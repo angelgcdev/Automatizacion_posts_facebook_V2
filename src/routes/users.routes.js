@@ -7,6 +7,8 @@ import {
   addPost,
   getPosts,
   deletePost,
+  updatePost,
+  sharePosts,
 } from "../controllers/users.controllers.js";
 // import { verifyToken } from "../middlewares/users.middlewares.js";
 
@@ -20,8 +22,12 @@ router.post("/login", loginUser);
 
 router.post("/addPost", addPost);
 
-router.get("/getPosts", getPosts);
+router.get("/getPosts/:id_usuario", getPosts);
 
-router.get("/deletePost/:id_publicacion", deletePost);
+router.delete("/deletePost/:id_publicacion", deletePost);
+
+router.put("/updatePost/:id_publicacion", updatePost);
+
+router.post("/sharePosts/:id_usuario", sharePosts);
 
 export { router };

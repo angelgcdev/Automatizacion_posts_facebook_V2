@@ -81,14 +81,16 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   //Funcion para abrir el modal de edicion
-  const openEditModal = (user) => {
-    document.querySelector("#editEmail").value = user.email;
-    document.querySelector("#editPassword").value = user.password;
-    document.querySelector("#editUrlPost").value = user.urlPost;
-    document.querySelector("#editMessage").value = user.message;
-    document.querySelector("#editPostCount").value = user.postCount;
-    document.querySelector("#editPostInterval").value = user.postInterval;
-    document.querySelector("#editOldEmail").value = user.email;
+  const openEditModal = (post, id_publicacion) => {
+    document.querySelector("#id_post").value = post.id_publicacion;
+    document.querySelector("#id_usuario").value = post.id_usuario;
+    document.querySelector("#editEmail").value = post.email;
+    document.querySelector("#editPassword").value = post.password;
+    document.querySelector("#editUrlPost").value = post.url;
+    document.querySelector("#editMessage").value = post.mensaje;
+    document.querySelector("#editPostCount").value = post.numero_de_posts;
+    document.querySelector("#editPostInterval").value = post.intervalo_tiempo;
+    document.querySelector("#editOldEmail").value = post.email;
     editModal.style.display = "block";
   };
 
@@ -98,13 +100,16 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   //Funcion para manejar la eliminacion de un usuario
-  const handleDeletePost = async (id) => {
+  const handleDeletePost = async (id_publicacion) => {
     const confirmDelete = confirm(
       "¿Esta seguro de que deseas eliminar esta publicación? Esta accion no se puede deshacer."
     );
     if (confirmDelete) {
-      const response = await requestData(`/deletePost/${id}`, {
+      const response = await requestData(`/deletePost/${id_publicacion}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       if (response) {
         showNotification(response.message);
@@ -116,26 +121,30 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   //Función para crear el botón de edición
-  const createEditButton = (user) => {
+  const createEditButton = (post, id_publicacion) => {
     const editButton = document.createElement("button");
     editButton.classList.add("button", "button--edit");
     editButton.textContent = "Editar";
-    editButton.addEventListener("click", () => openEditModal(user));
+    editButton.addEventListener("click", () =>
+      openEditModal(post, id_publicacion)
+    );
     return editButton;
   };
 
   //Funcion para crear un botón de eliminacion de usuario
-  const createDeleteButton = (id) => {
+  const createDeleteButton = (id_publicacion) => {
     const deleteButton = document.createElement("button");
     deleteButton.classList.add("button", "button--delete");
     deleteButton.textContent = "Eliminar";
-    deleteButton.addEventListener("click", () => handleDeletePost(id));
+    deleteButton.addEventListener("click", () =>
+      handleDeletePost(id_publicacion)
+    );
     return deleteButton;
   };
 
   //Funcion para cargar y mostrar usuarios
   const loadPosts = async () => {
-    const posts = await requestData("/getPosts");
+    const posts = await requestData(`/getPosts/${userId}`);
 
     if (posts) {
       userList.innerHTML = ""; //Limpiar la lista
@@ -165,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
         intervalSpan.textContent = `Una publicacion cada: ${post.intervalo_tiempo} minutos`;
         listItem.appendChild(intervalSpan);
 
-        listItem.appendChild(createEditButton(post));
+        listItem.appendChild(createEditButton(post, post.id));
         listItem.appendChild(createDeleteButton(post.id_publicacion));
 
         userList.appendChild(listItem);
@@ -183,7 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //Funcion para añadir usuarios
   const addPost = async (event) => {
-
     event.preventDefault();
     const formData = new FormData(event.target);
     const data = {
@@ -226,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await requestData("/sharePosts", options);
+      const response = await requestData(`/sharePosts/${userId}`, options);
 
       if (response) {
         showNotification("Las publicaciones se han compartido correctamente.");
@@ -245,18 +253,22 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   //Función para editar un usuario
-  const editUser = async (event) => {
+  const editPost = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
     const data = {
+      id_publicacion: formData.get("id_post"),
+      id_usuario: formData.get("id_usuario"),
       email: formData.get("email"),
       password: formData.get("password"),
-      urlPost: formData.get("urlPost"),
-      message: formData.get("message"),
-      postCount: parseInt(formData.get("postCount"), 10) || 1,
-      postInterval: parseInt(formData.get("postInterval"), 10) || 0,
+      url: formData.get("urlPost"),
+      mensaje: formData.get("message"),
+      numero_de_posts: parseInt(formData.get("postCount"), 10) || 1,
+      intervalo_tiempo: parseInt(formData.get("postInterval"), 10) || 0,
       oldEmail: formData.get("oldEmail"),
     };
+
+    console.log("Borrame id_post:", data.id_publicacion);
 
     const options = {
       method: "PUT",
@@ -264,7 +276,10 @@ document.addEventListener("DOMContentLoaded", () => {
       body: JSON.stringify(data),
     };
 
-    const response = await requestData("/updateUser", options);
+    const response = await requestData(
+      `/updatePost/${data.id_publicacion}`,
+      options
+    );
 
     if (response) {
       showNotification("La cuenta se ha actualizado correctamente.");
@@ -365,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sharePostsButton.addEventListener("click", sharePosts);
 
     //Se dispara cuando se hace click en el boton "Guardar Cambios"
-    editForm.addEventListener("submit", editUser);
+    editForm.addEventListener("submit", editPost);
 
     //Se dispara cuando se hace click en cerrar el modal
     closeModal.addEventListener("click", closeEditModal);

@@ -3,6 +3,8 @@ import { pool } from "../db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+import { automatizarFacebook } from "../facebookAutomation.js";
+
 const saltRounds = 10;
 
 const getUsers = async (req, res) => {
@@ -96,7 +98,11 @@ const addPost = async (req, res) => {
 
 const getPosts = async (req, res) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM publicaciones;");
+    const { id_usuario } = req.params;
+    const { rows } = await pool.query(
+      "SELECT * FROM publicaciones WHERE id_usuario=$1;",
+      [id_usuario]
+    );
     return res.status(200).json(rows);
   } catch (error) {
     console.log("Error al obtener la lista de usuarios:", error);
@@ -131,4 +137,73 @@ const deletePost = async (req, res) => {
   }
 };
 
-export { getUsers, createUser, loginUser, addPost, getPosts, deletePost };
+const updatePost = async (req, res) => {
+  try {
+    const { id_publicacion } = req.params;
+    const data = req.body;
+
+    const { rows } = await pool.query(
+      "UPDATE publicaciones SET email=$1, password=$2, url=$3, mensaje=$4, numero_de_posts=$5, intervalo_tiempo=$6 WHERE id_publicacion= $7 RETURNING *",
+      [
+        data.email,
+        data.password,
+        data.url,
+        data.mensaje,
+        data.numero_de_posts,
+        data.intervalo_tiempo,
+        id_publicacion,
+      ]
+    );
+
+    return res
+      .status(200)
+      .json({ message: "Publicación actualizada con éxito." });
+  } catch (error) {
+    console.error("Error durante la actualización de la cuenta:", error);
+
+    return res
+      .status(500)
+      .json({ message: "Se produjo un error al actualizar la publicación." });
+  }
+};
+
+const sharePosts = async (req, res) => {
+  try {
+    const { id_usuario } = req.params;
+    const { rows } = await pool.query(
+      "SELECT * FROM publicaciones WHERE id_usuario=$1;",
+      [id_usuario]
+    );
+
+    for (const post of rows) {
+      try {
+        await automatizarFacebook(post);
+      } catch (error) {
+        console.log(
+          `Error al automatizar publicaciones de: ${post.email}`,
+          error
+        );
+      }
+    }
+
+    return res.status(200).json({
+      message: "Automatización de posts completada con éxito.",
+    });
+  } catch (error) {
+    console.log("Error durante sharePosts:", error);
+    return res.status(500).json({
+      message: "Se produjo un error durante la automatización de posts.",
+    });
+  }
+};
+
+export {
+  getUsers,
+  createUser,
+  loginUser,
+  addPost,
+  getPosts,
+  deletePost,
+  updatePost,
+  sharePosts,
+};
