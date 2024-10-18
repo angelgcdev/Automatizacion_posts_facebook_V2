@@ -47,7 +47,7 @@ const writeReportFile = async (report) => {
 };
 
 // Función Principal de automatización de Facebook
-const automatizarFacebook = async (user) => {
+const automatizarFacebook = async (post) => {
   let browser;
   const flagPost = 1; //acumulador
   try {
@@ -59,10 +59,10 @@ const automatizarFacebook = async (user) => {
     const page = await context.newPage();
 
     // Iniciar sesión en Facebook
-    await loginToFacebook(page, user);
+    await loginToFacebook(page, post);
 
     // Navegar al enlace del post de una página
-    await page.goto(user.urlPost);
+    await page.goto(post.url);
     await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
     //Verificar si ya se dio me gusta
@@ -97,8 +97,8 @@ const automatizarFacebook = async (user) => {
     }
 
     // Publicar en los primeros tres grupos
-    for (let i = 1; i <= user.postCount; i++) {
-      await page.waitForTimeout(user.postInterval * 60000); //intervalo de tiempo entre publicaciones
+    for (let i = 1; i <= post.numero_de_posts; i++) {
+      await page.waitForTimeout(post.intervalo_tiempo * 60000); //intervalo de tiempo entre publicaciones
 
       //Botón Compartir
       const selector1 =
@@ -170,7 +170,7 @@ const automatizarFacebook = async (user) => {
       await fillField(
         page,
         'div[aria-label="Crea una publicación pública..."]',
-        user.message
+        post.mensaje
       );
       await page.keyboard.press("Space");
 
@@ -179,40 +179,40 @@ const automatizarFacebook = async (user) => {
 
       await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
-      //Actualizar el reporte de publicaciones en el archivo JSON
-      const report = await readReportFile();
-      const existingReportIndex = report.reports.findIndex(
-        (r) => r.email === user.email
-      );
+      //   //Actualizar el reporte de publicaciones en el archivo JSON
+      //   const report = await readReportFile();
+      //   const existingReportIndex = report.reports.findIndex(
+      //     (r) => r.email === post.email
+      //   );
 
-      const currentDate = new Date().toISOString();
+      //   const currentDate = new Date().toISOString();
 
-      if (existingReportIndex !== -1) {
-        report.reports[existingReportIndex].postsCount =
-          Number(report.reports[existingReportIndex].postsCount) + flagPost;
+      //   if (existingReportIndex !== -1) {
+      //     report.reports[existingReportIndex].postsCount =
+      //       Number(report.reports[existingReportIndex].postsCount) + flagPost;
 
-        report.reports[existingReportIndex].dates.push({
-          titleGroupPostText: titleGroupPostText,
-          currentDate: currentDate,
-        }); //Agrega la fecha actual
-      } else {
-        report.reports.push({
-          email: user.email,
-          message: user.message,
-          URL: user.urlPost,
-          postsCount: flagPost,
-          dates: [
-            {
-              titleGroupPostText: titleGroupPostText,
-              currentDate: currentDate,
-            },
-          ],
-        });
-      }
+      //     report.reports[existingReportIndex].dates.push({
+      //       titleGroupPostText: titleGroupPostText,
+      //       currentDate: currentDate,
+      //     }); //Agrega la fecha actual
+      //   } else {
+      //     report.reports.push({
+      //       email: post.email,
+      //       message: post.mensaje,
+      //       URL: post.url,
+      //       postsCount: flagPost,
+      //       dates: [
+      //         {
+      //           titleGroupPostText: titleGroupPostText,
+      //           currentDate: currentDate,
+      //         },
+      //       ],
+      //     });
+      //   }
 
-      console.log("reporte:", report.reports);
+      //   console.log("reporte:", report.reports);
 
-      await writeReportFile(report);
+      //   await writeReportFile(report);
     }
 
     await browser.close();
