@@ -4,6 +4,9 @@ import {
   getUsers,
   createUser,
   loginUser,
+  addPost,
+  getPosts,
+  deletePost,
 } from "../controllers/users.controllers.js";
 // import { verifyToken } from "../middlewares/users.middlewares.js";
 
@@ -11,14 +14,14 @@ const router = Router();
 
 router.get("/users", getUsers);
 
-// router.get("/users/:id", getUser);
-
 router.post("/users", createUser);
 
 router.post("/login", loginUser);
 
-// router.delete("/users/:id", deleteUser);
+router.post("/addPost", addPost);
 
-// router.put("/users/:id", updateUser);
+router.get("/getPosts", getPosts);
+
+router.get("/deletePost/:id_publicacion", deletePost);
 
 export { router };

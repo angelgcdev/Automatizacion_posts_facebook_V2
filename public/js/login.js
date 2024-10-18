@@ -24,12 +24,15 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
     const data = await response.json();
 
+    console.log('data: ',data.token);
+    
+
     //Manejar la respuesta de la API
     if (response.ok) {
       //Guardar el token en el localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.user.id_usuario);
-      localStorage.setItem("token", data.user.email);
+      localStorage.setItem("userEmail", data.user.email);
       //Redirigir a la pagina principal o donde desees
       window.location.href = "../main.html";
     } else {

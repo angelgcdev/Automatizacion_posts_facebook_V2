@@ -80,12 +80,56 @@
 --;
 --;
 --;
---version3
+-- --version3
+-- --Crear la base de datos
+-- CREATE DATABASE facebook_db;
+-- --;
+-- --Conectarse a la base de datos
+-- \ c facebook_db;
+-- --Tabla usuarios;
+-- CREATE TABLE usuarios(
+--   id_usuario SERIAL PRIMARY KEY,
+--   email VARCHAR(255) NOT NULL UNIQUE,
+--   password VARCHAR(255) NOT NULL
+-- );
+-- --;
+-- --Tabla publicaciones;
+-- CREATE TABLE publicaciones (
+--   id_publicacion SERIAL PRIMARY KEY,
+--   id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+--   email VARCHAR(255) NOT NULL,
+--   password VARCHAR(255) NOT NULL,
+--   url VARCHAR(255),
+--   mensaje TEXT NOT NULL,
+--   numero_de_posts INT DEFAULT 1,
+--   intervalo_tiempo INT NOT NULL,
+--   estado_publicacion VARCHAR(50) DEFAULT 'pendiente'
+-- );
+-- --;
+-- --Tabla grupos_facebook
+-- CREATE TABLE grupos_facebook(
+--   id_grupo SERIAL PRIMARY KEY,
+--   nombre_grupo VARCHAR(255) NOT NULL
+-- );
+-- --;
+-- --Tabla publicaciones_grupos
+-- CREATE TABLE publicaciones_grupos (
+--   id_publicacion_grupo SERIAL PRIMARY KEY,
+--   id_publicacion INT REFERENCES publicaciones(id_publicacion) ON DELETE CASCADE,
+--   id_grupo INT REFERENCES grupos_facebook(id_grupo) ON DELETE CASCADE,
+--   fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
+--;
+--;
+--;
+--;
+--;
+--version4
 --Crear la base de datos
 CREATE DATABASE facebook_db;
 --;
 --Conectarse a la base de datos
-\ c facebook_db;
+\c facebook_db;
 --Tabla usuarios;
 CREATE TABLE usuarios(
   id_usuario SERIAL PRIMARY KEY,
@@ -102,8 +146,7 @@ CREATE TABLE publicaciones (
   url VARCHAR(255),
   mensaje TEXT NOT NULL,
   numero_de_posts INT DEFAULT 1,
-  intervalo_tiempo INT NOT NULL,
-  estado_publicacion VARCHAR(50) DEFAULT 'pendiente'
+  intervalo_tiempo INT NOT NULL
 );
 --;
 --Tabla grupos_facebook

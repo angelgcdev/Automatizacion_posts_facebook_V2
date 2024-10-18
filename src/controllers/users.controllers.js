@@ -6,20 +6,9 @@ import jwt from "jsonwebtoken";
 const saltRounds = 10;
 
 const getUsers = async (req, res) => {
-  const { rows } = await pool.query("SELECT * FROM usuarios");
+  const { rows } = await pool.query("SELECT * FROM usuarios;");
   res.json(rows);
 };
-
-// const getUser = async (req, res) => {
-//   const { id } = req.params;
-//   const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-
-//   if (rows.length === 0) {
-//     return res.status(404).json({ message: "User not found" });
-//   }
-
-//   res.json(rows[0]);
-// };
 
 const createUser = async (req, res) => {
   try {
@@ -73,32 +62,73 @@ const loginUser = async (req, res) => {
   res.json({ token, user: { id_usuario: user.id_usuario, email: user.email } });
 };
 
-// const deleteUser = async (req, res) => {
-//   const { id } = req.params;
-//   const { rowCount } = await pool.query(
-//     "DELETE FROM users WHERE id= $1 RETURNING *",
-//     [id]
-//   );
+const addPost = async (req, res) => {
+  try {
+    const {
+      id_usuario,
+      email,
+      password,
+      url,
+      mensaje,
+      numero_de_posts,
+      intervalo_tiempo,
+    } = req.body;
+    const { rows } = await pool.query(
+      "INSERT INTO publicaciones (id_usuario, email, password, url, mensaje, numero_de_posts, intervalo_tiempo) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      [
+        id_usuario,
+        email,
+        password,
+        url,
+        mensaje,
+        numero_de_posts,
+        intervalo_tiempo,
+      ]
+    );
+    return res.status(200).json({ message: "Usuario añadido con éxito." });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: "Se produjo un error al añadir el usuario." });
+  }
+};
 
-//   if (rowCount === 0) {
-//     return res.status(404).json({ message: "User not found" });
-//   }
+const getPosts = async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT * FROM publicaciones;");
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.log("Error al obtener la lista de usuarios:", error);
 
-//   return res.sendStatus(204);
-// };
+    return res.status(500).json({
+      message: "Se produjo un error al obtener la lista de usuarios.",
+    });
+  }
+};
 
-// const updateUser = async (req, res) => {
-//   const { id } = req.params;
-//   const data = req.body;
+const deletePost = async (req, res) => {
+  try {
+    const { id_publicacion } = req.params;
+    const { rowCount } = await pool.query(
+      "DELETE FROM publicaciones WHERE id_publicacion = $1 RETURNING *",
+      [id_publicacion]
+    );
 
-//   const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+    if (rowCount === 0) {
+      return res.status(404).json({ message: "Publicación no encontrada." });
+    }
 
-//   const { rows } = await pool.query(
-//     "UPDATE users SET name= $1, email=$2, password=$3 WHERE id = $4 RETURNING *",
-//     [data.name, data.email, hashedPassword, id]
-//   );
+    res
+      .status(200)
+      .json({ message: "La publicación ha sido eliminado con éxito." });
+  } catch (error) {
+    console.error("Error durante la eliminacion de la publicación:", error);
 
-//   return res.json(rows[0]);
-// };
+    res
+      .status(500)
+      .json({ message: "Se produjo un error al eliminar la publicación." });
+  }
+};
 
-export { getUsers, createUser, loginUser };
+export { getUsers, createUser, loginUser, addPost, getPosts, deletePost };
