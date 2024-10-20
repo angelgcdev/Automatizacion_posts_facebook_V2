@@ -1,7 +1,6 @@
 // src/facebookAutomation.js
 import { chromium } from "playwright";
-import * as fs from "fs/promises";
-import path from "path";
+import { pool } from "./db.js";
 
 const MIN_DELAY = 5000; // Minimo tiempo de espera en milisegundos
 const MAX_DELAY = 10000; // Máximo tiempo de espera en milisegundos
@@ -23,33 +22,18 @@ const fillField = async (page, selector, value) => {
 };
 
 //Funcion para iniciar sesion en Facebook
-const loginToFacebook = async (page, user) => {
+const loginToFacebook = async (page, post) => {
   await page.goto("https://www.facebook.com/");
-  await fillField(page, "#email", user.email);
-  await fillField(page, "#pass", user.password);
+  await fillField(page, "#email", post.email);
+  await fillField(page, "#pass", post.password);
   await clickOnSelector(page, "button[name='login']");
   await page.waitForNavigation({ timeout: 30000 }); //Espera hasta 30 segundos
-};
-
-const readReportFile = async () => {
-  const data = await fs.readFile(
-    path.join(__dirname, "./config/postsReport.json"),
-    "utf-8"
-  );
-  return JSON.parse(data);
-};
-
-const writeReportFile = async (report) => {
-  await fs.writeFile(
-    path.join(__dirname, "./config/postsReport.json"),
-    JSON.stringify(report, null, 2)
-  );
 };
 
 // Función Principal de automatización de Facebook
 const automatizarFacebook = async (post) => {
   let browser;
-  const flagPost = 1; //acumulador
+  let postCount = 0; //acumulador
   try {
     browser = await chromium.launch({
       headless: false,
@@ -96,7 +80,7 @@ const automatizarFacebook = async (post) => {
       );
     }
 
-    // Publicar en los primeros tres grupos
+    // Publicar en los grupos
     for (let i = 1; i <= post.numero_de_posts; i++) {
       await page.waitForTimeout(post.intervalo_tiempo * 60000); //intervalo de tiempo entre publicaciones
 
@@ -159,8 +143,8 @@ const automatizarFacebook = async (post) => {
   span[class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x676frb x1lkfr7t x1lbecb7 xk50ysn xzsf02u x1yc453h"]`
       );
 
-      const titleGroupPostText = await titleGroupPost.textContent();
-      console.log(titleGroupPostText);
+      const nombre_grupo = await titleGroupPost.textContent();
+      console.log(nombre_grupo);
 
       await page.click(
         `div[role="list"] div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-child(${i})`
@@ -179,40 +163,31 @@ const automatizarFacebook = async (post) => {
 
       await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
-      //   //Actualizar el reporte de publicaciones en el archivo JSON
-      //   const report = await readReportFile();
-      //   const existingReportIndex = report.reports.findIndex(
-      //     (r) => r.email === post.email
-      //   );
+      //Actualizar el reporte de publicaciones en la base de datos
+      const currentDate = new Date().toISOString();
+      postCount++;
 
-      //   const currentDate = new Date().toISOString();
-
-      //   if (existingReportIndex !== -1) {
-      //     report.reports[existingReportIndex].postsCount =
-      //       Number(report.reports[existingReportIndex].postsCount) + flagPost;
-
-      //     report.reports[existingReportIndex].dates.push({
-      //       titleGroupPostText: titleGroupPostText,
-      //       currentDate: currentDate,
-      //     }); //Agrega la fecha actual
-      //   } else {
-      //     report.reports.push({
-      //       email: post.email,
-      //       message: post.mensaje,
-      //       URL: post.url,
-      //       postsCount: flagPost,
-      //       dates: [
-      //         {
-      //           titleGroupPostText: titleGroupPostText,
-      //           currentDate: currentDate,
-      //         },
-      //       ],
-      //     });
-      //   }
-
-      //   console.log("reporte:", report.reports);
-
-      //   await writeReportFile(report);
+      try {
+        const { rows } = await pool.query(
+          "INSERT INTO reportes (id_publicacion, id_usuario, email, url, mensaje, total_posts, nombre_grupo, fecha_publicacion) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+          [
+            post.id_publicacion,
+            post.id_usuario,
+            post.email,
+            post.url,
+            post.mensaje,
+            postCount,
+            nombre_grupo,
+            currentDate,
+          ]
+        );
+        console.log(`Reporte insertado:`, rows[0]); //Imprime el reporte insertado
+        // return res.json(rows[0]);
+      } catch (error) {
+        console.log(`Error al insertar el reporte:`, error);
+        // console.log(error);
+        // return res.status(500).json({ message: "Interval server error" });
+      }
     }
 
     await browser.close();

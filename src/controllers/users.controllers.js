@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { automatizarFacebook } from "../facebookAutomation.js";
+// import { cleanText } from "../utils/cleanText.js";
 
 const saltRounds = 10;
 
@@ -75,6 +76,12 @@ const addPost = async (req, res) => {
       numero_de_posts,
       intervalo_tiempo,
     } = req.body;
+
+    //Limpiar el texto antes de insertarlo
+    // const cleanEmail = cleanText(email);
+    // const cleanUrl = cleanText(url);
+    // const cleanMensaje = cleanText(mensaje);
+
     const { rows } = await pool.query(
       "INSERT INTO publicaciones (id_usuario, email, password, url, mensaje, numero_de_posts, intervalo_tiempo) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
       [
@@ -197,6 +204,40 @@ const sharePosts = async (req, res) => {
   }
 };
 
+const postsReport = async (req, res) => {
+  try {
+    const { id_usuario } = req.params;
+    const { rows } = await pool.query(
+      "SELECT * FROM reportes WHERE id_usuario = $1;",
+      [id_usuario]
+    );
+
+    if(rows.length === 0){
+      return res.status(400).json({message: "publicaciones no encontradas"})
+    }
+
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error al obtener el reporte de publicaciones.");
+    return res.status(500).json({
+      message: "Se produjo un error al obtener el reporte de publicaciones.",
+    });
+  }
+};
+
+const deleteReport = async (req, res) => {
+  try {
+    const { rowCount } = await pool.query("DELETE FROM reportes RETURNING *");
+
+    return res.status(200).json({ message: "Reporte eliminado con éxito." });
+  } catch (error) {
+    console.error("Error durante la eliminacion del reporte:", error);
+    return res
+      .status(500)
+      .json({ message: "Se produjo un error al eliminar el Reporte." });
+  }
+};
+
 export {
   getUsers,
   createUser,
@@ -206,4 +247,6 @@ export {
   deletePost,
   updatePost,
   sharePosts,
+  postsReport,
+  deleteReport,
 };

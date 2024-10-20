@@ -125,11 +125,52 @@
 --;
 --;
 --version4
+-- --Crear la base de datos
+-- CREATE DATABASE facebook_db;
+-- --;
+-- --Conectarse a la base de datos
+-- \ c facebook_db;
+-- --Tabla usuarios;
+-- CREATE TABLE usuarios(
+--   id_usuario SERIAL PRIMARY KEY,
+--   email VARCHAR(255) NOT NULL UNIQUE,
+--   password VARCHAR(255) NOT NULL
+-- );
+-- --;
+-- --Tabla publicaciones;
+-- CREATE TABLE publicaciones (
+--   id_publicacion SERIAL PRIMARY KEY,
+--   id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+--   email VARCHAR(255) NOT NULL,
+--   password VARCHAR(255) NOT NULL,
+--   url VARCHAR(255),
+--   mensaje TEXT NOT NULL,
+--   numero_de_posts INT DEFAULT 1,
+--   intervalo_tiempo INT NOT NULL
+-- );
+-- --;
+-- --Tabla grupos_facebook
+-- CREATE TABLE grupos_facebook(
+--   id_grupo SERIAL PRIMARY KEY,
+--   nombre_grupo VARCHAR(255) NOT NULL
+-- );
+-- --;
+-- --Tabla publicaciones_grupos
+-- CREATE TABLE publicaciones_grupos (
+--   id_publicacion_grupo SERIAL PRIMARY KEY,
+--   id_publicacion INT REFERENCES publicaciones(id_publicacion) ON DELETE CASCADE,
+--   id_grupo INT REFERENCES grupos_facebook(id_grupo) ON DELETE CASCADE,
+--   fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
+--;
+--;
+--;
+--version 5
 --Crear la base de datos
-CREATE DATABASE facebook_db;
+CREATE DATABASE facebook_db WITH ENCODING 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8' TEMPLATE template0;
 --;
 --Conectarse a la base de datos
-\c facebook_db;
+\ c facebook_db;
 --Tabla usuarios;
 CREATE TABLE usuarios(
   id_usuario SERIAL PRIMARY KEY,
@@ -143,24 +184,24 @@ CREATE TABLE publicaciones (
   id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
-  url VARCHAR(255),
+  url VARCHAR(255) NOT NULL,
   mensaje TEXT NOT NULL,
   numero_de_posts INT DEFAULT 1,
-  intervalo_tiempo INT NOT NULL
+  intervalo_tiempo INT DEFAULT 0
 );
 --;
---Tabla grupos_facebook
-CREATE TABLE grupos_facebook(
-  id_grupo SERIAL PRIMARY KEY,
-  nombre_grupo VARCHAR(255) NOT NULL
-);
---;
---Tabla publicaciones_grupos
-CREATE TABLE publicaciones_grupos (
-  id_publicacion_grupo SERIAL PRIMARY KEY,
-  id_publicacion INT REFERENCES publicaciones(id_publicacion) ON DELETE CASCADE,
-  id_grupo INT REFERENCES grupos_facebook(id_grupo) ON DELETE CASCADE,
-  fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Tabla reportes
+CREATE TABLE reportes (
+  id_reporte SERIAL PRIMARY KEY,
+  id_publicacion INT REFERENCES publicaciones(id_publicacion) ON DELETE
+  SET NULL,
+    id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    email VARCHAR(255) NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    mensaje TEXT NOT NULL,
+    total_posts INT DEFAULT 1,
+    nombre_grupo VARCHAR (255),
+    fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 --;
 INSERT INTO usuarios(email, password)

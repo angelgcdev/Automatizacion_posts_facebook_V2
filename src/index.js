@@ -13,10 +13,13 @@ const __dirname = dirname(__filename);
 
 const app = express();
 
-app.use(morgan("dev"));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "../public")));
-app.use(router);
+app.use(morgan("dev")); // Logger
+app.use(express.json()); // Para parsear JSON
+app.use(express.urlencoded({ extended: true })); //para parsear URL-encoded
+app.use(express.static(path.join(__dirname, "../public"))); // Servir archivos estaticos
+app.use(router); //Usar las rutas definidas
 
-app.listen(PORT);
-console.log("Server on port", PORT);
+app.listen(PORT, () => {
+  const baseUrl = `http://localhost:${PORT}/login.html`;
+  console.log(`Server running at ${baseUrl}`);
+});

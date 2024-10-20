@@ -296,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //Función para abrir el modal del reporte
   const openReportModal = async () => {
     try {
-      const reports = await requestData("/postsReport");
+      const reports = await requestData(`/postsReport/${userId}`);
       if (reports) {
         const reportContent = document.querySelector("#reportContent");
         reportContent.innerHTML = ""; //Limpiar el contenido previo
@@ -307,28 +307,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
           postElement.innerHTML = `
         <p class="report-post__email">${post.email}</p>
-        <p class="report-post__text">Mensaje: ${post.message}</p>
+        <p class="report-post__text">Mensaje: ${post.mensaje}</p>
         <p class="report-post__text">URL: 
-          <a href="${post.URL}" target="_blank">${post.URL}</a>
+          <a href="${post.url}" target="_blank">${post.url}</a>
         </p>
         <p class="report-post__text">Cantidad de Publicaciones: ${
-          post.postsCount
+          post.total_posts
         }</p>
         <p class="report-post__text">
         Detalle(s):
         <ul class="report-post__list">
-        ${post.dates
-          .map((date) => {
-            return `<li class="report-post__text report-post__listItem">
-              <span class="report-post__groupText"> ${
-                date.titleGroupPostText
-              } </span> 👉 
-              <span class="report-post__date">​ ${new Date(
-                date.currentDate
-              ).toLocaleString()}​🕛 </span>
-              </li>`;
-          })
-          .join("")}
+            <li class="report-post__text report-post__listItem">
+              <span class="report-post__groupText">
+              ${post.nombre_grupo} 
+              </span> 👉 
+              <span class="report-post__date">​ 
+              ${new Date(post.fecha_publicacion).toLocaleString()}​🕛 
+              </span>
+              </li>
         </ul>
         </p>
         `;
@@ -350,7 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   //Funcion para eliminar el reporte de publicaciones
-  const deleteReport = async (userEmail) => {
+  const deleteReport = async () => {
     const confirmDelete = confirm(
       "¿Esta seguro de que deseas eliminar esta el Reporte? Esta accion no se puede deshacer."
     );

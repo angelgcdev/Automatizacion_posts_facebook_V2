@@ -9,6 +9,8 @@ import {
   deletePost,
   updatePost,
   sharePosts,
+  postsReport,
+  deleteReport,
 } from "../controllers/users.controllers.js";
 // import { verifyToken } from "../middlewares/users.middlewares.js";
 
@@ -29,5 +31,9 @@ router.delete("/deletePost/:id_publicacion", deletePost);
 router.put("/updatePost/:id_publicacion", updatePost);
 
 router.post("/sharePosts/:id_usuario", sharePosts);
+
+router.get("/postsReport/:id_usuario", postsReport);
+
+router.delete("/deleteReport", deleteReport);
 
 export { router };
