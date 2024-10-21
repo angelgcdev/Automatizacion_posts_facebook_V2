@@ -35,12 +35,15 @@ li {
   list-style-type: none;
 }
 
+a {
+  text-decoration: none;
+}
+
 :root {
   /*Color palette*/
   --black: #0d0d0d;
   --darkblue: #0f1426;
   --blue: #324373;
-  --violet: #3b136d;
   --lightBlue: #2d55a6;
   --skyBlue: #1374f2;
   --skyBlueDark: hsl(214, 90%, 31%);
@@ -125,7 +128,7 @@ li {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: hsla(227.5, 44.4%, 10.6%, 0.84);
+  background: hsla(232.9, 97.4%, 15.3%, 0.84);
   z-index: 10;
 }
 
@@ -136,7 +139,23 @@ li {
   position: relative;
   z-index: 20;
   text-align: center;
-  margin-top: 50px;
+}
+
+.form-sesion {
+  background-color: var(--darkblue);
+  border-radius: 1rem;
+  padding: 1.6rem;
+  align-items: center;
+  justify-content: flex-start;
+  display: flex;
+  gap: 1.6rem;
+}
+
+.emailSesion {
+  padding: 1.6rem;
+  color: var(--white);
+  letter-spacing: 0.1rem;
+  border-radius: 1rem;
 }
 
 /*Estilos para el form-title*/
@@ -161,6 +180,20 @@ li {
   font-weight: 700;
 }
 
+/*Estilos para el logo*/
+.form-logo {
+  width: 20rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 3.2rem;
+}
+
+.form-logo__img {
+  display: inline-block;
+  max-width: 100%;
+  text-align: center;
+}
+
 /*Estilos para el form*/
 .form {
   margin-bottom: 3.2rem;
@@ -173,6 +206,14 @@ li {
 .form__group {
   margin-bottom: 1.6rem;
   width: 100%;
+}
+
+.password-wrapper {
+  display: flex;
+}
+
+.password-flex {
+  flex: 1;
 }
 
 .form__input {
@@ -221,6 +262,10 @@ li {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+.button__toggle-icon {
+  margin-left: 1rem;
+}
+
 .button--password:hover {
   background-color: var(--darkblue);
   color: var(--gray);
@@ -245,6 +290,27 @@ li {
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
 
+.button--login-register {
+  width: 100%;
+  background-color: var(--green);
+  color: var(--white);
+}
+
+.button--login-register:hover {
+  background-color: var(--greenDark);
+  color: var(--gray);
+}
+
+.button--logout {
+  background-color: hsl(235.38deg 70.33% 60.83%);
+  color: var(--white);
+}
+
+.button--logout:hover {
+  background-color: hsl(235.38deg 70.33% 50.83%);
+  color: var(--gray);
+}
+
 .button--add {
   width: 100%;
   background-color: var(--skyBlue);
@@ -261,7 +327,6 @@ li {
 }
 
 .button--share {
-  margin-top: 3.2rem;
   border: 2px solid var(--white);
   color: var(--white);
 }
@@ -370,6 +435,23 @@ li {
 .button--reportDelete:active {
   transform: scale(0.98);
   box-shadow: none;
+}
+
+/*Estilos para el link de registrase*/
+.form__link {
+  display: inline-block;
+  color: var(--white);
+  letter-spacing: 0.1rem;
+  font-size: var(--small);
+  font-weight: 600;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.form__link:hover,
+.form__link:focus {
+  background-color: rgba(52, 152, 219, 0.2);
+  color: #2980b9;
+  text-decoration: underline;
 }
 
 /*Estilos para el user-list*/

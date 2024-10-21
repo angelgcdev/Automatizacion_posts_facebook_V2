@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline';"
+    />
+
     <meta charset="UTF-8" />
     <meta
       name="description"
@@ -23,13 +28,19 @@
       <div class="loading__spinner"></div>
     </div>
 
-    <button class="button" id="logoutButton">Cerrar Sesión</button>
-
     <!-- Formulario de registro de cuentas de facebook -->
     <div class="container">
       <div class="form-container">
         <div class="overlay"></div>
         <div class="form-content">
+          <div class="form-sesion">
+            <button
+              class="button button--logout button--position"
+              id="logoutButton"
+            >
+              Cerrar Sesión
+            </button>
+          </div>
           <div class="form-title">
             <h1 class="form-title__main">Automatiza tus publicaciones de</h1>
             <h1 class="form-title__sub">Facebook</h1>
@@ -47,7 +58,7 @@
               />
             </div>
 
-            <div class="form__group">
+            <div class="form__group password-wrapper">
               <input
                 class="form__input password"
                 type="password"
@@ -55,8 +66,15 @@
                 required
                 placeholder="Contraseña"
               />
-              <button type="button" class="button--password togglePassword">
-                Mostrar Contraseña
+              <button
+                type="button"
+                class="button--password button__toggle-icon"
+              >
+                <img
+                  class="toggleIcon"
+                  src="./assets/icons/visibility.svg"
+                  alt=""
+                />
               </button>
             </div>
 
@@ -260,7 +278,6 @@
       </div>
     </div>
 
-    <script src="./js/main.js" defer></script>
-    <script src="./js/logout.js"></script>
+    <script type="module" src="./js/main.js"></script>
   </body>
 </html>
