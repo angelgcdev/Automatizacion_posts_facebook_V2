@@ -24,6 +24,7 @@ const fillField = async (page, selector, value) => {
 //Funcion para iniciar sesion en Facebook
 const loginToFacebook = async (page, post) => {
   await page.goto("https://www.facebook.com/");
+  await page.waitForLoadState("networkidle");
   await fillField(page, "#email", post.email);
   await fillField(page, "#pass", post.password);
   await clickOnSelector(page, "button[name='login']");
@@ -47,7 +48,7 @@ const automatizarFacebook = async (post) => {
 
     // Navegar al enlace del post de una página
     await page.goto(post.url);
-    await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+    await page.waitForLoadState("networkidle");
 
     //Verificar si ya se dio me gusta
     const likeButtonSelector = 'div[aria-label="Me gusta"]';
@@ -68,7 +69,6 @@ const automatizarFacebook = async (post) => {
       }, likeButtonSelector);
 
       if (!isLiked) {
-        await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
         await clickOnSelector(page, likeButtonSelector);
       } else {
         console.log("Me gusta esta activado");
@@ -107,36 +107,44 @@ const automatizarFacebook = async (post) => {
       }
 
       try {
-        await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
-        //Click en el boton 'Grupo'
+        //Esperar a que el boton "Grupo" esté disponible antes de hacer click
         await clickOnSelector(
           page,
           'div[role="button"] span:has-text("Grupo")'
         );
       } catch (error) {
-        console.error(error);
+        console.error(
+          "Error al intentar hacer click en el botón 'Grupo'",
+          error
+        );
       }
 
-      //-----------------Opcion auxiliar-------------------------------
-      try {
-        await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
-        await clickOnSelector(
-          page,
-          'div[role="button"] span:has-text("Más opciones")'
-        );
+      //comprobar si el boton "Más opciones" esta disponible
+      const buttonMoreOptions =
+        (await page.$('div[role="button"] span:has-text("Más opciones")')) !==
+        null;
 
-        await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
-        await clickOnSelector(
-          page,
-          'div[role="button"] span:has-text("Compartir en un grupo")'
-        );
-      } catch (error) {
-        console.error(error);
+      console.log("Boton mas opciones:", buttonMoreOptions);
+
+      if (buttonMoreOptions) {
+        //-----------------Opcion auxiliar-------------------------------
+        try {
+          await clickOnSelector(
+            page,
+            'div[role="button"] span:has-text("Más opciones")'
+          );
+
+          await clickOnSelector(
+            page,
+            'div[role="button"] span:has-text("Compartir en un grupo")'
+          );
+        } catch (error) {
+          console.error(error);
+        }
+        //--------------------------------------------------------------------
       }
-      //--------------------------------------------------------------------
 
-      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
-      await page.waitForSelector('div[role="list"]');
+      await page.waitForSelector('div[role="list"]', { timeout: 10000 });
 
       const titleGroupPost = await page.locator(
         `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
@@ -146,11 +154,11 @@ const automatizarFacebook = async (post) => {
       const nombre_grupo = await titleGroupPost.textContent();
       console.log(nombre_grupo);
 
-      await page.click(
+      await clickOnSelector(
+        page,
         `div[role="list"] div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-child(${i})`
       );
 
-      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
       await fillField(
         page,
         'div[aria-label="Crea una publicación pública..."]',
@@ -158,10 +166,7 @@ const automatizarFacebook = async (post) => {
       );
       await page.keyboard.press("Space");
 
-      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
       await clickOnSelector(page, 'div[aria-label="Publicar"]');
-
-      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
       //Actualizar el reporte de publicaciones en la base de datos
       const currentDate = new Date().toISOString();
@@ -185,9 +190,10 @@ const automatizarFacebook = async (post) => {
         // return res.json(rows[0]);
       } catch (error) {
         console.log(`Error al insertar el reporte:`, error);
-        // console.log(error);
-        // return res.status(500).json({ message: "Interval server error" });
+        return res.status(500).json({ message: "Interval server error" });
       }
+
+      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
     }
 
     await browser.close();
