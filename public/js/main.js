@@ -1,5 +1,6 @@
 import { showNotification } from "./utils/showNotification.js";
 import { togglePasswordVisibility } from "./utils/togglePasswordVisibility.js";
+import { logoutUser } from "./utils/logoutUser.js";
 
 const token = localStorage.getItem("token");
 const userId = localStorage.getItem("userId");
@@ -22,6 +23,8 @@ const sharePostsButton = document.querySelector("#sharePostsButton");
 
 const userList = document.querySelector("#users");
 
+const reportContent = document.querySelector("#reportContent");
+
 const editModal = document.querySelector("#editModal");
 const closeModal = document.querySelector("#closeModal");
 const editForm = document.querySelector("#editForm");
@@ -35,17 +38,6 @@ emailSesion.textContent = userEmail;
 formSesion.appendChild(emailSesion);
 
 /**---------FUNCIONES---------- */
-
-//Funcion para cerra sesion
-const logoutUser = () => {
-  //Elimina el token del localStorage
-  localStorage.removeItem("token");
-  localStorage.removeItem("userId");
-  localStorage.removeItem("userEmail");
-
-  //Redirige a la página de inicio de sesión
-  window.location.href = "../login.html";
-};
 
 //Funcion para mostrar la animacion de carga
 const showLoading = () => {
@@ -113,6 +105,94 @@ const handleDeletePost = async (id_publicacion) => {
   }
 };
 
+//Funcion para mostrar el reporte por publicacion
+const reportPost = async (id_usuario, email) => {
+  try {
+    const reports = await requestData(`/postReport/${id_usuario}/${email}`);
+
+    //Limpiar el contenido actual
+    reportContent.innerHTML = "";
+
+    //Crear la tabla y su cabecera
+    const table = document.createElement("table");
+    table.classList.add("report-post__table");
+
+    table.innerHTML = `
+    <thead>
+        <tr>
+          <th>Email</th>
+          <th>Mensaje</th>
+          <th>URL</th>
+          <th>Cantidad de Publicaciones</th>
+          <th>Nombre del Grupo</th>
+          <th>Fecha de Publicación</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+
+    const tbody = table.querySelector("tbody");
+
+    //Agregar las filas de datos
+    reports.forEach((post) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="report-post__text">${post.email}</td>
+        <td class="report-post__text">${post.mensaje}</td>
+        <td class="report-post__text"><a href="${post.url}" target="_blank">${
+        post.url
+      }</a></td>
+        <td class="report-post__text">${post.total_posts}</td>
+        <td class="report-post__text">${post.nombre_grupo}</td>
+        <td class="report-post__text">${new Date(
+          post.fecha_publicacion
+        ).toLocaleString()}</td>
+      `;
+
+      tbody.appendChild(row);
+    });
+
+    //Insertar la tabla en el contenido del modal
+    reportContent.appendChild(table);
+
+    // reports.forEach((post) => {
+    //   const postElement = document.createElement("div");
+    //   postElement.classList.add("report-post__item");
+
+    //   postElement.innerHTML = `
+    //     <p class="report-post__email">${post.email}</p>
+    //     <p class="report-post__text">Mensaje: ${post.mensaje}</p>
+    //     <p class="report-post__text">URL:
+    //       <a href="${post.url}" target="_blank">${post.url}</a>
+    //     </p>
+    //     <p class="report-post__text">Cantidad de Publicaciones: ${
+    //       post.total_posts
+    //     }</p>
+    //     <p class="report-post__text">
+    //     Detalle(s):
+    //     <ul class="report-post__list">
+    //         <li class="report-post__text report-post__listItem">
+    //           <span class="report-post__groupText">
+    //           ${post.nombre_grupo}
+    //           </span> 👉
+    //           <span class="report-post__date">​
+    //           ${new Date(post.fecha_publicacion).toLocaleString()}​🕛
+    //           </span>
+    //           </li>
+    //     </ul>
+    //     </p>
+    //     `;
+
+    //   reportContent.appendChild(postElement);
+    // });
+
+    document.querySelector("#reportModal").style.display = "block";
+  } catch (error) {
+    console.log(error);
+    showNotification("Error al cargar el reporte.", false);
+  }
+};
+
 //Función para crear el botón de edición
 const createEditButton = (post, id_publicacion) => {
   const editButton = document.createElement("button");
@@ -133,6 +213,15 @@ const createDeleteButton = (id_publicacion) => {
     handleDeletePost(id_publicacion)
   );
   return deleteButton;
+};
+
+//Función para crear el botón de reporte
+const createReportButton = (id_usuario, email) => {
+  const reportButton = document.createElement("button");
+  reportButton.classList.add("button", "button--report");
+  reportButton.textContent = "Reporte";
+  reportButton.addEventListener("click", () => reportPost(id_usuario, email));
+  return reportButton;
 };
 
 //Funcion para cargar y mostrar usuarios
@@ -169,6 +258,7 @@ const loadPosts = async () => {
 
       listItem.appendChild(createEditButton(post, post.id));
       listItem.appendChild(createDeleteButton(post.id_publicacion));
+      listItem.appendChild(createReportButton(post.id_usuario, post.email));
 
       userList.appendChild(listItem);
 
@@ -288,7 +378,6 @@ const openReportModal = async () => {
   try {
     const reports = await requestData(`/postsReport/${userId}`);
     if (reports) {
-      const reportContent = document.querySelector("#reportContent");
       reportContent.innerHTML = ""; //Limpiar el contenido previo
 
       reports.forEach((post) => {

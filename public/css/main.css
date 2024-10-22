@@ -575,6 +575,7 @@ a {
   border: 1px solid #888;
   border-radius: 1rem;
   width: 80%;
+  overflow: auto;
 }
 
 .close {
@@ -602,10 +603,8 @@ a {
 
 .report-post__text {
   letter-spacing: 0.1rem;
-  font-size: var(--normal);
+  font-size: var(--small);
   color: var(--grayDark);
-  padding-bottom: 1.6rem;
-  padding-left: 3.2rem;
   line-height: 1.5;
 }
 
@@ -690,4 +689,41 @@ a {
 /* Clase auxiliar para ocultar elementos */
 .hidden {
   display: none;
+}
+
+/*---------------------------------------------------*/
+/*Estilos para el reporte individual*/
+.report-post__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.report-post__table th,
+.report-post__table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.report-post__table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.report-post__table tr {
+  background-color: #f9f9f9;
+}
+
+/* .report-post__table tr:nth-child(even) {
+  background-color: #f9f9f9;
+} */
+
+/* .report-post__table tr:hover {
+  background-color: #f1f1f1;
+} */
+
+.report-post__table a {
+  color: #007bff;
+  text-decoration: none;
 }
