@@ -212,8 +212,8 @@ const postsReport = async (req, res) => {
       [id_usuario]
     );
 
-    if(rows.length === 0){
-      return res.status(400).json({message: "publicaciones no encontradas"})
+    if (rows.length === 0) {
+      return res.status(400).json({ message: "publicaciones no encontradas" });
     }
 
     return res.status(200).json(rows);
@@ -221,6 +221,27 @@ const postsReport = async (req, res) => {
     console.error("Error al obtener el reporte de publicaciones.");
     return res.status(500).json({
       message: "Se produjo un error al obtener el reporte de publicaciones.",
+    });
+  }
+};
+
+const postReport = async (req, res) => {
+  try {
+    const { id_usuario, email } = req.params;
+    const { rows } = await pool.query(
+      "SELECT * FROM reportes WHERE id_usuario= $1 AND email= $2;",
+      [id_usuario, email]
+    );
+
+    if (rows.length === 0) {
+      return res.status(400).json({ message: "Publicaciones no encontradas" });
+    }
+
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error al obtener el reporte de publicaciones.");
+    return res.status(500).json({
+      message: "Se produjo un error al obtener el reporte de publicaciones",
     });
   }
 };
@@ -248,5 +269,6 @@ export {
   updatePost,
   sharePosts,
   postsReport,
+  postReport,
   deleteReport,
 };

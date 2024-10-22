@@ -35,6 +35,7 @@ const loginToFacebook = async (page, post) => {
 const automatizarFacebook = async (post) => {
   let browser;
   let postCount = 0; //acumulador
+  let nombre_grupo = "";
   try {
     browser = await chromium.launch({
       headless: false,
@@ -48,7 +49,7 @@ const automatizarFacebook = async (post) => {
 
     // Navegar al enlace del post de una página
     await page.goto(post.url);
-    await page.waitForLoadState("networkidle");
+    // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
     //Verificar si ya se dio me gusta
     const likeButtonSelector = 'div[aria-label="Me gusta"]';
@@ -69,6 +70,7 @@ const automatizarFacebook = async (post) => {
       }, likeButtonSelector);
 
       if (!isLiked) {
+        // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
         await clickOnSelector(page, likeButtonSelector);
       } else {
         console.log("Me gusta esta activado");
@@ -107,7 +109,8 @@ const automatizarFacebook = async (post) => {
       }
 
       try {
-        //Esperar a que el boton "Grupo" esté disponible antes de hacer click
+        // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+        //Click en el boton 'Grupo'
         await clickOnSelector(
           page,
           'div[role="button"] span:has-text("Grupo")'
@@ -119,39 +122,32 @@ const automatizarFacebook = async (post) => {
         );
       }
 
-      //comprobar si el boton "Más opciones" esta disponible
-      const buttonMoreOptions =
-        (await page.$('div[role="button"] span:has-text("Más opciones")')) !==
-        null;
+      //-----------------Opcion auxiliar-------------------------------
+      try {
+        // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+        await clickOnSelector(
+          page,
+          'div[role="button"] span:has-text("Más opciones")'
+        );
 
-      console.log("Boton mas opciones:", buttonMoreOptions);
-
-      if (buttonMoreOptions) {
-        //-----------------Opcion auxiliar-------------------------------
-        try {
-          await clickOnSelector(
-            page,
-            'div[role="button"] span:has-text("Más opciones")'
-          );
-
-          await clickOnSelector(
-            page,
-            'div[role="button"] span:has-text("Compartir en un grupo")'
-          );
-        } catch (error) {
-          console.error(error);
-        }
-        //--------------------------------------------------------------------
+        // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+        await clickOnSelector(
+          page,
+          'div[role="button"] span:has-text("Compartir en un grupo")'
+        );
+      } catch (error) {
+        console.error(error);
       }
 
-      await page.waitForSelector('div[role="list"]', { timeout: 10000 });
+      // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+      await page.waitForSelector('div[role="list"]');
 
       const titleGroupPost = await page.locator(
         `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
   span[class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x676frb x1lkfr7t x1lbecb7 xk50ysn xzsf02u x1yc453h"]`
       );
 
-      const nombre_grupo = await titleGroupPost.textContent();
+      nombre_grupo = await titleGroupPost.textContent();
       console.log(nombre_grupo);
 
       await clickOnSelector(
@@ -159,6 +155,7 @@ const automatizarFacebook = async (post) => {
         `div[role="list"] div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-child(${i})`
       );
 
+      // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
       await fillField(
         page,
         'div[aria-label="Crea una publicación pública..."]',
@@ -166,34 +163,37 @@ const automatizarFacebook = async (post) => {
       );
       await page.keyboard.press("Space");
 
+      // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
       await clickOnSelector(page, 'div[aria-label="Publicar"]');
 
-      //Actualizar el reporte de publicaciones en la base de datos
-      const currentDate = new Date().toISOString();
-      postCount++;
-
-      try {
-        const { rows } = await pool.query(
-          "INSERT INTO reportes (id_publicacion, id_usuario, email, url, mensaje, total_posts, nombre_grupo, fecha_publicacion) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
-          [
-            post.id_publicacion,
-            post.id_usuario,
-            post.email,
-            post.url,
-            post.mensaje,
-            postCount,
-            nombre_grupo,
-            currentDate,
-          ]
-        );
-        console.log(`Reporte insertado:`, rows[0]); //Imprime el reporte insertado
-        // return res.json(rows[0]);
-      } catch (error) {
-        console.log(`Error al insertar el reporte:`, error);
-        return res.status(500).json({ message: "Interval server error" });
-      }
-
       await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+
+      postCount++;
+    }
+
+    //Actualizar el reporte de publicaciones en la base de datos
+    const currentDate = new Date().toISOString();
+
+    try {
+      const { rows } = await pool.query(
+        "INSERT INTO reportes (id_publicacion, id_usuario, email, url, mensaje, total_posts, nombre_grupo, fecha_publicacion) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+        [
+          post.id_publicacion,
+          post.id_usuario,
+          post.email,
+          post.url,
+          post.mensaje,
+          postCount,
+          nombre_grupo,
+          currentDate,
+        ]
+      );
+      console.log(`Reporte insertado:`, rows[0]); //Imprime el reporte insertado
+      // return res.json(rows[0]);
+    } catch (error) {
+      console.log(`Error al insertar el reporte:`, error);
+      console.log(error);
+      // return res.status(500).json({ message: "Interval server error" });
     }
 
     await browser.close();
