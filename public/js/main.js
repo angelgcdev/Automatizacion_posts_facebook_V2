@@ -106,12 +106,22 @@ const handleDeletePost = async (id_publicacion) => {
 };
 
 //Funcion para mostrar el reporte por publicacion
-const reportPost = async (id_usuario, email) => {
+const detailPost = async (id_usuario, email) => {
   try {
-    const reports = await requestData(`/postReport/${id_usuario}/${email}`);
+    const detail = await requestData(`/detailPost/${id_usuario}/${email}`);
+
+    const total_d = await requestData(`/totalD/${id_usuario}/${email}`);
+
+    console.log(total_d);
+    console.log(total_d[0]);
 
     //Limpiar el contenido actual
-    reportContent.innerHTML = "";
+    reportContent.innerHTML = `
+      <div container-title__detail>
+        <p class="text-detail textEmail-detail">${detail[0].email}</p>
+        <p class="text-detail">Total publicaciones: ${total_d[0].count}</p>
+      </div>
+    `;
 
     //Crear la tabla y su cabecera
     const table = document.createElement("table");
@@ -120,10 +130,8 @@ const reportPost = async (id_usuario, email) => {
     table.innerHTML = `
     <thead>
         <tr>
-          <th>Email</th>
           <th>Mensaje</th>
           <th>URL</th>
-          <th>Cantidad de Publicaciones</th>
           <th>Nombre del Grupo</th>
           <th>Fecha de Publicación</th>
         </tr>
@@ -134,19 +142,21 @@ const reportPost = async (id_usuario, email) => {
     const tbody = table.querySelector("tbody");
 
     //Agregar las filas de datos
-    reports.forEach((post) => {
+    detail.forEach((post) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td class="report-post__text">${post.email}</td>
-        <td class="report-post__text">${post.mensaje}</td>
-        <td class="report-post__text"><a href="${post.url}" target="_blank">${
-        post.url
-      }</a></td>
-        <td class="report-post__text">${post.total_posts}</td>
-        <td class="report-post__text">${post.nombre_grupo}</td>
-        <td class="report-post__text">${new Date(
-          post.fecha_publicacion
-        ).toLocaleString()}</td>
+        <td class="report-post__text">
+          ${post.mensaje}
+        </td>
+        <td class="report-post__text">
+          <a href="${post.url}" target="_blank">${post.url}</a>
+        </td>
+        <td class="report-post__text">
+          ${post.nombre_grupo}
+        </td>
+        <td class="report-post__text">
+          ${new Date(post.fecha_publicacion).toLocaleString()}
+        </td>
       `;
 
       tbody.appendChild(row);
@@ -154,37 +164,6 @@ const reportPost = async (id_usuario, email) => {
 
     //Insertar la tabla en el contenido del modal
     reportContent.appendChild(table);
-
-    // reports.forEach((post) => {
-    //   const postElement = document.createElement("div");
-    //   postElement.classList.add("report-post__item");
-
-    //   postElement.innerHTML = `
-    //     <p class="report-post__email">${post.email}</p>
-    //     <p class="report-post__text">Mensaje: ${post.mensaje}</p>
-    //     <p class="report-post__text">URL:
-    //       <a href="${post.url}" target="_blank">${post.url}</a>
-    //     </p>
-    //     <p class="report-post__text">Cantidad de Publicaciones: ${
-    //       post.total_posts
-    //     }</p>
-    //     <p class="report-post__text">
-    //     Detalle(s):
-    //     <ul class="report-post__list">
-    //         <li class="report-post__text report-post__listItem">
-    //           <span class="report-post__groupText">
-    //           ${post.nombre_grupo}
-    //           </span> 👉
-    //           <span class="report-post__date">​
-    //           ${new Date(post.fecha_publicacion).toLocaleString()}​🕛
-    //           </span>
-    //           </li>
-    //     </ul>
-    //     </p>
-    //     `;
-
-    //   reportContent.appendChild(postElement);
-    // });
 
     document.querySelector("#reportModal").style.display = "block";
   } catch (error) {
@@ -216,12 +195,14 @@ const createDeleteButton = (id_publicacion) => {
 };
 
 //Función para crear el botón de reporte
-const createReportButton = (id_usuario, email) => {
-  const reportButton = document.createElement("button");
-  reportButton.classList.add("button", "button--report");
-  reportButton.textContent = "Reporte";
-  reportButton.addEventListener("click", () => reportPost(id_usuario, email));
-  return reportButton;
+const createDetailPostButton = (id_usuario, email) => {
+  const detailPostButton = document.createElement("button");
+  detailPostButton.classList.add("button", "button--detail-p");
+  detailPostButton.textContent = "Detalles";
+  detailPostButton.addEventListener("click", () =>
+    detailPost(id_usuario, email)
+  );
+  return detailPostButton;
 };
 
 //Funcion para cargar y mostrar usuarios
@@ -258,7 +239,7 @@ const loadPosts = async () => {
 
       listItem.appendChild(createEditButton(post, post.id));
       listItem.appendChild(createDeleteButton(post.id_publicacion));
-      listItem.appendChild(createReportButton(post.id_usuario, post.email));
+      listItem.appendChild(createDetailPostButton(post.id_usuario, post.email));
 
       userList.appendChild(listItem);
 

@@ -11,7 +11,8 @@ import {
   sharePosts,
   postsReport,
   deleteReport,
-  postReport,
+  detailPost,
+  totalD,
 } from "../controllers/users.controllers.js";
 // import { verifyToken } from "../middlewares/users.middlewares.js";
 
@@ -35,7 +36,9 @@ router.post("/sharePosts/:id_usuario", sharePosts);
 
 router.get("/postsReport/:id_usuario", postsReport);
 
-router.get("/postReport/:id_usuario/:email", postReport);
+router.get("/detailPost/:id_usuario/:email", detailPost);
+
+router.get("/totalD/:id_usuario/:email", totalD);
 
 router.delete("/deleteReport", deleteReport);
 

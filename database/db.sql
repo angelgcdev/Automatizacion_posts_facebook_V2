@@ -199,7 +199,6 @@ CREATE TABLE reportes (
     email VARCHAR(255) NOT NULL,
     url VARCHAR(255) NOT NULL,
     mensaje TEXT NOT NULL,
-    total_posts INT DEFAULT 1,
     nombre_grupo VARCHAR (255),
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

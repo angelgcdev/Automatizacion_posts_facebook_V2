@@ -34,7 +34,7 @@ const loginToFacebook = async (page, post) => {
 // Función Principal de automatización de Facebook
 const automatizarFacebook = async (post) => {
   let browser;
-  let postCount = 0; //acumulador
+  // let postCount = 0; //acumulador
   let nombre_grupo = "";
   try {
     browser = await chromium.launch({
@@ -168,32 +168,33 @@ const automatizarFacebook = async (post) => {
 
       await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
-      postCount++;
-    }
+      //Actualizar el reporte de publicaciones en la base de datos
+      const currentDate = new Date().toLocaleString("es-ES", {
+        timeZone: "America/La_Paz",
+      });
 
-    //Actualizar el reporte de publicaciones en la base de datos
-    const currentDate = new Date().toISOString();
+      try {
+        const { rows } = await pool.query(
+          "INSERT INTO reportes (id_publicacion, id_usuario, email, url, mensaje, nombre_grupo, fecha_publicacion) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+          [
+            post.id_publicacion,
+            post.id_usuario,
+            post.email,
+            post.url,
+            post.mensaje,
+            nombre_grupo,
+            currentDate,
+          ]
+        );
+        console.log(`Reporte insertado:`, rows[0]); //Imprime el reporte insertado
+        // return res.json(rows[0]);
+      } catch (error) {
+        console.log(`Error al insertar el reporte:`, error);
+        console.log(error);
+        // return res.status(500).json({ message: "Interval server error" });
+      }
 
-    try {
-      const { rows } = await pool.query(
-        "INSERT INTO reportes (id_publicacion, id_usuario, email, url, mensaje, total_posts, nombre_grupo, fecha_publicacion) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
-        [
-          post.id_publicacion,
-          post.id_usuario,
-          post.email,
-          post.url,
-          post.mensaje,
-          postCount,
-          nombre_grupo,
-          currentDate,
-        ]
-      );
-      console.log(`Reporte insertado:`, rows[0]); //Imprime el reporte insertado
-      // return res.json(rows[0]);
-    } catch (error) {
-      console.log(`Error al insertar el reporte:`, error);
-      console.log(error);
-      // return res.status(500).json({ message: "Interval server error" });
+      // postCount++;
     }
 
     await browser.close();

@@ -276,7 +276,8 @@ a {
 }
 
 .button {
-  padding: 1.6rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
   border-radius: 3rem;
   text-transform: uppercase;
   font-weight: 600;
@@ -346,7 +347,6 @@ a {
   text-transform: capitalize;
   background-color: var(--green);
   color: var(--white);
-  padding: 1rem;
   width: 90px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
@@ -366,7 +366,6 @@ a {
   text-transform: capitalize;
   background-color: var(--red);
   color: var(--white);
-  padding: 1rem;
   width: 90px;
   margin-left: 1rem;
   box-shadow: 3px 2px 3px rgba(0, 0, 0, 0.5);
@@ -395,6 +394,25 @@ a {
 }
 
 .button--save:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+.button--detail-p {
+  font-size: var(--smaller);
+  text-transform: capitalize;
+  border-radius: 1rem;
+  border: 2px solid var(--lightBlue);
+  color: var(--lightBlue);
+  margin-left: 1.6rem;
+}
+
+.button--detail-p:hover {
+  border: 2px solid var(--grayDark);
+  color: var(--grayDark);
+}
+
+.button--detail-p:active {
   transform: scale(0.98);
   box-shadow: none;
 }
@@ -627,6 +645,40 @@ a {
   list-style-type: decimal;
 }
 
+/*---------------------------------------------------*/
+.text-detail {
+  color: var(--white);
+  font-weight: 400;
+  letter-spacing: 0.1rem;
+  margin-bottom: 1.6rem;
+  font-size: var(--normal);
+}
+
+.textEmail-detail {
+  font-size: var(--titulo3);
+}
+
+/*Estilos para el reporte individual*/
+.report-post__table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+.report-post__table th,
+.report-post__table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+  background-color: #f4f4f4;
+}
+
+.report-post__table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+/*---------------------------------------------------*/
+
 /*------ Media Queries ------*/
 @media (min-width: 480px) {
   .form-title__main {
@@ -689,41 +741,4 @@ a {
 /* Clase auxiliar para ocultar elementos */
 .hidden {
   display: none;
-}
-
-/*---------------------------------------------------*/
-/*Estilos para el reporte individual*/
-.report-post__table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.report-post__table th,
-.report-post__table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.report-post__table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
-
-.report-post__table tr {
-  background-color: #f9f9f9;
-}
-
-/* .report-post__table tr:nth-child(even) {
-  background-color: #f9f9f9;
-} */
-
-/* .report-post__table tr:hover {
-  background-color: #f1f1f1;
-} */
-
-.report-post__table a {
-  color: #007bff;
-  text-decoration: none;
 }
