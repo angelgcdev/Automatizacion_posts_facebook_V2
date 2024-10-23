@@ -225,6 +225,29 @@ const postsReport = async (req, res) => {
   }
 };
 
+const totalP = async (req, res) => {
+  try {
+    const { id_usuario } = req.params;
+    const { rows } = await pool.query(
+      "SELECT COUNT(*) FROM reportes WHERE id_usuario= $1;",
+      [id_usuario]
+    );
+
+    if (rows.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "No se pudo obtener el resultado." });
+    }
+
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error al obtener el total.");
+    return res.status(500).json({
+      message: "Se produjo un error al obtener el total.",
+    });
+  }
+};
+
 const detailPost = async (req, res) => {
   try {
     const { id_usuario, email } = req.params;
@@ -292,6 +315,7 @@ export {
   updatePost,
   sharePosts,
   postsReport,
+  totalP,
   detailPost,
   totalD,
   deleteReport,

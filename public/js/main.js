@@ -112,10 +112,9 @@ const detailPost = async (id_usuario, email) => {
 
     const total_d = await requestData(`/totalD/${id_usuario}/${email}`);
 
-    console.log(total_d);
-    console.log(total_d[0]);
-
     //Limpiar el contenido actual
+    reportContent.innerHTML = "";
+
     reportContent.innerHTML = `
       <div container-title__detail>
         <p class="text-detail textEmail-detail">${detail[0].email}</p>
@@ -358,24 +357,33 @@ const editPost = async (event) => {
 const openReportModal = async () => {
   try {
     const reports = await requestData(`/postsReport/${userId}`);
+
+    const total_p= await requestData(`/totalP/${userId}`);
+
     if (reports) {
       reportContent.innerHTML = ""; //Limpiar el contenido previo
+
+      reportContent.innerHTML = `
+      <div container-title__detail>
+        <p class="text-detail">Total publicaciones: ${total_p[0].count}</p>
+      </div>
+    `;
 
       reports.forEach((post) => {
         const postElement = document.createElement("div");
         postElement.classList.add("report-post__item");
 
         postElement.innerHTML = `
-        <p class="report-post__email">${post.email}</p>
-        <p class="report-post__text">Mensaje: ${post.mensaje}</p>
-        <p class="report-post__text">URL: 
-          <a href="${post.url}" target="_blank">${post.url}</a>
+        <p class="report-post__email">
+          ${post.email}
         </p>
-        <p class="report-post__text">Cantidad de Publicaciones: ${
-          post.total_posts
-        }</p>
         <p class="report-post__text">
-        Detalle(s):
+          Mensaje: ${post.mensaje}
+        </p>
+        <p class="report-post__text">
+          URL: <a href="${post.url}" target="_blank">${post.url}</a>
+        </p>
+        <p class="report-post__text">
         <ul class="report-post__list">
             <li class="report-post__text report-post__listItem">
               <span class="report-post__groupText">

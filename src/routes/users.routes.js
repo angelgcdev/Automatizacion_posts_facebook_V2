@@ -13,6 +13,7 @@ import {
   deleteReport,
   detailPost,
   totalD,
+  totalP,
 } from "../controllers/users.controllers.js";
 // import { verifyToken } from "../middlewares/users.middlewares.js";
 
@@ -33,6 +34,8 @@ router.delete("/deletePost/:id_publicacion", deletePost);
 router.put("/updatePost/:id_publicacion", updatePost);
 
 router.post("/sharePosts/:id_usuario", sharePosts);
+
+router.get("/totalP/:id_usuario/", totalP);
 
 router.get("/postsReport/:id_usuario", postsReport);
 
