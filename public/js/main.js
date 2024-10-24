@@ -358,53 +358,66 @@ const openReportModal = async () => {
   try {
     const reports = await requestData(`/postsReport/${userId}`);
 
-    const total_p= await requestData(`/totalP/${userId}`);
+    const total_p = await requestData(`/totalP/${userId}`);
 
-    if (reports) {
-      reportContent.innerHTML = ""; //Limpiar el contenido previo
+    //Limpiar el contenido previo
+    reportContent.innerHTML = "";
 
-      reportContent.innerHTML = `
+    reportContent.innerHTML = `
       <div container-title__detail>
         <p class="text-detail">Total publicaciones: ${total_p[0].count}</p>
       </div>
     `;
 
-      reports.forEach((post) => {
-        const postElement = document.createElement("div");
-        postElement.classList.add("report-post__item");
+    //Crear la tabla y su cabecera
+    const table = document.createElement("table");
+    table.classList.add("report-post__table");
 
-        postElement.innerHTML = `
-        <p class="report-post__email">
-          ${post.email}
-        </p>
-        <p class="report-post__text">
-          Mensaje: ${post.mensaje}
-        </p>
-        <p class="report-post__text">
-          URL: <a href="${post.url}" target="_blank">${post.url}</a>
-        </p>
-        <p class="report-post__text">
-        <ul class="report-post__list">
-            <li class="report-post__text report-post__listItem">
-              <span class="report-post__groupText">
-              ${post.nombre_grupo} 
-              </span> 👉 
-              <span class="report-post__date">​ 
-              ${new Date(post.fecha_publicacion).toLocaleString()}​🕛 
-              </span>
-              </li>
-        </ul>
-        </p>
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Mensaje</th>
+          <th>URL</th>
+          <th>Nombre del Grupo</th>
+          <th>Fecha de Publicación</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      `;
+
+    const tbody = table.querySelector("tbody");
+
+    //Agregar las filas de datos
+    reports.forEach((post) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+          <td class="report-post__text">
+            ${post.email}
+          </td>
+          <td class="report-post__text">
+            ${post.mensaje}
+          </td>
+          <td class="report-post__text">
+            <a href="${post.url}" target="_blank">${post.url}</a>
+          </td>
+          <td class="report-post__text">
+            ${post.nombre_grupo}
+          </td>
+          <td class="report-post__text">
+            ${new Date(post.fecha_publicacion).toLocaleString()}
+          </td>
         `;
 
-        reportContent.appendChild(postElement);
-      });
+      tbody.appendChild(row);
+    });
 
-      document.querySelector("#reportModal").style.display = "block";
-    }
+    //Insertar la tabla en el contenido del modal
+    reportContent.appendChild(table);
+
+    document.querySelector("#reportModal").style.display = "block";
   } catch (error) {
     showNotification("Error al cargar el reporte:", false);
-    console.error(error);
   }
 };
 

@@ -1,0 +1,31 @@
+/* main.css*/
+@import "./main.css";
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10rem;
+}
+
+.link__login {
+  color: white;
+  align-self: flex-start;
+  padding-left: 3.2rem;
+}
+
+.link__login__icon{
+  width: 3rem;
+}
+
+.button--login {
+  background-color: var(--skyBlue);
+  width: 100%;
+  color: var(--white);
+}
+
+.button--login:hover {
+  background-color: var(--skyBlueDark);
+  color: var(--gray);
+}

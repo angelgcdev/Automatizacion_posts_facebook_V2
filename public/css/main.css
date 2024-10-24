@@ -43,6 +43,8 @@ a {
   /*Color palette*/
   --black: #0d0d0d;
   --darkblue: #0f1426;
+  --violet: #5560e1;
+  --darkViolet: hsl(235, 70%, 30%);
   --blue: #324373;
   --lightBlue: #2d55a6;
   --skyBlue: #1374f2;
@@ -143,24 +145,26 @@ a {
 
 .form-sesion {
   background-color: var(--darkblue);
-  border-radius: 1rem;
-  padding: 1.6rem;
+  padding: 1rem;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   display: flex;
   gap: 1.6rem;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
 }
 
 .emailSesion {
-  padding: 1.6rem;
-  color: var(--white);
+  padding: 1rem;
+  color: var(--gray);
   letter-spacing: 0.1rem;
   border-radius: 1rem;
 }
 
 /*Estilos para el form-title*/
 .form-title {
-  margin-bottom: 3.2rem;
+  margin-bottom: 0;
   padding: 1.6rem;
 }
 
@@ -249,16 +253,9 @@ a {
 
 /*Estilos para los botones*/
 .button--password {
-  border-radius: 3rem;
   padding: 1rem;
-  color: var(--white);
-  font-size: var(--smaller);
-  font-weight: 600;
-  letter-spacing: 0.1rem;
-  margin-top: 0.5rem;
+  border-radius: 50%;
   background-color: var(--blue);
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-  text-transform: uppercase;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
@@ -276,30 +273,19 @@ a {
 }
 
 .button {
-  margin-bottom: 1rem;
-  padding: 1rem;
+  padding: 1.6rem;
   border-radius: 3rem;
-  text-transform: uppercase;
+  text-transform: capitalize;
   font-weight: 600;
-  font-size: var(--smaller);
+  font-size: var(--small);
   letter-spacing: 0.1rem;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .button-gost {
   background-color: transparent;
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
-
-.button--login-register {
-  width: 100%;
-  background-color: var(--green);
-  color: var(--white);
-}
-
-.button--login-register:hover {
-  background-color: var(--greenDark);
-  color: var(--gray);
 }
 
 .button--logout {
@@ -348,7 +334,7 @@ a {
   background-color: var(--green);
   color: var(--white);
   width: 90px;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1.6rem;
 }
 
 .button--edit:hover {
@@ -356,7 +342,7 @@ a {
   color: var(--gray);
 }
 
-.button--delete:active {
+.button--edit:active {
   transform: scale(0.98);
   box-shadow: none;
 }
@@ -368,7 +354,7 @@ a {
   color: var(--white);
   width: 90px;
   margin-left: 1rem;
-  box-shadow: 3px 2px 3px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1.6rem;
 }
 
 .button--delete:hover {
@@ -385,7 +371,6 @@ a {
   background-color: var(--skyBlue);
   color: var(--white);
   padding: 1rem;
-  box-shadow: 3px 2px 3px rgba(0, 0, 0, 0.5);
 }
 
 .button--save:hover {
@@ -405,6 +390,7 @@ a {
   border: 2px solid var(--lightBlue);
   color: var(--lightBlue);
   margin-left: 1.6rem;
+  margin-bottom: 1.6rem;
 }
 
 .button--detail-p:hover {
@@ -456,20 +442,25 @@ a {
 }
 
 /*Estilos para el link de registrase*/
-.form__link {
+/* .form__link {
   display: inline-block;
-  color: var(--white);
   letter-spacing: 0.1rem;
   font-size: var(--small);
   font-weight: 600;
   transition: background-color 0.3s ease, color 0.3s ease;
-}
+} */
 
-.form__link:hover,
+/* .form__link:hover,
 .form__link:focus {
   background-color: rgba(52, 152, 219, 0.2);
   color: #2980b9;
-  text-decoration: underline;
+} */
+
+.container__buttons {
+  margin-bottom: 1.6rem;
+}
+
+.container__form-post{
 }
 
 /*Estilos para el user-list*/
@@ -477,8 +468,8 @@ a {
   background: linear-gradient(
     0deg,
     var(--darkblue),
-    var(--blue),
-    var(--lightBlue),
+    var(--darkViolet),
+    var(--darkViolet),
     var(--darkblue)
   );
   width: 100vw;
@@ -490,7 +481,7 @@ a {
 }
 
 .user-list__title {
-  padding-top: 3.2rem;
+  padding-top: 1.6rem;
   margin-bottom: 3.2rem;
   text-align: center;
   font-size: var(--titulo3);
@@ -503,7 +494,7 @@ a {
 .user-list__count {
   color: var(--gray);
   padding: 1.6rem;
-  margin-bottom: 3.2rem;
+  margin-bottom: 1.6rem;
   font-size: var(--small);
   letter-spacing: 0.1rem;
   text-transform: uppercase;
@@ -658,25 +649,34 @@ a {
   font-size: var(--titulo3);
 }
 
-/*Estilos para el reporte individual*/
+/*Estilos para el reporte individual-grupal*/
 .report-post__table {
   width: 100%;
   border-collapse: collapse;
-  overflow-x: auto;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .report-post__table th,
 .report-post__table td {
-  padding: 12px;
+  font-size: var(--smaller);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.1rem;
+  padding: 0.1rem 1rem;
   text-align: left;
-  border: 1px solid #ddd;
+  border-bottom: 1px solid #e0e0e0;
   background-color: #f4f4f4;
 }
 
 .report-post__table th {
-  background-color: #f4f4f4;
-  font-weight: bold;
+  background-color: #fafafa;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
+
 /*---------------------------------------------------*/
 
 /*------ Media Queries ------*/
@@ -718,6 +718,12 @@ a {
   .form-title {
     max-width: 500px;
   }
+
+  .form-sesion {
+    max-width: 50rem;
+    margin-left: auto;
+    margin-right: auto;
+}
 }
 
 @media (min-width: 767px) {
@@ -735,7 +741,16 @@ a {
 
   .form-container {
     margin: initial;
+    width: 50vw;
   }
+
+  .report-post__table th,
+  .report-post__table td {
+    font-size: var(--small);
+  }
+}
+
+@media (min-width: 1019px) {
 }
 
 /* Clase auxiliar para ocultar elementos */
