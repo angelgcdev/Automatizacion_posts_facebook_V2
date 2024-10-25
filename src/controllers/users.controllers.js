@@ -248,6 +248,28 @@ const totalP = async (req, res) => {
   }
 };
 
+const postsReportDay = async (req, res) => {
+  try {
+    const { id_usuario } = req.params;
+    const { rows } = await pool.query(
+      "SELECT DATE_TRUNC('day', fecha_publicacion) AS dia, COUNT(*) AS total_publicaciones FROM reportes WHERE id_usuario = $1 GROUP BY DATE_TRUNC('day', fecha_publicacion) ORDER BY dia DESC;",
+      [id_usuario]
+    );
+
+    if (rows.length === 0) {
+      return res.status(400).json({ message: "reporte diario no encontrado" });
+    }
+
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error al obtener el reporte diario de publicaciones.");
+    return res.status(500).json({
+      message:
+        "Se produjo un error al obtener el reporte diario de publicaciones.",
+    });
+  }
+};
+
 const detailPost = async (req, res) => {
   try {
     const { id_usuario, email } = req.params;
@@ -315,6 +337,7 @@ export {
   updatePost,
   sharePosts,
   postsReport,
+  postsReportDay,
   totalP,
   detailPost,
   totalD,

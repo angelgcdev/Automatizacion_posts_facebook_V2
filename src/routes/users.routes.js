@@ -10,6 +10,7 @@ import {
   updatePost,
   sharePosts,
   postsReport,
+  postsReportDay,
   deleteReport,
   detailPost,
   totalD,
@@ -35,9 +36,11 @@ router.put("/updatePost/:id_publicacion", updatePost);
 
 router.post("/sharePosts/:id_usuario", sharePosts);
 
+router.get("/postsReport/:id_usuario", postsReport);
+
 router.get("/totalP/:id_usuario/", totalP);
 
-router.get("/postsReport/:id_usuario", postsReport);
+router.get("/postsReportDay/:id_usuario", postsReportDay);
 
 router.get("/detailPost/:id_usuario/:email", detailPost);
 
