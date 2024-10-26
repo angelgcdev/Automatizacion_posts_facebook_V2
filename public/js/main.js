@@ -16,6 +16,8 @@ if (!token) {
 // public/js/automation.js
 
 /**---------VARIABLES---------- */
+const titleReport = document.querySelector("#title_report");
+
 const loadingElement = document.querySelector("#loading");
 
 const automationForm = document.querySelector("#automationForm");
@@ -400,14 +402,60 @@ const openReportModal = async () => {
 
     const total_p = await requestData(`/totalP/${userId}`);
 
+    const reports_day = await requestData(`/postsReportDay/${userId}`);
+
+    console.log(reports_day);
+    console.log(reports);
+
     //Limpiar el contenido previo
     reportContent.innerHTML = "";
 
+    //Titulo del reporte
+    titleReport.textContent = "Historial de publicaciones";
+
     reportContent.innerHTML = `
-      <div container-title__detail>
+      <div class="container-title__detail">
         <p class="text-detail">Total publicaciones: ${total_p[0].count}</p>
       </div>
+
+      <div class="container-title__detail">
+      <p class="text-detail">Publicaciones por día</p>
+      </div>
     `;
+
+    //Crear la tabla de publicaciones diarias
+    const tableD = document.createElement("table");
+    tableD.classList.add("report-post__table");
+
+    tableD.innerHTML = `
+      <thead>
+        <tr>
+          <th>Día</th>
+          <th>Total Publicaciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+
+    const tbodyD = tableD.querySelector("tbody");
+
+    //Agregar las filas de datos
+    reports_day.forEach((reportDay) => {
+      const rowD = document.createElement("tr");
+      rowD.innerHTML = `
+        <td class="report-post__text">
+          ${new Date(reportDay.dia).toLocaleDateString("es-ES")}
+        </td>
+        <td class="report-post__text">
+          ${reportDay.total_publicaciones}
+        </td>
+      `;
+
+      tbodyD.appendChild(rowD);
+    });
+
+    //Insertar la tabla en el contenido del modal
+    reportContent.appendChild(tableD);
 
     //Crear la tabla y su cabecera
     const table = document.createElement("table");
