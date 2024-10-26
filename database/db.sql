@@ -174,17 +174,18 @@ CREATE DATABASE facebook_db WITH ENCODING 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_C
 --Tabla usuarios;
 CREATE TABLE usuarios(
   id_usuario SERIAL PRIMARY KEY,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL
+  email VARCHAR(512) NOT NULL UNIQUE,
+  password VARCHAR(512) NOT NULL
 );
 --;
 --Tabla publicaciones;
 CREATE TABLE publicaciones (
   id_publicacion SERIAL PRIMARY KEY,
   id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-  email VARCHAR(255) NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  url VARCHAR(255) NOT NULL,
+  email VARCHAR(512) NOT NULL,
+  password VARCHAR(512) NOT NULL,
+  url TEXT NOT NULL,
+  urlImg TEXT NOT NULL,
   mensaje TEXT NOT NULL,
   numero_de_posts INT DEFAULT 1,
   intervalo_tiempo INT DEFAULT 0
@@ -196,10 +197,10 @@ CREATE TABLE reportes (
   id_publicacion INT REFERENCES publicaciones(id_publicacion) ON DELETE
   SET NULL,
     id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-    email VARCHAR(255) NOT NULL,
-    url VARCHAR(255) NOT NULL,
+    email VARCHAR(512) NOT NULL,
+    url TEXT NOT NULL,
     mensaje TEXT NOT NULL,
-    nombre_grupo VARCHAR (255),
+    nombre_grupo TEXT,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 --;

@@ -21,7 +21,7 @@ const loadingElement = document.querySelector("#loading");
 const automationForm = document.querySelector("#automationForm");
 const sharePostsButton = document.querySelector("#sharePostsButton");
 
-const userList = document.querySelector("#users");
+const postList = document.querySelector("#posts");
 
 const reportContent = document.querySelector("#reportContent");
 
@@ -197,7 +197,7 @@ const createDeleteButton = (id_publicacion) => {
 const createDetailPostButton = (id_usuario, email) => {
   const detailPostButton = document.createElement("button");
   detailPostButton.classList.add("button", "button--detail-p");
-  detailPostButton.textContent = "Detalles";
+  detailPostButton.textContent = "Historial";
   detailPostButton.addEventListener("click", () =>
     detailPost(id_usuario, email)
   );
@@ -209,41 +209,81 @@ const loadPosts = async () => {
   const posts = await requestData(`/getPosts/${userId}`);
 
   if (posts) {
-    userList.innerHTML = ""; //Limpiar la lista
+    postList.innerHTML = ""; //Limpiar
     let userCount = 0; //Variable para contar usuarios
 
     posts.forEach((post) => {
-      const listItem = document.createElement("li");
-      listItem.classList.add("user-list__item");
+      const articlePost = document.createElement("article");
+      articlePost.classList.add("user-list__item");
 
-      const emailSpan = document.createElement("span");
-      emailSpan.classList.add("user-list__item-email", "user-list__span");
-      emailSpan.textContent = `${post.email}`;
-      listItem.appendChild(emailSpan);
+      articlePost.innerHTML = `
+        <p class="user-list__item-email user-list__span">
+          ${post.email}
+        </p>
 
-      const messageSpan = document.createElement("span");
-      messageSpan.classList.add("user-list__item-message", "user-list__span");
-      messageSpan.textContent = `Mensaje: ${post.mensaje}`;
-      listItem.appendChild(messageSpan);
+        <img class="article__post-img" src="${post.urlimg}">
 
-      const postsSpan = document.createElement("span");
-      postsSpan.classList.add("user-list__item-posts", "user-list__span");
-      postsSpan.textContent = `Publicaciones Programadas: ${post.numero_de_posts}`;
-      listItem.appendChild(postsSpan);
+        <p class="user-list__item-message user-list__span">
+          ${post.mensaje}
+        </p>
 
-      const intervalSpan = document.createElement("span");
-      intervalSpan.classList.add("user-list__item-posts", "user-list__span");
-      intervalSpan.textContent = `Una publicacion cada: ${post.intervalo_tiempo} minutos`;
-      listItem.appendChild(intervalSpan);
+        <p class="user-list__item-posts user-list__span">
+          ${post.numero_de_posts}
+        </p>
 
-      listItem.appendChild(createEditButton(post, post.id));
-      listItem.appendChild(createDeleteButton(post.id_publicacion));
-      listItem.appendChild(createDetailPostButton(post.id_usuario, post.email));
+        <p class="user-list__item-posts user-list__span">
+          Una publicación cada: ${post.intervalo_tiempo} minutos
+        </p>
+      `;
 
-      userList.appendChild(listItem);
+      articlePost.appendChild(createEditButton(post, post.id));
+      articlePost.appendChild(createDeleteButton(post.id_publicacion));
+      articlePost.appendChild(
+        createDetailPostButton(post.id_usuario, post.email)
+      );
+
+      postList.appendChild(articlePost);
 
       userCount++;
     });
+
+    // posts.forEach((post) => {
+    //   const listItem = document.createElement("li");
+    //   listItem.classList.add("user-list__item");
+
+    //   const emailSpan = document.createElement("span");
+    //   emailSpan.classList.add("user-list__item-email", "user-list__span");
+    //   emailSpan.textContent = `${post.email}`;
+    //   listItem.appendChild(emailSpan);
+
+    //   const postImg = document.createElement("img");
+    //   postImg.classList.add("user-list__item-posts", "user-list__span");
+    //   postImg.src = post.urlimg;
+    //   listItem.appendChild(postImg);
+
+    //   const messageSpan = document.createElement("span");
+    //   messageSpan.classList.add("user-list__item-message", "user-list__span");
+    //   messageSpan.textContent = `Mensaje: ${post.mensaje}`;
+    //   listItem.appendChild(messageSpan);
+
+    //   const postsSpan = document.createElement("span");
+    //   postsSpan.classList.add("user-list__item-posts", "user-list__span");
+    //   postsSpan.textContent = `Publicaciones Programadas: ${post.numero_de_posts}`;
+    //   listItem.appendChild(postsSpan);
+
+    //   const intervalSpan = document.createElement("span");
+    //   intervalSpan.classList.add("user-list__item-posts", "user-list__span");
+    //   intervalSpan.textContent = `Una publicacion cada: ${post.intervalo_tiempo} minutos`;
+    //   listItem.appendChild(intervalSpan);
+
+    //   listItem.appendChild(createEditButton(post, post.id));
+    //   listItem.appendChild(createDeleteButton(post.id_publicacion));
+    //   listItem.appendChild(createDetailPostButton(post.id_usuario, post.email));
+
+    //   postList.appendChild(listItem);
+
+    //   userCount++;
+    // });
 
     //Mostrar el conteo de usuarios en el UI
     const userCountDisplay = document.querySelector("#userCount");

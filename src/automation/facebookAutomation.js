@@ -1,34 +1,38 @@
 // src/facebookAutomation.js
 import { chromium } from "playwright";
-import { pool } from "./db.js";
+import { pool } from "../db.js";
 
+/*********VARIABLES***********/
 const MIN_DELAY = 5000; // Minimo tiempo de espera en milisegundos
 const MAX_DELAY = 10000; // Máximo tiempo de espera en milisegundos
+const URL = "https://www.facebook.com/";
 
+/************FUNCIONES***********/
 // Función para obtener un retraso aleatorio
 const getRandomDelay = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
 //Funcion para hacer click en un selector con espera
 const clickOnSelector = async (page, selector) => {
+  await page.waitForLoadState("networkidle");
   await page.waitForSelector(selector, { timeout: 10000 }); //Espera hasta 10 segundos
   await page.click(selector);
 };
 
 //Funcion para llenar un campo de texto
 const fillField = async (page, selector, value) => {
+  await page.waitForLoadState("networkidle");
   await page.waitForSelector(selector, { timeout: 10000 }); //Espera hasta 10 segundos
   await page.fill(selector, value);
 };
 
 //Funcion para iniciar sesion en Facebook
-const loginToFacebook = async (page, post) => {
-  await page.goto("https://www.facebook.com/");
-  await page.waitForLoadState("networkidle");
-  await fillField(page, "#email", post.email);
-  await fillField(page, "#pass", post.password);
+const loginToFacebook = async (page, { email, password }) => {
+  await page.goto(URL);
+  await fillField(page, "#email", email);
+  await fillField(page, "#pass", password);
   await clickOnSelector(page, "button[name='login']");
-  await page.waitForNavigation({ timeout: 30000 }); //Espera hasta 30 segundos
+  await page.waitForNavigation({ timeout: 30000 });
 };
 
 // Función Principal de automatización de Facebook
@@ -49,6 +53,8 @@ const automatizarFacebook = async (post) => {
 
     // Navegar al enlace del post de una página
     await page.goto(post.url);
+    await page.waitForLoadState("networkidle");
+
     // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
     //Verificar si ya se dio me gusta
@@ -72,6 +78,7 @@ const automatizarFacebook = async (post) => {
       if (!isLiked) {
         // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
         await clickOnSelector(page, likeButtonSelector);
+        await page.waitForLoadState("networkidle");
       } else {
         console.log("Me gusta esta activado");
       }
@@ -101,6 +108,8 @@ const automatizarFacebook = async (post) => {
 
       if (firstSelector) {
         await firstSelector.click();
+        await page.waitForLoadState("networkidle");
+
         console.log(
           "Se hizo clic en el primer selector(compartir) que se resolvió."
         );
@@ -115,6 +124,7 @@ const automatizarFacebook = async (post) => {
           page,
           'div[role="button"] span:has-text("Grupo")'
         );
+        await page.waitForLoadState("networkidle");
       } catch (error) {
         console.error(
           "Error al intentar hacer click en el botón 'Grupo'",
@@ -129,18 +139,20 @@ const automatizarFacebook = async (post) => {
           page,
           'div[role="button"] span:has-text("Más opciones")'
         );
+        await page.waitForLoadState("networkidle");
 
         // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
         await clickOnSelector(
           page,
           'div[role="button"] span:has-text("Compartir en un grupo")'
         );
+        await page.waitForLoadState("networkidle");
       } catch (error) {
         console.error(error);
       }
 
       // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
-      await page.waitForSelector('div[role="list"]');
+      await page.waitForSelector('div[role="list"]', { timeout: 10000 });
 
       const titleGroupPost = await page.locator(
         `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
@@ -154,6 +166,7 @@ const automatizarFacebook = async (post) => {
         page,
         `div[role="list"] div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-child(${i})`
       );
+      await page.waitForLoadState("networkidle");
 
       // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
       await fillField(
@@ -165,6 +178,7 @@ const automatizarFacebook = async (post) => {
 
       // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
       await clickOnSelector(page, 'div[aria-label="Publicar"]');
+      await page.waitForLoadState("networkidle");
 
       await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 

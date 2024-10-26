@@ -3,8 +3,8 @@ import { pool } from "../db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import { automatizarFacebook } from "../facebookAutomation.js";
-// import { cleanText } from "../utils/cleanText.js";
+import { automatizarFacebook } from "../automation/facebookAutomation.js";
+import { postImg } from "../automation/postImg.js";
 
 const saltRounds = 10;
 
@@ -77,18 +77,18 @@ const addPost = async (req, res) => {
       intervalo_tiempo,
     } = req.body;
 
-    //Limpiar el texto antes de insertarlo
-    // const cleanEmail = cleanText(email);
-    // const cleanUrl = cleanText(url);
-    // const cleanMensaje = cleanText(mensaje);
+    const urlImg = await postImg({ email, password, url });
+    console.log('URL de imagen: ',urlImg);
+    
 
     const { rows } = await pool.query(
-      "INSERT INTO publicaciones (id_usuario, email, password, url, mensaje, numero_de_posts, intervalo_tiempo) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      "INSERT INTO publicaciones (id_usuario, email, password, url, urlImg, mensaje, numero_de_posts, intervalo_tiempo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
         id_usuario,
         email,
         password,
         url,
+        urlImg,
         mensaje,
         numero_de_posts,
         intervalo_tiempo,

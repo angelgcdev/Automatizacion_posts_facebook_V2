@@ -460,7 +460,7 @@ a {
   margin-bottom: 1.6rem;
 }
 
-.container__form-post{
+.container__form-post {
 }
 
 /*Estilos para el user-list*/
@@ -527,6 +527,13 @@ a {
 
 .user-list__item-email {
   font-weight: bold;
+}
+
+.article__post-img {
+  display: block;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .user-list__item-message,
@@ -723,13 +730,15 @@ a {
     max-width: 50rem;
     margin-left: auto;
     margin-right: auto;
-}
+  }
 }
 
 @media (min-width: 767px) {
   .container {
     display: flex;
     justify-content: center;
+    height: 100vh;
+    overflow: hidden;
   }
 
   .user-list {

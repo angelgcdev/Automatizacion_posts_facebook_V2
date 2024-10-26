@@ -17,6 +17,7 @@ app.use(morgan("dev")); // Logger
 app.use(express.json()); // Para parsear JSON
 app.use(express.urlencoded({ extended: true })); //para parsear URL-encoded
 app.use(express.static(path.join(__dirname, "../public"))); // Servir archivos estaticos
+
 app.use(router); //Usar las rutas definidas
 
 app.listen(PORT, () => {
