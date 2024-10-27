@@ -185,7 +185,7 @@ CREATE TABLE publicaciones (
   email VARCHAR(512) NOT NULL,
   password VARCHAR(512) NOT NULL,
   url TEXT NOT NULL,
-  urlImg TEXT NOT NULL,
+  urlImg VARCHAR(2048),
   mensaje TEXT NOT NULL,
   numero_de_posts INT DEFAULT 1,
   intervalo_tiempo INT DEFAULT 0
@@ -198,7 +198,7 @@ CREATE TABLE reportes (
   SET NULL,
     id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
     email VARCHAR(512) NOT NULL,
-    url TEXT NOT NULL,
+    url VARCHAR(2048),
     mensaje TEXT NOT NULL,
     nombre_grupo TEXT,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
