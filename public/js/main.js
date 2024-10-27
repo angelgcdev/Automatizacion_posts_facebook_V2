@@ -180,6 +180,17 @@ const detailPost = async (id_usuario, email) => {
   }
 };
 
+//Funcion para crear el boton cancelar
+const createCancelButton = () => {
+  const cancelButton = document.createElement("button");
+  cancelButton.classList.add("button", "button--delete");
+  cancelButton.textContent = "Cancelar";
+  cancelButton.addEventListener("click", () => {
+    cancelPosts();
+  });
+  return cancelButton;
+};
+
 //Función para crear el botón de edición
 const createEditButton = (post, id_publicacion) => {
   const editButton = document.createElement("button");
@@ -211,6 +222,22 @@ const createDetailPostButton = (id_usuario, email) => {
     detailPost(id_usuario, email)
   );
   return detailPostButton;
+};
+
+//Funcion para cancelar publicaciones
+const cancelPosts = async () => {
+  const options = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  };
+
+  const response = await requestData("/cancelPosts", options);
+
+  if (response) {
+    console.log("Se hiso click en cancelar");
+  } else {
+    console.log("No se cancelo");
+  }
 };
 
 //Funcion para cargar y mostrar usuarios
@@ -304,6 +331,8 @@ const addPost = async (event) => {
 const sharePosts = async () => {
   showLoading("Publicando..."); //Muestra la animacion de carga
 
+  loadingContainer.appendChild(createCancelButton());
+
   const options = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -313,9 +342,9 @@ const sharePosts = async () => {
     const response = await requestData(`/sharePosts/${userId}`, options);
 
     if (response) {
-      showNotification("Las publicaciones se han compartido correctamente.");
+      showNotification(response.message);
     } else {
-      showNotification("Hubo un problema al compartir las publiciones.", false);
+      showNotification(response.message, false);
     }
   } catch (error) {
     showNotification("Hubo un problema al compartir las publiciones.", false);

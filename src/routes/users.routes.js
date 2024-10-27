@@ -15,6 +15,7 @@ import {
   detailPost,
   totalD,
   totalP,
+  cancelPosts,
 } from "../controllers/users.controllers.js";
 // import { verifyToken } from "../middlewares/users.middlewares.js";
 
@@ -47,5 +48,7 @@ router.get("/detailPost/:id_usuario/:email", detailPost);
 router.get("/totalD/:id_usuario/:email", totalD);
 
 router.delete("/deleteReport", deleteReport);
+
+router.post("/cancelPosts", cancelPosts);
 
 export { router };

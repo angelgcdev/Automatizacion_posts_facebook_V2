@@ -5,7 +5,9 @@ import jwt from "jsonwebtoken";
 import { automatizarFacebook } from "../automation/facebookAutomation.js";
 import { postImg } from "../automation/postImg.js";
 
+/************VARIABLES***********/
 const saltRounds = 10;
+let isCanceled = false;
 
 const getUsers = async (req, res) => {
   const { rows } = await pool.query("SELECT * FROM usuarios;");
@@ -174,6 +176,9 @@ const updatePost = async (req, res) => {
 
 const sharePosts = async (req, res) => {
   try {
+    //Reiniciar el estado de cancelacion al iniciar la solicitud
+    isCanceled = false;
+
     const { id_usuario } = req.params;
 
     const { rows } = await pool.query(
@@ -182,6 +187,11 @@ const sharePosts = async (req, res) => {
     );
 
     for (const post of rows) {
+      console.log('Compartir si entro');
+      
+      if (isCanceled) {
+        return res.status(200).json({ message: "Publicaciones canceladas" });
+      }
       try {
         await automatizarFacebook(post);
       } catch (error) {
@@ -326,6 +336,21 @@ const deleteReport = async (req, res) => {
   }
 };
 
+const cancelPosts = async (req, res) => {
+  try {
+    isCanceled = true;
+    console.log("Publicaciones canceladas. Estado:", isCanceled);
+    return res
+      .status(200)
+      .json({ message: "Publicaciones canceladas exitosamente." });
+  } catch (error) {
+    console.log("Error al cancelar las publicaciones.", error);
+    return res
+      .status(500)
+      .json({ message: "Error al cancelar las publicaciones." });
+  }
+};
+
 export {
   getUsers,
   createUser,
@@ -341,4 +366,5 @@ export {
   detailPost,
   totalD,
   deleteReport,
+  cancelPosts,
 };
