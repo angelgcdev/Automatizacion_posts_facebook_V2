@@ -1,6 +1,7 @@
 import { showNotification } from "./utils/showNotification.js";
 import { togglePasswordVisibility } from "./utils/togglePasswordVisibility.js";
 import { logoutUser } from "./utils/logoutUser.js";
+import { cancelPosts, getNewSignal } from "./utils/cancelPosts.js";
 
 const token = localStorage.getItem("token");
 const userId = localStorage.getItem("userId");
