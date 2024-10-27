@@ -2,7 +2,6 @@
 import { pool } from "../db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
 import { automatizarFacebook } from "../automation/facebookAutomation.js";
 import { postImg } from "../automation/postImg.js";
 
@@ -78,8 +77,7 @@ const addPost = async (req, res) => {
     } = req.body;
 
     const urlImg = await postImg({ email, password, url });
-    console.log('URL de imagen: ',urlImg);
-    
+    console.log("URL de imagen: ", urlImg);
 
     const { rows } = await pool.query(
       "INSERT INTO publicaciones (id_usuario, email, password, url, urlImg, mensaje, numero_de_posts, intervalo_tiempo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
@@ -177,6 +175,7 @@ const updatePost = async (req, res) => {
 const sharePosts = async (req, res) => {
   try {
     const { id_usuario } = req.params;
+
     const { rows } = await pool.query(
       "SELECT * FROM publicaciones WHERE id_usuario=$1;",
       [id_usuario]

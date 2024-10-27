@@ -1,6 +1,7 @@
 import { showNotification } from "./utils/showNotification.js";
 import { togglePasswordVisibility } from "./utils/togglePasswordVisibility.js";
 import { logoutUser } from "./utils/logoutUser.js";
+import { cancelPosts, getNewSignal } from "./utils/cancelPosts.js";
 
 const token = localStorage.getItem("token");
 const userId = localStorage.getItem("userId");
@@ -16,9 +17,11 @@ if (!token) {
 // public/js/automation.js
 
 /**---------VARIABLES---------- */
+const loadingText = document.getElementById("loading__text");
+
 const titleReport = document.querySelector("#title_report");
 
-const loadingElement = document.querySelector("#loading");
+const loadingContainer = document.querySelector("#loading");
 
 const automationForm = document.querySelector("#automationForm");
 const sharePostsButton = document.querySelector("#sharePostsButton");
@@ -42,12 +45,17 @@ formSesion.appendChild(emailSesion);
 /**---------FUNCIONES---------- */
 
 //Funcion para mostrar la animacion de carga
-const showLoading = () => {
-  loadingElement.classList.remove("hidden");
+const showLoading = (text) => {
+  loadingContainer.innerHTML = `
+  <div class="loading__spinner"></div>
+  <p id="loading__text" class="loading__text">${text}</p>
+  `;
+
+  loadingContainer.classList.remove("hidden");
 };
 
 const hideLoading = () => {
-  loadingElement.classList.add("hidden");
+  loadingContainer.classList.add("hidden");
 };
 
 //Solicita datos al servidor y maneja la respuesta
@@ -249,44 +257,6 @@ const loadPosts = async () => {
       userCount++;
     });
 
-    // posts.forEach((post) => {
-    //   const listItem = document.createElement("li");
-    //   listItem.classList.add("user-list__item");
-
-    //   const emailSpan = document.createElement("span");
-    //   emailSpan.classList.add("user-list__item-email", "user-list__span");
-    //   emailSpan.textContent = `${post.email}`;
-    //   listItem.appendChild(emailSpan);
-
-    //   const postImg = document.createElement("img");
-    //   postImg.classList.add("user-list__item-posts", "user-list__span");
-    //   postImg.src = post.urlimg;
-    //   listItem.appendChild(postImg);
-
-    //   const messageSpan = document.createElement("span");
-    //   messageSpan.classList.add("user-list__item-message", "user-list__span");
-    //   messageSpan.textContent = `Mensaje: ${post.mensaje}`;
-    //   listItem.appendChild(messageSpan);
-
-    //   const postsSpan = document.createElement("span");
-    //   postsSpan.classList.add("user-list__item-posts", "user-list__span");
-    //   postsSpan.textContent = `Publicaciones Programadas: ${post.numero_de_posts}`;
-    //   listItem.appendChild(postsSpan);
-
-    //   const intervalSpan = document.createElement("span");
-    //   intervalSpan.classList.add("user-list__item-posts", "user-list__span");
-    //   intervalSpan.textContent = `Una publicacion cada: ${post.intervalo_tiempo} minutos`;
-    //   listItem.appendChild(intervalSpan);
-
-    //   listItem.appendChild(createEditButton(post, post.id));
-    //   listItem.appendChild(createDeleteButton(post.id_publicacion));
-    //   listItem.appendChild(createDetailPostButton(post.id_usuario, post.email));
-
-    //   postList.appendChild(listItem);
-
-    //   userCount++;
-    // });
-
     //Mostrar el conteo de usuarios en el UI
     const userCountDisplay = document.querySelector("#userCount");
     if (userCountDisplay) {
@@ -298,6 +268,7 @@ const loadPosts = async () => {
 //Funcion para añadir usuarios
 const addPost = async (event) => {
   event.preventDefault();
+  showLoading("Añadiendo publicación");
   const formData = new FormData(event.target);
   const data = {
     id_usuario: userId,
@@ -327,11 +298,12 @@ const addPost = async (event) => {
       false
     );
   }
+  hideLoading();
 };
 
 //Funcion para compartir publicaciones
 const sharePosts = async () => {
-  showLoading(); //Muestra la animacion de carga
+  showLoading("Publicando..."); //Muestra la animacion de carga
 
   const options = {
     method: "POST",
@@ -533,6 +505,9 @@ const deleteReport = async () => {
 /**---------LISTENERS---------- */
 
 const cargarEventListeners = () => {
+  //Cargar los usuarios cuando el contenido del DOM esté completamente cargado
+  loadPosts();
+
   //Cerrar sesion
   logout_button.addEventListener("click", logoutUser);
 
@@ -582,9 +557,6 @@ const cargarEventListeners = () => {
     }
   });
 };
-
-//Cargar los usuarios cuando el contenido del DOM esté completamente cargado
-loadPosts();
 
 //Llama a la funcion para cargar los listeners
 cargarEventListeners();
