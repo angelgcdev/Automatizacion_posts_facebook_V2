@@ -80,7 +80,7 @@ const addPost = async (req, res) => {
       intervalo_tiempo,
     } = req.body;
 
-    const urlImg = await postImg({ email, password, url });
+    const urlImg = await postImg({ url });
     console.log("URL de imagen: ", urlImg);
 
     const { rows } = await pool.query(
@@ -149,17 +149,22 @@ const deletePost = async (req, res) => {
 const updatePost = async (req, res) => {
   try {
     const { id_publicacion } = req.params;
-    const data = req.body;
+    const { email, password, url, mensaje, numero_de_posts, intervalo_tiempo } =
+      req.body;
+
+    const urlImg = await postImg({ url });
+    console.log("URL de imagen: ", urlImg);
 
     const { rows } = await pool.query(
-      "UPDATE publicaciones SET email=$1, password=$2, url=$3, mensaje=$4, numero_de_posts=$5, intervalo_tiempo=$6 WHERE id_publicacion= $7 RETURNING *",
+      "UPDATE publicaciones SET email = $1, password = $2, url = $3, urlImg = $4, mensaje = $5, numero_de_posts = $6, intervalo_tiempo = $7 WHERE id_publicacion= $8 RETURNING *",
       [
-        data.email,
-        data.password,
-        data.url,
-        data.mensaje,
-        data.numero_de_posts,
-        data.intervalo_tiempo,
+        email,
+        password,
+        url,
+        urlImg,
+        mensaje,
+        numero_de_posts,
+        intervalo_tiempo,
         id_publicacion,
       ]
     );

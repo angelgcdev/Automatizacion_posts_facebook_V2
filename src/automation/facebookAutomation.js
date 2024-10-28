@@ -42,7 +42,7 @@ const automatizarFacebook = async (post) => {
   let nombre_grupo = "";
   try {
     browser = await chromium.launch({
-      headless: false,
+      headless: true,
       slowMo: 50,
     });
     const context = await browser.newContext();

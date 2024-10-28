@@ -188,7 +188,10 @@ a {
 
 /**/
 .container-title__detail {
-  padding: 1.6rem;
+}
+
+.container-title__total {
+  margin-bottom: 3.2rem;
 }
 
 /*Estilos para el logo*/
@@ -448,17 +451,17 @@ a {
   box-shadow: none;
 }
 
-.button--search {
+.button--cancel {
   background-color: var(--blue);
   color: var(--white);
 }
 
-.button--search:hover {
+.button--cancel:hover {
   background-color: var(--darkblue);
   color: var(--gray);
 }
 
-.button--search:active {
+.button--cancel:active {
   transform: scale(0.98);
 }
 /*Estilos para el link de registrase*/
@@ -558,7 +561,7 @@ a {
 }
 
 .article__posts__text {
-  font-size: var(--normal);
+  font-size: var(--small);
   letter-spacing: 0.1rem;
   line-height: 1.5;
   padding-bottom: 1.6rem;
@@ -628,7 +631,7 @@ a {
 .modal {
   display: none;
   position: fixed;
-  z-index: 30;
+  z-index: 9999;
   left: 0;
   top: 0;
   width: 100%;
@@ -638,7 +641,7 @@ a {
 }
 
 .modal-content {
-  background: var(--blue);
+  background: var(--gray);
   margin: 15% auto;
   padding: 2rem;
   border: 1px solid #888;
@@ -647,8 +650,21 @@ a {
   overflow: auto;
 }
 
+.report__title-container {
+  margin-bottom: 1.6rem;
+  padding-left: 1.6rem;
+}
+
+.report__title {
+  color: var(--black);
+  font-size: var(--titulo2);
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  line-height: 1.5;
+}
+
 .close {
-  color: #aaa;
+  color: var(--blue);
   float: right;
   font-size: 2.8rem;
   font-weight: bold;
@@ -662,6 +678,12 @@ a {
 }
 
 /* Estilos para el reporte */
+
+.report-content {
+  border-radius: 1rem;
+  background: var(--gray);
+}
+
 .report-post__item {
   background-color: var(--white);
   padding: 1.6rem;
@@ -671,6 +693,7 @@ a {
 }
 
 .report-post__text {
+  font-weight: 500;
   letter-spacing: 0.1rem;
   font-size: var(--small);
   color: var(--grayDark);
@@ -698,8 +721,8 @@ a {
 
 /*---------------------------------------------------*/
 .text-detail {
-  color: var(--white);
-  font-weight: 400;
+  color: var(--black);
+  font-weight: 500;
   letter-spacing: 0.1rem;
   margin-bottom: 1.6rem;
   font-size: var(--normal);
@@ -711,33 +734,48 @@ a {
 
 /*Estilos para el reporte individual-grupal*/
 .report-post__table {
+  margin-bottom: 3.2rem;
   width: 100%;
   border-collapse: collapse;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 3.2rem;
-}
-
-.report-post__table th,
-.report-post__table td {
-  font-size: var(--smaller);
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: 0.1rem;
-  padding: 0.1rem 1rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #f4f4f4;
+  background-color: var(--gray);
 }
 
 .report-post__table th {
-  text-align: center;
-  background-color: var(--skyBlueDark);
+  background-color: var(--skyBlue);
   color: var(--white);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-align: left;
+  padding: 1.2rem;
+}
+
+.report-post__table td {
+  padding: 1.2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tr:hover {
+  background-color: var(--white);
+}
+
+.t_email {
+  font-weight: 600;
+  color: #111827;
+}
+
+.t_message {
+  color: #4b5563;
+}
+
+.t_link {
+  color: #2563eb;
+}
+
+.t_link:hover {
+  color: #1d4ed8;
+}
+
+.t_date {
+  color: #6b7280;
 }
 
 /*---------------------------------------------------*/
