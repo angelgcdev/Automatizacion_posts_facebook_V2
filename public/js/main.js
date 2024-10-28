@@ -14,6 +14,9 @@ if (!token) {
 }
 
 /**---------VARIABLES---------- */
+
+const searchInput = document.getElementById("search__posts-input");
+
 let controller;
 
 const logout_button = document.getElementById("logoutButton");
@@ -253,14 +256,21 @@ const cancelPosts = async () => {
 };
 
 //Funcion para cargar y mostrar usuarios
-const loadPosts = async () => {
+const loadPosts = async (serachTerm = "") => {
   const posts = await requestData(`/getPosts/${userId}`);
 
   if (posts) {
-    postList.innerHTML = ""; //Limpiar
+    //Filtrar publicaciones si hay un termino de bùsqueda
+    const filteredPosts = posts.filter((post) =>
+      post.email.toLowerCase().includes(serachTerm.toLowerCase())
+    );
+
+    //Limpiar las lista de publicaciones
+    postList.innerHTML = "";
     let userCount = 0; //Variable para contar usuarios
 
-    posts.forEach((post) => {
+    //Rederizamos los posts
+    filteredPosts.forEach((post) => {
       const articlePost = document.createElement("article");
       articlePost.classList.add("article__posts");
 
@@ -546,6 +556,13 @@ const deleteReport = async () => {
 /**---------LISTENERS---------- */
 
 const cargarEventListeners = () => {
+  searchInput.addEventListener("input", () => {
+    const serachTerm = searchInput.value.trim();
+    console.log(serachTerm);
+
+    loadPosts(serachTerm);
+  });
+
   //Cargar los usuarios cuando el contenido del DOM esté completamente cargado
   loadPosts();
 

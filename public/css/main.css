@@ -522,7 +522,8 @@ a {
 }
 
 .search__container-posts {
-  margin-left: 3.2rem;
+  width: 90%;
+  margin-left: auto;
   margin-bottom: 4.2rem;
 }
 
