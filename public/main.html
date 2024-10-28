@@ -154,7 +154,20 @@
         <!-- Contador de publicaciones registradas -->
         <p class="user-list__count" id="userCount"></p>
 
-        <div id="posts" class="user-list__items"></div>
+        <!-- Buscador de publicaciones -->
+        <div class="search__container-posts">
+          <input
+            class="search__posts-input"
+            type="text"
+            id="search__posts-input"
+            placeholder="Buscar por email"
+          />
+          <button id="button--search" class="button button--search">
+            Buscar
+          </button>
+        </div>
+
+        <div id="posts" class="posts__container"></div>
       </div>
     </div>
 

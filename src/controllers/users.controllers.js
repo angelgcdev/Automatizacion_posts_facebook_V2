@@ -30,7 +30,9 @@ const createUser = async (req, res) => {
     console.log(error);
 
     if (error?.code === "23505") {
-      return res.status(409).json({ message: "Email already exists" }); // estado 409 indica conflicto entre datos
+      return res
+        .status(409)
+        .json({ message: "El correo ya ha sido registrado." }); // estado 409 indica conflicto entre datos
     }
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -45,7 +47,7 @@ const loginUser = async (req, res) => {
   ]);
 
   if (rows.length === 0) {
-    return res.status(401).json({ message: "Invalid credentials" });
+    return res.status(401).json({ message: "No existe la cuenta" });
   }
 
   const user = rows[0];
@@ -53,7 +55,7 @@ const loginUser = async (req, res) => {
   //Comparar la contraseña
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
-    return res.status(401).json({ message: "Invalid credentials" });
+    return res.status(401).json({ message: "Contraseña invalida" });
   }
 
   //Crear un token JWT
@@ -94,12 +96,12 @@ const addPost = async (req, res) => {
         intervalo_tiempo,
       ]
     );
-    return res.status(200).json({ message: "Usuario añadido con éxito." });
+    return res.status(200).json({ message: "Publicación añadida con éxito." });
   } catch (error) {
     console.log(error);
     return res
       .status(500)
-      .json({ message: "Se produjo un error al añadir el usuario." });
+      .json({ message: "Se produjo un error al añadir la publicación." });
   }
 };
 
@@ -166,7 +168,7 @@ const updatePost = async (req, res) => {
       .status(200)
       .json({ message: "Publicación actualizada con éxito." });
   } catch (error) {
-    console.error("Error durante la actualización de la cuenta:", error);
+    console.error("Error durante la actualización de la publicación:", error);
 
     return res
       .status(500)
@@ -187,10 +189,12 @@ const sharePosts = async (req, res) => {
     );
 
     for (const post of rows) {
-      console.log('Compartir si entro');
-      
+      console.log("Aqui ver: ", isCanceled);
       if (isCanceled) {
-        return res.status(200).json({ message: "Publicaciones canceladas" });
+        console.log("Cancelarlllll");
+
+        res.status(200).json({ message: "Publicaciones canceladas" });
+        return;
       }
       try {
         await automatizarFacebook(post);

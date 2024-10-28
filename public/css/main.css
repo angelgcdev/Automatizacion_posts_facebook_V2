@@ -448,6 +448,19 @@ a {
   box-shadow: none;
 }
 
+.button--search {
+  background-color: var(--blue);
+  color: var(--white);
+}
+
+.button--search:hover {
+  background-color: var(--darkblue);
+  color: var(--gray);
+}
+
+.button--search:active {
+  transform: scale(0.98);
+}
 /*Estilos para el link de registrase*/
 /* .form__link {
   display: inline-block;
@@ -508,7 +521,23 @@ a {
   font-weight: 300;
 }
 
-.user-list__items {
+.search__container-posts {
+  margin-left: 3.2rem;
+  margin-bottom: 4.2rem;
+}
+
+.search__posts-input {
+  padding: 1.6rem;
+  width: inherit;
+  border-radius: 3rem;
+  background-color: rgba(242, 242, 242, 0.788);
+  font-weight: 500;
+  font-size: var(--small);
+  letter-spacing: 0.1rem;
+  color: var(--black);
+}
+
+.posts__container {
   padding: 1.6rem;
   background-color: rgba(242, 242, 242, 0.2);
   width: 90%;
@@ -517,36 +546,51 @@ a {
   border-radius: 1rem;
 }
 
-.user-list__item {
+.article__posts {
   margin-bottom: 1.6rem;
   background-color: var(--white);
   border-radius: 1rem;
   padding: 1.6rem;
-  letter-spacing: 0.1rem;
-  font-size: var(--smaller);
+  /* letter-spacing: 0.1rem; */
+  /* font-size: var(--smaller); */
 }
 
-.user-list__span {
-  display: block;
+.article__posts__text {
+  font-size: var(--normal);
+  letter-spacing: 0.1rem;
   line-height: 1.5;
   padding-bottom: 1.6rem;
+  text-align: left;
+  font-weight: 400;
+  color: var(--black);
 }
 
-.user-list__item-email {
-  font-weight: bold;
+.article__post-img__container {
+  display: block;
+  text-align: center;
+  font-size: var(--smaller);
+  letter-spacing: 0.1rem;
+  width: 90%;
+  height: 25rem;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
 }
 
 .article__post-img {
   display: block;
-  width: 50%;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  height: 90%;
+  object-fit: contain;
 }
 
-.user-list__item-message,
-.user-list__item-posts {
+.article__post-img__text {
+  text-align: center;
+}
+
+.article__posts__text-span {
   color: var(--grayDark);
-  font-weight: 500;
+  font-weight: 400;
   padding-left: 1rem;
 }
 
@@ -714,7 +758,7 @@ a {
     font-size: var(--small);
   }
 
-  .user-list__items {
+  .posts__container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     gap: 1.6rem;

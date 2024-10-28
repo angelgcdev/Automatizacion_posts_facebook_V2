@@ -1,3 +1,5 @@
+// public/js/main.js
+
 import { showNotification } from "./utils/showNotification.js";
 import { togglePasswordVisibility } from "./utils/togglePasswordVisibility.js";
 import { logoutUser } from "./utils/logoutUser.js";
@@ -6,16 +8,16 @@ const token = localStorage.getItem("token");
 const userId = localStorage.getItem("userId");
 const userEmail = localStorage.getItem("userEmail");
 
-const logout_button = document.getElementById("logoutButton");
-
 if (!token) {
   //Si no hay token, redirigir a la pagina de login
   window.location.href = "../login.html";
 }
 
-// public/js/automation.js
-
 /**---------VARIABLES---------- */
+let controller;
+
+const logout_button = document.getElementById("logoutButton");
+
 const loadingText = document.getElementById("loading__text");
 
 const titleReport = document.querySelector("#title_report");
@@ -68,7 +70,7 @@ const requestData = async (url, options) => {
 
     return response.json();
   } catch (error) {
-    showNotification("Se produjo un error durante la solicitud.", false);
+    // showNotification("Se produjo un error durante la solicitud.", false);
     console.error(error); // para depuracion
     return null; //retornar null para evitar errores posteriores
   }
@@ -120,6 +122,11 @@ const detailPost = async (id_usuario, email) => {
     const detail = await requestData(`/detailPost/${id_usuario}/${email}`);
 
     const total_d = await requestData(`/totalD/${id_usuario}/${email}`);
+
+    if (!(detail && total_d)) {
+      showNotification("Historial vacio");
+      return;
+    }
 
     //Limpiar el contenido actual
     reportContent.innerHTML = "";
@@ -233,6 +240,11 @@ const cancelPosts = async () => {
 
   const response = await requestData("/cancelPosts", options);
 
+  //Cancelar solicitud usando AbortController
+  if (controller) {
+    controller.abort(); //llama a abort para cancelar la solicitud
+  }
+
   if (response) {
     console.log("Se hiso click en cancelar");
   } else {
@@ -250,24 +262,26 @@ const loadPosts = async () => {
 
     posts.forEach((post) => {
       const articlePost = document.createElement("article");
-      articlePost.classList.add("user-list__item");
+      articlePost.classList.add("article__posts");
 
       articlePost.innerHTML = `
-        <p class="user-list__item-email user-list__span">
-          ${post.email}
+        <p class="article__posts__text">
+          Correo Electrónico: <span class = "article__posts__text-span">${post.email}</span>
+        </p>
+        <figcaption class = "article__post-img__container">
+          <img class="article__post-img" src="${post.urlimg}">
+          <caption class = "article__post-img__text">Imagen de la publicación</caption>
+        </figcaption>
+
+        <p class="article__posts__text">
+          Mensaje: <span class = "article__posts__text-span">${post.mensaje}</span>
         </p>
 
-        <img class="article__post-img" src="${post.urlimg}">
-
-        <p class="user-list__item-message user-list__span">
-          ${post.mensaje}
+        <p class="article__posts__text">
+          Cantidad de publicaciones: <span class = "article__posts__text-span">${post.numero_de_posts}</span>
         </p>
 
-        <p class="user-list__item-posts user-list__span">
-          ${post.numero_de_posts}
-        </p>
-
-        <p class="user-list__item-posts user-list__span">
+        <p class="article__posts__text">
           Una publicación cada: ${post.intervalo_tiempo} minutos
         </p>
       `;
@@ -315,20 +329,21 @@ const addPost = async (event) => {
   const response = await requestData("/addPost", options);
 
   if (response) {
-    showNotification("La cuenta se ha añadido correctamente.");
+    showNotification(response.message);
     event.target.reset(); //Limpiar el formulario después de añadir el usuario
     loadPosts(); // Recargar la lista de usuarios
   } else {
-    showNotification(
-      "Hubo problemas al añadir la cuenta. Por favor, inténtelo de nuevo",
-      false
-    );
+    showNotification(response.message, false);
   }
   hideLoading();
 };
 
 //Funcion para compartir publicaciones
 const sharePosts = async () => {
+  //Crear un AbortController para la solicitud
+  controller = new AbortController();
+  const signal = controller.signal;
+
   showLoading("Publicando..."); //Muestra la animacion de carga
 
   loadingContainer.appendChild(createCancelButton());
@@ -336,6 +351,7 @@ const sharePosts = async () => {
   const options = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    signal,
   };
 
   try {
@@ -370,8 +386,6 @@ const editPost = async (event) => {
     oldEmail: formData.get("oldEmail"),
   };
 
-  console.log("Borrame id_post:", data.id_publicacion);
-
   const options = {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -384,14 +398,11 @@ const editPost = async (event) => {
   );
 
   if (response) {
-    showNotification("La cuenta se ha actualizado correctamente.");
+    showNotification(response.message);
     closeEditModal();
     loadPosts(); //Recargar la lista de usuarios
   } else {
-    showNotification(
-      "Hubo problemas al actualizar la cuenta. Por favor, inténtelo de nuevo",
-      false
-    );
+    showNotification(response.message, false);
   }
 };
 
@@ -404,8 +415,10 @@ const openReportModal = async () => {
 
     const reports_day = await requestData(`/postsReportDay/${userId}`);
 
-    console.log(reports_day);
-    console.log(reports);
+    if (!(reports && total_p && reports_day)) {
+      showNotification("El reporte esta vacio");
+      return;
+    }
 
     //Limpiar el contenido previo
     reportContent.innerHTML = "";
