@@ -135,7 +135,7 @@ const detailPost = async (id_usuario, email) => {
     reportContent.innerHTML = "";
 
     reportContent.innerHTML = `
-      <div container-title__detail>
+      <div class="container-title__detail">
         <p class="text-detail textEmail-detail">${detail[0].email}</p>
         <p class="text-detail">Total publicaciones: ${total_d[0].count}</p>
       </div>
@@ -148,10 +148,10 @@ const detailPost = async (id_usuario, email) => {
     table.innerHTML = `
     <thead>
         <tr>
-          <th>Mensaje</th>
-          <th>URL</th>
+          <th>Mensaje del Post</th>
+          <th>URL del Post</th>
           <th>Nombre del Grupo</th>
-          <th>Fecha de Publicación</th>
+          <th>Fecha</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -163,16 +163,18 @@ const detailPost = async (id_usuario, email) => {
     detail.forEach((post) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td class="report-post__text">
+        <td class="t_messaje">
           ${post.mensaje}
         </td>
-        <td class="report-post__text">
-          <a href="${post.url}" target="_blank">${post.url}</a>
+        <td>
+          <a class="t_link" href="${post.url}" target="_blank">
+          Ver publicación
+          </a>
         </td>
-        <td class="report-post__text">
+        <td class="t_name-group">
           ${post.nombre_grupo}
         </td>
-        <td class="report-post__text">
+        <td class="t_date">
           ${new Date(post.fecha_publicacion).toLocaleString()}
         </td>
       `;
@@ -193,7 +195,7 @@ const detailPost = async (id_usuario, email) => {
 //Funcion para crear el boton cancelar
 const createCancelButton = () => {
   const cancelButton = document.createElement("button");
-  cancelButton.classList.add("button", "button--delete");
+  cancelButton.classList.add("button", "button--cancel");
   cancelButton.textContent = "Cancelar";
   cancelButton.addEventListener("click", () => {
     cancelPosts();
@@ -383,6 +385,7 @@ const sharePosts = async () => {
 //Función para editar un usuario
 const editPost = async (event) => {
   event.preventDefault();
+  showLoading("Actualizando publicación");
   const formData = new FormData(event.target);
   const data = {
     id_publicacion: formData.get("id_post"),
@@ -414,6 +417,7 @@ const editPost = async (event) => {
   } else {
     showNotification(response.message, false);
   }
+  hideLoading();
 };
 
 //Función para abrir el modal del reporte
@@ -437,7 +441,7 @@ const openReportModal = async () => {
     titleReport.textContent = "Historial de publicaciones";
 
     reportContent.innerHTML = `
-      <div class="container-title__detail">
+      <div class="container-title__detail container-title__total">
         <p class="text-detail">Total publicaciones: ${total_p[0].count}</p>
       </div>
 
@@ -487,9 +491,9 @@ const openReportModal = async () => {
     table.innerHTML = `
       <thead>
         <tr>
-          <th>Email</th>
-          <th>Mensaje</th>
-          <th>URL</th>
+          <th>Correo de la Cuenta</th>
+          <th>Mensaje del Post</th>
+          <th>URL del Post</th>
           <th>Nombre del Grupo</th>
           <th>Fecha de Publicación</th>
         </tr>
@@ -510,7 +514,7 @@ const openReportModal = async () => {
             ${post.mensaje}
           </td>
           <td class="report-post__text">
-            <a href="${post.url}" target="_blank">${post.url}</a>
+            <a href="${post.url}" target="_blank">Ver publicación</a>
           </td>
           <td class="report-post__text">
             ${post.nombre_grupo}
