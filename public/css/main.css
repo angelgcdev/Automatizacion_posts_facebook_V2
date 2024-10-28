@@ -72,8 +72,6 @@ a {
 .loading__container {
   border-radius: 1rem;
   position: fixed;
-  /* right: 3.2rem; */
-  /* bottom: 3.2rem; */
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
@@ -81,7 +79,7 @@ a {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 10000;
 }
 
 .loading__text {
