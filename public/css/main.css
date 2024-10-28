@@ -220,8 +220,17 @@ a {
   width: 100%;
 }
 
+.form__text {
+  color: var(--gray);
+  font-size: var(--small);
+  font-weight: 400;
+  letter-spacing: 0.1rem;
+}
+
 .password-wrapper {
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .password-flex {
@@ -501,6 +510,19 @@ a {
   margin-right: auto;
 }
 
+.totalPublicaciones_p {
+  border-radius: 1rem;
+  display: inline-block;
+  padding: 1.6rem;
+  background: #1374f2b8;
+  z-index: 30;
+  position: fixed;
+  top: 10rem;
+  right: -2rem;
+  color: white;
+  width: 26rem;
+}
+
 .user-list__title {
   padding-top: 1.6rem;
   margin-bottom: 3.2rem;
@@ -529,7 +551,7 @@ a {
 }
 
 .search__posts-input {
-  box-shadow: 0px 0px 4px 2px #3c62c1, inset 1px -2px 5px 1px #787878;
+  box-shadow: 0px 0px 2px 1px #3c62c1, inset 1px -2px 3px 1px #787878;
   padding: 1.6rem;
   width: inherit;
   border-radius: 3rem;
@@ -646,6 +668,7 @@ a {
   border-radius: 1rem;
   width: 80%;
   overflow: auto;
+  max-width: 80rem;
 }
 
 .report__title-container {

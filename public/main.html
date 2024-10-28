@@ -196,74 +196,92 @@
             />
           </div>
           <div class="form__group">
+            <label class="form__text" for="editEmail">Correo Electrónico</label>
             <input
               class="form__input"
               type="email"
               id="editEmail"
-              name="email"
-              placeholder="Correo Electrónico"
+              name="editEmail"
               required
             />
           </div>
 
           <div class="form__group">
-            <input
-              class="form__input password"
-              id="editPassword"
-              name="password"
-              placeholder="Contraseña"
-              required
-            />
-            <button type="button" class="button--password togglePassword">
-              Mostrar Contraseña
-            </button>
+            <label class="form__text" for="editPassword">Contraseña</label>
+            <div class="form__group password-wrapper">
+              <input
+                class="form__input password"
+                id="editPassword"
+                type="text"
+                name="editPassword"
+                required
+              />
+              <button
+                type="button"
+                class="button--password button__toggle-icon"
+              >
+                <img
+                  class="toggleIcon"
+                  src="./assets/icons/visibility.svg"
+                  alt=""
+                />
+              </button>
+            </div>
           </div>
 
           <div class="form__group">
+            <label class="form__text" for="editUrlPost"
+              >URL de la Publicación</label
+            >
             <input
               class="form__input"
               type="url"
               id="editUrlPost"
-              name="urlPost"
-              placeholder="URL de la Publicación"
+              name="editUrlPost"
               required
             />
           </div>
 
           <div class="form__group">
+            <label class="form__text" for="editMessage"
+              >Escribe tu mensaje</label
+            >
             <textarea
               class="form__textarea"
               id="editMessage"
-              name="message"
-              placeholder="Escribe tu mensaje"
+              name="editMessage"
               required
             ></textarea>
           </div>
 
           <div class="form__group">
+            <label class="form__text" for="editPostCount"
+              >Número de Publicaciones</label
+            >
             <input
               class="form__input"
               type="number"
               id="editPostCount"
-              name="postCount"
-              placeholder="Número de Publicaciones"
+              name="editPostCount"
               min="1"
               required
             />
           </div>
           <div class="form__group">
+            <label class="form__text" for="editPostInterval"
+              >Intervalo entre publicaciones (minutos)</label
+            >
             <input
               class="form__input"
               type="number"
               id="editPostInterval"
-              name="postInterval"
-              placeholder="Intervalo entre publicaciones (minutos)"
+              name="editPostInterval"
               required
               min="0"
             />
           </div>
 
-          <input type="hidden" id="editOldEmail" name="oldEmail" />
+          <!-- <input type="hidden" id="editOldEmail" name="oldEmail" /> -->
 
           <button class="button button--save" type="submit">
             Guardar Cambios

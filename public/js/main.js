@@ -14,6 +14,7 @@ if (!token) {
 }
 
 /**---------VARIABLES---------- */
+const postsContainer = document.querySelector(".user-list");
 
 const searchInput = document.getElementById("search__posts-input");
 
@@ -89,7 +90,7 @@ const openEditModal = (post, id_publicacion) => {
   document.querySelector("#editMessage").value = post.mensaje;
   document.querySelector("#editPostCount").value = post.numero_de_posts;
   document.querySelector("#editPostInterval").value = post.intervalo_tiempo;
-  document.querySelector("#editOldEmail").value = post.email;
+  // document.querySelector("#editOldEmail").value = post.email;
   editModal.style.display = "block";
 };
 
@@ -267,6 +268,14 @@ const loadPosts = async (serachTerm = "") => {
       post.email.toLowerCase().includes(serachTerm.toLowerCase())
     );
 
+    const reports_day = await requestData(`/postsReportDay/${userId}`);
+
+    //Añadir total de publicaciones en la UI
+    const totalPublicaciones_p = document.createElement("p");
+    totalPublicaciones_p.classList.add("totalPublicaciones_p");
+    totalPublicaciones_p.textContent = `Total Publicaciones hoy : ${reports_day[0].total_publicaciones}`;
+    postsContainer.appendChild(totalPublicaciones_p);
+
     //Limpiar las lista de publicaciones
     postList.innerHTML = "";
     let userCount = 0; //Variable para contar usuarios
@@ -390,13 +399,13 @@ const editPost = async (event) => {
   const data = {
     id_publicacion: formData.get("id_post"),
     id_usuario: formData.get("id_usuario"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    url: formData.get("urlPost"),
-    mensaje: formData.get("message"),
-    numero_de_posts: parseInt(formData.get("postCount"), 10) || 1,
-    intervalo_tiempo: parseInt(formData.get("postInterval"), 10) || 0,
-    oldEmail: formData.get("oldEmail"),
+    email: formData.get("editEmail"),
+    password: formData.get("editPassword"),
+    url: formData.get("editUrlPost"),
+    mensaje: formData.get("editMessage"),
+    numero_de_posts: parseInt(formData.get("editPostCount"), 10) || 1,
+    intervalo_tiempo: parseInt(formData.get("editPostInterval"), 10) || 0,
+    // oldEmail: formData.get("oldEmail"),
   };
 
   const options = {
