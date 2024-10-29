@@ -246,11 +246,6 @@ const cancelPosts = async () => {
 
   const response = await requestData("/cancelPosts", options);
 
-  //Cancelar solicitud usando AbortController
-  if (controller) {
-    controller.abort(); //llama a abort para cancelar la solicitud
-  }
-
   if (response) {
     console.log("Se hiso click en cancelar");
   } else {
@@ -366,10 +361,6 @@ const addPost = async (event) => {
 
 //Funcion para compartir publicaciones
 const sharePosts = async () => {
-  //Crear un AbortController para la solicitud
-  controller = new AbortController();
-  const signal = controller.signal;
-
   showLoading("Publicando..."); //Muestra la animacion de carga
 
   loadingContainer.appendChild(createCancelButton());
@@ -377,7 +368,6 @@ const sharePosts = async () => {
   const options = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    signal,
   };
 
   try {

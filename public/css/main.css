@@ -331,6 +331,7 @@ a {
 }
 
 .button--share {
+  width: 73%;
   border: 2px solid var(--white);
   color: var(--white);
 }

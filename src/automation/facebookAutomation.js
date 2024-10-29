@@ -3,6 +3,9 @@ import { chromium } from "playwright";
 import { pool } from "../db.js";
 
 /*********VARIABLES***********/
+let browser = null;
+let page = null;
+
 const MIN_DELAY = 5000; // Minimo tiempo de espera en milisegundos
 const MAX_DELAY = 10000; // Máximo tiempo de espera en milisegundos
 const URL = "https://www.facebook.com/";
@@ -37,16 +40,15 @@ const loginToFacebook = async (page, { email, password }) => {
 
 // Función Principal de automatización de Facebook
 const automatizarFacebook = async (post) => {
-  let browser;
   // let postCount = 0; //acumulador
   let nombre_grupo = "";
   try {
     browser = await chromium.launch({
-      headless: true,
+      headless: false,
       slowMo: 50,
     });
     const context = await browser.newContext();
-    const page = await context.newPage();
+    page = await context.newPage();
 
     // Iniciar sesión en Facebook
     await loginToFacebook(page, post);
@@ -221,6 +223,14 @@ const automatizarFacebook = async (post) => {
   }
 };
 
-console.log("Exportando automatizarFacebook:", typeof automatizarFacebook);
+//Función para cerrar el navegador
+const cancelAutomation = () => {
+  if (browser) {
+    browser.close();
+    browser = null;
+    page = null;
+    console.log("Automatizacion cancelada, navegador cerrado.");
+  }
+};
 
-export { automatizarFacebook };
+export { automatizarFacebook, cancelAutomation };

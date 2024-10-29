@@ -2,7 +2,10 @@
 import { pool } from "../db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { automatizarFacebook } from "../automation/facebookAutomation.js";
+import {
+  automatizarFacebook,
+  cancelAutomation,
+} from "../automation/facebookAutomation.js";
 import { postImg } from "../automation/postImg.js";
 
 /************VARIABLES***********/
@@ -194,10 +197,7 @@ const sharePosts = async (req, res) => {
     );
 
     for (const post of rows) {
-      console.log("Aqui ver: ", isCanceled);
       if (isCanceled) {
-        console.log("Cancelarlllll");
-
         res.status(200).json({ message: "Publicaciones canceladas" });
         return;
       }
@@ -347,6 +347,8 @@ const deleteReport = async (req, res) => {
 
 const cancelPosts = async (req, res) => {
   try {
+    cancelAutomation();
+
     isCanceled = true;
     console.log("Publicaciones canceladas. Estado:", isCanceled);
     return res
