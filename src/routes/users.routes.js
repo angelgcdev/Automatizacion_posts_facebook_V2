@@ -16,6 +16,7 @@ import {
   totalD,
   totalP,
   cancelPosts,
+  postsReportCurrentDay,
 } from "../controllers/users.controllers.js";
 // import { verifyToken } from "../middlewares/users.middlewares.js";
 
@@ -42,6 +43,8 @@ router.get("/postsReport/:id_usuario", postsReport);
 router.get("/totalP/:id_usuario/", totalP);
 
 router.get("/postsReportDay/:id_usuario", postsReportDay);
+
+router.get("/postsReportCurrentDay/:id_usuario", postsReportCurrentDay);
 
 router.get("/detailPost/:id_usuario/:email", detailPost);
 

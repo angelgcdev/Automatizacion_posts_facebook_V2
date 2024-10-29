@@ -18,8 +18,6 @@ const postsContainer = document.querySelector(".user-list");
 
 const searchInput = document.getElementById("search__posts-input");
 
-let controller;
-
 const logout_button = document.getElementById("logoutButton");
 
 const loadingText = document.getElementById("loading__text");
@@ -57,10 +55,24 @@ const showLoading = (text) => {
   `;
 
   loadingContainer.classList.remove("hidden");
+  localStorage.setItem("loadingState", "active");
 };
 
 const hideLoading = () => {
   loadingContainer.classList.add("hidden");
+  localStorage.removeItem("loadingState");
+};
+
+//Funcion para verificar el estado de la animación al cargar la página
+const checkLoadingState = () => {
+  const loadingState = localStorage.getItem("loadingState");
+
+  console.log("Verificando....");
+  console.log("loadingState:", loadingState);
+
+  if (loadingState === "active") {
+    showLoading("Publicando...");
+  }
 };
 
 //Solicita datos al servidor y maneja la respuesta
@@ -278,12 +290,14 @@ const loadPosts = async (serachTerm = "") => {
       post.email.toLowerCase().includes(serachTerm.toLowerCase())
     );
 
-    const reports_day = await requestData(`/postsReportDay/${userId}`);
+    const total_posts_current_day = await requestData(
+      `/postsReportCurrentDay/${userId}`
+    );
 
     //Añadir total de publicaciones en la UI
     const totalPublicaciones_p = document.createElement("p");
     totalPublicaciones_p.classList.add("totalPublicaciones_p");
-    totalPublicaciones_p.textContent = `Publicaciones hoy : ${reports_day[0].total_publicaciones}`;
+    totalPublicaciones_p.textContent = `Publicaciones hoy : ${total_posts_current_day[0].total_publicaciones}`;
     postsContainer.appendChild(totalPublicaciones_p);
 
     //Limpiar las lista de publicaciones
@@ -373,6 +387,9 @@ const addPost = async (event) => {
   }
   hideLoading();
 };
+
+//Llamar a checkLoadingState cuando la página se carga
+window.addEventListener("load", checkLoadingState);
 
 //Funcion para compartir publicaciones
 const sharePosts = async () => {

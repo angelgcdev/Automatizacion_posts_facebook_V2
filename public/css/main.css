@@ -70,10 +70,12 @@ a {
 /* Estilos para la animacion de carga */
 
 .loading__container {
+  right: 1.6rem;
+  bottom: 1.6rem;
+  width: 23rem;
+  height: 23rem;
   border-radius: 1rem;
   position: fixed;
-  width: 100vw;
-  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
