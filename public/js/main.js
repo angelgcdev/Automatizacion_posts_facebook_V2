@@ -208,7 +208,12 @@ const createCancelButton = () => {
 const createEditButton = (post, id_publicacion) => {
   const editButton = document.createElement("button");
   editButton.classList.add("button", "button--edit");
-  editButton.textContent = "Editar";
+
+  const iconEdit = document.createElement("img");
+  iconEdit.classList.add("icon__button");
+  iconEdit.src = "../assets/icons/edit.svg";
+  editButton.appendChild(iconEdit);
+
   editButton.addEventListener("click", () =>
     openEditModal(post, id_publicacion)
   );
@@ -219,7 +224,12 @@ const createEditButton = (post, id_publicacion) => {
 const createDeleteButton = (id_publicacion) => {
   const deleteButton = document.createElement("button");
   deleteButton.classList.add("button", "button--delete");
-  deleteButton.textContent = "Eliminar";
+
+  const iconEdit = document.createElement("img");
+  iconEdit.classList.add("icon__button");
+  iconEdit.src = "../assets/icons/delete.svg";
+  deleteButton.appendChild(iconEdit);
+
   deleteButton.addEventListener("click", () =>
     handleDeletePost(id_publicacion)
   );
@@ -230,7 +240,12 @@ const createDeleteButton = (id_publicacion) => {
 const createDetailPostButton = (id_usuario, email) => {
   const detailPostButton = document.createElement("button");
   detailPostButton.classList.add("button", "button--detail-p");
-  detailPostButton.textContent = "Historial";
+
+  const iconEdit = document.createElement("img");
+  iconEdit.classList.add("icon__button");
+  iconEdit.src = "../assets/icons/history.svg";
+  detailPostButton.appendChild(iconEdit);
+
   detailPostButton.addEventListener("click", () =>
     detailPost(id_usuario, email)
   );

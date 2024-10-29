@@ -306,6 +306,7 @@ a {
 }
 
 .button--logout {
+  border-radius: 1rem;
   background-color: hsl(235.38deg 70.33% 60.83%);
   color: var(--white);
 }
@@ -347,11 +348,10 @@ a {
 }
 
 .button--edit {
+  padding: 1rem;
   border-radius: 1rem;
-  text-transform: capitalize;
   background-color: var(--green);
-  color: var(--white);
-  width: 90px;
+  width: 6rem;
   margin-bottom: 1.6rem;
 }
 
@@ -366,11 +366,10 @@ a {
 }
 
 .button--delete {
+  padding: 1rem;
   border-radius: 1rem;
-  text-transform: capitalize;
   background-color: var(--red);
-  color: var(--white);
-  width: 90px;
+  width: 6rem;
   margin-left: 1rem;
   margin-bottom: 1.6rem;
 }
@@ -402,11 +401,10 @@ a {
 }
 
 .button--detail-p {
-  font-size: var(--smaller);
-  text-transform: capitalize;
+  padding: 1rem;
+  width: 6rem;
   border-radius: 1rem;
   border: 2px solid var(--lightBlue);
-  color: var(--lightBlue);
   margin-left: 1.6rem;
   margin-bottom: 1.6rem;
 }
@@ -419,6 +417,10 @@ a {
 .button--detail-p:active {
   transform: scale(0.98);
   box-shadow: none;
+}
+
+.icon__button {
+  width: 2.5rem;
 }
 
 .button--report {
@@ -674,7 +676,7 @@ a {
 }
 
 .modal-content {
-  background: var(--lightBlue);
+  background: var(--blue);
   margin: 15% auto;
   padding: 2rem;
   border: 1px solid #888;
