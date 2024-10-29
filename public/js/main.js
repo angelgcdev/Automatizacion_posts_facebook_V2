@@ -273,7 +273,7 @@ const loadPosts = async (serachTerm = "") => {
     //Añadir total de publicaciones en la UI
     const totalPublicaciones_p = document.createElement("p");
     totalPublicaciones_p.classList.add("totalPublicaciones_p");
-    totalPublicaciones_p.textContent = `Total Publicaciones hoy : ${reports_day[0].total_publicaciones}`;
+    totalPublicaciones_p.textContent = `Publicaciones hoy : ${reports_day[0].total_publicaciones}`;
     postsContainer.appendChild(totalPublicaciones_p);
 
     //Limpiar las lista de publicaciones
@@ -281,11 +281,16 @@ const loadPosts = async (serachTerm = "") => {
     let userCount = 0; //Variable para contar usuarios
 
     //Rederizamos los posts
-    filteredPosts.forEach((post) => {
+    for (const post of filteredPosts) {
+      const total_d = await requestData(`/totalD/${userId}/${post.email}`);
+
       const articlePost = document.createElement("article");
       articlePost.classList.add("article__posts");
 
       articlePost.innerHTML = `
+        <div class = "total__detail-container">
+          <p class="total__detail-text">${total_d[0].count}</p>
+        </div>
         <p class="article__posts__text">
           Correo Electrónico: <span class = "article__posts__text-span">${post.email}</span>
         </p>
@@ -316,7 +321,7 @@ const loadPosts = async (serachTerm = "") => {
       postList.appendChild(articlePost);
 
       userCount++;
-    });
+    }
 
     //Mostrar el conteo de usuarios en el UI
     const userCountDisplay = document.querySelector("#userCount");
@@ -388,6 +393,7 @@ const sharePosts = async () => {
   } finally {
     hideLoading(); //Oculta la animacion de carga
     openReportModal(); //Muestra el reporte al finalizar
+    loadPosts();
   }
 };
 

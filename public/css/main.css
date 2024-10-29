@@ -505,7 +505,7 @@ a {
   width: 100vw;
   min-height: 100vh;
   padding: 1.6rem;
-  max-width: 580px;
+  /* max-width: 580px; */
   margin-left: auto;
   margin-right: auto;
 }
@@ -571,7 +571,19 @@ a {
   border-radius: 1rem;
 }
 
+.total__detail-container {
+  border-radius: 1rem;
+  padding: 1rem;
+  background: #1374f2b5;
+  position: absolute;
+  right: 1.6rem;
+  top: 1.6rem;
+  color: var(--white);
+  font-weight: 700;
+}
+
 .article__posts {
+  position: relative;
   margin-bottom: 1.6rem;
   background-color: var(--white);
   border-radius: 1rem;
@@ -832,7 +844,7 @@ tr:hover {
 
   .posts__container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
     gap: 1.6rem;
   }
 }
@@ -868,7 +880,7 @@ tr:hover {
   }
 
   .user-list {
-    max-width: 1046px;
+    /* max-width: 1046px; */
     margin: initial;
     overflow: auto;
     height: 100vh;
