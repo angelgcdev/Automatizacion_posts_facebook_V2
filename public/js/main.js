@@ -264,9 +264,12 @@ const loadPosts = async (serachTerm = "") => {
 
     console.log(total_posts_current_day);
 
+    console.log(total_posts_current_day);
+
     //Añadir total de publicaciones en la UI
     const totalPublicaciones_p = document.createElement("p");
     totalPublicaciones_p.classList.add("totalPublicaciones_p");
+    totalPublicaciones_p.textContent = `Publicaciones hoy : ${total_posts_current_day.total_publicaciones}`;
     totalPublicaciones_p.textContent = `Publicaciones hoy : ${total_posts_current_day.total_publicaciones}`;
     postsContainer.appendChild(totalPublicaciones_p);
 
