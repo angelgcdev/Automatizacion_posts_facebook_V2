@@ -47,6 +47,18 @@ formSesion.appendChild(emailSesion);
 
 /**---------FUNCIONES---------- */
 
+//Funcion para verificar el estado de la animación al cargar la página
+const checkLoadingState = () => {
+  const loadingState = localStorage.getItem("loadingState");
+
+  console.log("Verificando....");
+  console.log("loadingState:", loadingState);
+
+  if (loadingState === "active") {
+    showLoading("Publicando...");
+  }
+};
+
 //Funcion para mostrar la animacion de carga
 const showLoading = (text) => {
   loadingContainer.innerHTML = `
@@ -61,18 +73,6 @@ const showLoading = (text) => {
 const hideLoading = () => {
   loadingContainer.classList.add("hidden");
   localStorage.removeItem("loadingState");
-};
-
-//Funcion para verificar el estado de la animación al cargar la página
-const checkLoadingState = () => {
-  const loadingState = localStorage.getItem("loadingState");
-
-  console.log("Verificando....");
-  console.log("loadingState:", loadingState);
-
-  if (loadingState === "active") {
-    showLoading("Publicando...");
-  }
 };
 
 //Solicita datos al servidor y maneja la respuesta
@@ -294,10 +294,12 @@ const loadPosts = async (serachTerm = "") => {
       `/postsReportCurrentDay/${userId}`
     );
 
+    console.log(total_posts_current_day);
+
     //Añadir total de publicaciones en la UI
     const totalPublicaciones_p = document.createElement("p");
     totalPublicaciones_p.classList.add("totalPublicaciones_p");
-    totalPublicaciones_p.textContent = `Publicaciones hoy : ${total_posts_current_day[0].total_publicaciones}`;
+    totalPublicaciones_p.textContent = `Publicaciones hoy : ${total_posts_current_day.total_publicaciones}`;
     postsContainer.appendChild(totalPublicaciones_p);
 
     //Limpiar las lista de publicaciones
@@ -387,9 +389,6 @@ const addPost = async (event) => {
   }
   hideLoading();
 };
-
-//Llamar a checkLoadingState cuando la página se carga
-window.addEventListener("load", checkLoadingState);
 
 //Funcion para compartir publicaciones
 const sharePosts = async () => {
@@ -659,3 +658,6 @@ const cargarEventListeners = () => {
 
 //Llama a la funcion para cargar los listeners
 cargarEventListeners();
+
+//Llamar a checkLoadingState cuando la página se carga
+window.addEventListener("load", checkLoadingState);
