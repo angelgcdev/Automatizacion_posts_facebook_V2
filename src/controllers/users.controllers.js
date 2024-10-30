@@ -296,13 +296,15 @@ const postsReportCurrentDay = async (req, res) => {
       [id_usuario]
     );
 
+    //Si no hay publicaciones para hoy, devolvemos un conteo de 0
     if (rows.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "total publicaciones diarias no encontrado" });
+      return res.status(200).json({
+        dia: new Date().toISOString().split("T")[0],
+        total_publicaciones: 0,
+      });
     }
 
-    return res.status(200).json(rows);
+    return res.status(200).json(rows[0]);
   } catch (error) {
     console.error("Error al obtener el total de publicaciones diarias.");
     return res.status(500).json({

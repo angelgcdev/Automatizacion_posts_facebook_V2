@@ -1,8 +1,8 @@
 // public/js/main.js
-
 import { showNotification } from "./utils/showNotification.js";
 import { togglePasswordVisibility } from "./utils/togglePasswordVisibility.js";
 import { logoutUser } from "./utils/logoutUser.js";
+import { requestData } from "./utils/requestData.js";
 
 const token = localStorage.getItem("token");
 const userId = localStorage.getItem("userId");
@@ -53,43 +53,11 @@ const showLoading = (text) => {
   <div class="loading__spinner"></div>
   <p id="loading__text" class="loading__text">${text}</p>
   `;
-
   loadingContainer.classList.remove("hidden");
-  localStorage.setItem("loadingState", "active");
 };
 
 const hideLoading = () => {
   loadingContainer.classList.add("hidden");
-  localStorage.removeItem("loadingState");
-};
-
-//Funcion para verificar el estado de la animación al cargar la página
-const checkLoadingState = () => {
-  const loadingState = localStorage.getItem("loadingState");
-
-  console.log("Verificando....");
-  console.log("loadingState:", loadingState);
-
-  if (loadingState === "active") {
-    showLoading("Publicando...");
-  }
-};
-
-//Solicita datos al servidor y maneja la respuesta
-const requestData = async (url, options) => {
-  try {
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-      throw new Error("Error en la respuesta del servidor");
-    }
-
-    return response.json();
-  } catch (error) {
-    // showNotification("Se produjo un error durante la solicitud.", false);
-    console.error(error); // para depuracion
-    return null; //retornar null para evitar errores posteriores
-  }
 };
 
 //Funcion para abrir el modal de edicion
@@ -294,10 +262,12 @@ const loadPosts = async (serachTerm = "") => {
       `/postsReportCurrentDay/${userId}`
     );
 
+    console.log(total_posts_current_day);
+
     //Añadir total de publicaciones en la UI
     const totalPublicaciones_p = document.createElement("p");
     totalPublicaciones_p.classList.add("totalPublicaciones_p");
-    totalPublicaciones_p.textContent = `Publicaciones hoy : ${total_posts_current_day[0].total_publicaciones}`;
+    totalPublicaciones_p.textContent = `Publicaciones hoy : ${total_posts_current_day.total_publicaciones}`;
     postsContainer.appendChild(totalPublicaciones_p);
 
     //Limpiar las lista de publicaciones
@@ -388,9 +358,6 @@ const addPost = async (event) => {
   hideLoading();
 };
 
-//Llamar a checkLoadingState cuando la página se carga
-window.addEventListener("load", checkLoadingState);
-
 //Funcion para compartir publicaciones
 const sharePosts = async () => {
   showLoading("Publicando..."); //Muestra la animacion de carga
@@ -433,7 +400,6 @@ const editPost = async (event) => {
     mensaje: formData.get("editMessage"),
     numero_de_posts: parseInt(formData.get("editPostCount"), 10) || 1,
     intervalo_tiempo: parseInt(formData.get("editPostInterval"), 10) || 0,
-    // oldEmail: formData.get("oldEmail"),
   };
 
   const options = {
