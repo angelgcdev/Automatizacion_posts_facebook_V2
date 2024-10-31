@@ -1,5 +1,6 @@
 import { showNotification } from "./utils/showNotification.js";
 import { togglePasswordVisibility } from "./utils/togglePasswordVisibility.js";
+import { requestData } from "./utils/requestData.js";
 
 // public/js/register.js
 document
@@ -16,27 +17,28 @@ document
     }
 
     try {
-      const response = await fetch("/users", {
+      const options = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-      });
+      };
 
-      const data = await response.json();
+      const response = await requestData("/users", options);
 
-      if (response.ok) {
+      if (response) {
         showNotification("Registro exitoso. Ahora puedes iniciar sesión.");
         //Limpiar el formulario
         document.getElementById("registerForm").reset();
       } else {
-        showNotification(data.message, false);
+        showNotification(response.message, false);
       }
     } catch (error) {
       console.error("Error al registrar usuario:", error);
       showNotification(
-        "Error al registrar usuario. Inténtalo de nuevo más tarde.", false
+        "Error al registrar usuario. Inténtalo de nuevo más tarde.",
+        false
       );
     }
   });

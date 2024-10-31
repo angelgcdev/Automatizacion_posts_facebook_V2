@@ -19,14 +19,14 @@ const getUsers = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, is_admin = false } = req.body;
 
     //Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const { rows } = await pool.query(
-      "INSERT INTO usuarios (email, password) VALUES ($1, $2) RETURNING *",
-      [email, hashedPassword]
+      "INSERT INTO usuarios (email, password, is_admin) VALUES ($1, $2, $3) RETURNING *",
+      [email, hashedPassword, is_admin]
     );
     return res.json(rows[0]);
   } catch (error) {
@@ -68,7 +68,12 @@ const loginUser = async (req, res) => {
     { expiresIn: "1h" }
   );
 
-  res.json({ token, user: { id_usuario: user.id_usuario, email: user.email } });
+  res.json({
+    token,
+    id_usuario: user.id_usuario,
+    email: user.email,
+    is_admin: user.is_admin,
+  });
 };
 
 const addPost = async (req, res) => {

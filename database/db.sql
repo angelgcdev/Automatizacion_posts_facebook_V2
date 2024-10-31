@@ -170,12 +170,13 @@
 CREATE DATABASE facebook_db WITH ENCODING 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8' TEMPLATE template0;
 --;
 --Conectarse a la base de datos
-\ c facebook_db;
+\c facebook_db;
 --Tabla usuarios;
 CREATE TABLE usuarios(
   id_usuario SERIAL PRIMARY KEY,
   email VARCHAR(512) NOT NULL UNIQUE,
-  password VARCHAR(512) NOT NULL
+  password VARCHAR(512) NOT NULL,
+  is_admin BOOLEAN DEFAULT FALSE
 );
 --;
 --Tabla publicaciones;

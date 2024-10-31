@@ -14,7 +14,7 @@ if (!token) {
   window.location.href = "../login.html";
 }
 
-if (userAdmin === "true") {
+if (userAdmin === "false") {
   window.location.href = "../error.html";
 }
 
