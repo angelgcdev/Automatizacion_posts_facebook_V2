@@ -56,6 +56,7 @@ a {
   --redDark: hsl(0, 79%, 34%);
   --green: hsl(120, 78%, 40%);
   --greenDark: hsl(120, 78%, 20%);
+  --verdeEsmeralda: #13d8f2;
 
   /*Font sizes*/
   --titulo1: 3.6rem;
@@ -116,8 +117,8 @@ a {
 /*Estilos para el form-container*/
 .form-container {
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 90%;
   background-image: url(../background.jpeg);
   background-size: cover;
   background-position: center;
@@ -132,7 +133,7 @@ a {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: hsla(232.9, 97.4%, 15.3%, 0.84);
+  background: hsl(238.02deg 100% 16.79% / 77%);
   z-index: 10;
 }
 
@@ -146,6 +147,8 @@ a {
 }
 
 .form-sesion {
+  height: 10%;
+  width: inherit;
   background-color: var(--darkblue);
   padding: 1rem;
   align-items: center;
@@ -334,9 +337,10 @@ a {
 }
 
 .button--share {
-  width: 73%;
-  border: 2px solid var(--white);
+  width: 15rem;
+  border-radius: 1rem;
   color: var(--white);
+  background-color: var(--skyBlue);
 }
 
 .button--share:hover {
@@ -426,6 +430,7 @@ a {
 }
 
 .button--report {
+  width: 15rem;
   font-size: var(--smaller);
   text-transform: capitalize;
   border-radius: 1rem;
@@ -445,6 +450,7 @@ a {
 }
 
 .button--reportDelete {
+  width: 15rem;
   font-size: var(--smaller);
   text-transform: capitalize;
   border-radius: 1rem;
@@ -476,6 +482,27 @@ a {
 .button--cancel:active {
   transform: scale(0.98);
 }
+
+.button--inform-posts {
+  font-size: var(--smaller);
+  border-radius: 1rem;
+  width: 13rem;
+  position: absolute;
+  background-color: var(--verdeEsmeralda);
+  color: var(--white);
+  bottom: 3.2rem;
+  right: 3.2rem;
+}
+
+.button--inform-posts:hover {
+  background-color: var(--darkblue);
+  color: var(--gray);
+}
+
+.button--inform-posts:active {
+  transform: scale(0.98);
+}
+
 /*Estilos para el link de registrase*/
 /* .form__link {
   display: inline-block;
@@ -492,10 +519,17 @@ a {
 } */
 
 .container__buttons {
+  display: flex;
+  gap: 1.6rem;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 1.6rem;
 }
 
 .container__form-post {
+  /* width: 100vw; */
+  height: 100vh;
 }
 
 /*Estilos para el user-list*/
@@ -510,7 +544,7 @@ a {
   width: 100vw;
   min-height: 100vh;
   padding: 1.6rem;
-  /* max-width: 580px; */
+  max-width: 50rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -519,7 +553,7 @@ a {
   border-radius: 1rem;
   display: inline-block;
   padding: 1.6rem;
-  background: #1374f2b8;
+  background: #1378f2b8;
   z-index: 30;
   position: fixed;
   top: 10rem;
@@ -549,6 +583,7 @@ a {
   font-weight: 300;
 }
 
+/* Estilos para el buscador */
 .search__container-posts {
   width: 90%;
   margin-left: auto;
@@ -860,7 +895,7 @@ tr:hover {
   }
 
   .form-container {
-    max-width: 500px;
+    max-width: 50rem;
     margin-left: auto;
     margin-right: auto;
   }
@@ -885,7 +920,7 @@ tr:hover {
   }
 
   .user-list {
-    /* max-width: 1046px; */
+    max-width: initial;
     margin: initial;
     overflow: auto;
     height: 100vh;

@@ -2,6 +2,7 @@
 import express from "express";
 import { PORT } from "./config.js";
 import { router } from "./routes/users.routes.js";
+import { adminRouter } from "./routes/admin.routes.js";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -18,7 +19,8 @@ app.use(express.json()); // Para parsear JSON
 app.use(express.urlencoded({ extended: true })); //para parsear URL-encoded
 app.use(express.static(path.join(__dirname, "../public"))); // Servir archivos estaticos
 
-app.use(router); //Usar las rutas definidas
+app.use(router); //Usar las rutas definidas para usuarios
+app.use(adminRouter); // Usar las rutas definidas para administradore
 
 app.listen(PORT, () => {
   const baseUrl = `http://localhost:${PORT}/login.html`;

@@ -38,11 +38,12 @@ login_form.addEventListener("submit", async (e) => {
       localStorage.setItem("userAdmin", response.is_admin);
 
       //Redirigir a la pagina que le pertenece
-      if (response.is_admin) {
-        window.location.href = "../main-admin.html";
-      } else {
-        window.location.href = "../main.html";
-      }
+      window.location.href = "../main.html";
+      // if (response.is_admin) {
+      //   window.location.href = "../main-admin.html";
+      // } else {
+      //   window.location.href = "../main.html";
+      // }
     } else {
       //Mostrar el mensaje de error
       showNotification(response.message, false);

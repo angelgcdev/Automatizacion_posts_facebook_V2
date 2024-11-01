@@ -14,11 +14,10 @@ if (!token) {
   window.location.href = "../login.html";
 }
 
-if (userAdmin === "true") {
-  window.location.href = "../error.html";
-}
-
 /**---------VARIABLES---------- */
+
+const formContent = document.getElementById("form-content");
+
 const postsContainer = document.querySelector(".user-list");
 
 const searchInput = document.getElementById("search__posts-input");
@@ -49,6 +48,26 @@ const emailSesion = document.createElement("p");
 emailSesion.classList.add("emailSesion");
 emailSesion.textContent = userEmail;
 formSesion.appendChild(emailSesion);
+
+/************************************** */
+/**Boton solo para el administrador */
+
+const createInformPostsButton = () => {
+  const informPostsButton = document.createElement("a");
+  informPostsButton.classList.add(
+    "button",
+    "button-gost",
+    "button--inform-posts"
+  );
+  informPostsButton.href = "../main-admin.html";
+  informPostsButton.textContent = "Informe de Publicaciones";
+  return informPostsButton;
+};
+
+if (userAdmin === "true") {
+  formContent.appendChild(createInformPostsButton());
+}
+/************************************** */
 
 /**---------FUNCIONES---------- */
 
@@ -274,7 +293,6 @@ const loadPosts = async (serachTerm = "") => {
     //Añadir total de publicaciones en la UI
     const totalPublicaciones_p = document.createElement("p");
     totalPublicaciones_p.classList.add("totalPublicaciones_p");
-    totalPublicaciones_p.textContent = `Publicaciones hoy : ${total_posts_current_day.total_publicaciones}`;
     totalPublicaciones_p.textContent = `Publicaciones hoy : ${total_posts_current_day.total_publicaciones}`;
     postsContainer.appendChild(totalPublicaciones_p);
 
