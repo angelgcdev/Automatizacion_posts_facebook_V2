@@ -248,28 +248,24 @@ import { pool } from "../db.js";
 //   }
 // };
 
-// const totalP = async (req, res) => {
-//   try {
-//     const { id_usuario } = req.params;
-//     const { rows } = await pool.query(
-//       "SELECT COUNT(*) FROM reportes WHERE id_usuario= $1;",
-//       [id_usuario]
-//     );
+const totalCG = async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT COUNT(*) as total_compartidas_global FROM reportes;");
 
-//     if (rows.length === 0) {
-//       return res
-//         .status(400)
-//         .json({ message: "No se pudo obtener el resultado." });
-//     }
+    if (rows.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "No se pudo obtener el resultado." });
+    }
 
-//     return res.status(200).json(rows);
-//   } catch (error) {
-//     console.error("Error al obtener el total.");
-//     return res.status(500).json({
-//       message: "Se produjo un error al obtener el total.",
-//     });
-//   }
-// };
+    return res.status(200).json(rows[0]);
+  } catch (error) {
+    console.error("Error al obtener el total.");
+    return res.status(500).json({
+      message: "Se produjo un error al obtener el total.",
+    });
+  }
+};
 
 // const postsReportDay = async (req, res) => {
 //   try {
@@ -391,4 +387,4 @@ const adminPostsReportCurrentDay = async (req, res) => {
 //   }
 // };
 
-export { adminPostsReportCurrentDay };
+export { totalCG, adminPostsReportCurrentDay };

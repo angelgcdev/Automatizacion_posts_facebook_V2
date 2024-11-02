@@ -1,7 +1,10 @@
 // src/routes/admin.routes.js
 import { Router } from "express";
 
-import { adminPostsReportCurrentDay } from "../controllers/admin.controllers.js";
+import {
+  totalCG,
+  adminPostsReportCurrentDay,
+} from "../controllers/admin.controllers.js";
 // import { verifyToken } from "../middlewares/users.middlewares.js";
 
 const adminRouter = Router();
@@ -24,7 +27,7 @@ const adminRouter = Router();
 
 // adminRouter.get("/admin/postsReport/:id_usuario", postsReport);
 
-// adminRouter.get("/admin/totalP/:id_usuario/", totalP);
+adminRouter.get("/admin/totalCG", totalCG);
 
 // adminRouter.get("/admin/postsReportDay/:id_usuario", postsReportDay);
 

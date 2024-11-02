@@ -9,10 +9,12 @@ const userId = localStorage.getItem("userId");
 const userEmail = localStorage.getItem("userEmail");
 const userAdmin = localStorage.getItem("userAdmin");
 
-if (!token) {
-  //Si no hay token, redirigir a la pagina de login
-  window.location.href = "../login.html";
-}
+//Validacion del usuario
+document.addEventListener("DOMContentLoaded", () => {
+  if (!token) {
+    logoutUser();
+  }
+});
 
 /**---------VARIABLES---------- */
 

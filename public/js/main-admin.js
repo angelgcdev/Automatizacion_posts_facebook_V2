@@ -1,3 +1,21 @@
+// public/js/main-admin.js
+
+import { logoutUser } from "./utils/logoutUser.js";
+import { requestData } from "./utils/requestData.js";
+
+// Datos del usuario
+const token = localStorage.getItem("token");
+const userId = localStorage.getItem("userId");
+const userEmail = localStorage.getItem("userEmail");
+const userAdmin = localStorage.getItem("userAdmin");
+
+//Validacion del usuario
+document.addEventListener("DOMContentLoaded", () => {
+  if (!token || userAdmin === "false") {
+    logoutUser();
+  }
+});
+
 // Datos de ejemplo
 const posts = [
   {
@@ -22,7 +40,7 @@ const posts = [
   },
 ];
 
-const totalShares = 225;
+// const totalShares = 225;
 const sharesByDay = [
   { date: "2023-05-01", shares: 150 },
   { date: "2023-05-02", shares: 75 },
@@ -38,12 +56,16 @@ const publicacionesBtn = document.getElementById("publicacionesBtn");
 const registroBtn = document.getElementById("registroBtn");
 
 // Funciones para renderizar contenido
-function renderResumen() {
+const renderResumen = async () => {
+  const totalCG = await requestData("/admin/totalCG");
+
   content.innerHTML = `
         <div class="informe__grid">
             <div class="informe__card">
                 <h2 class="informe__card-title">Total de Compartidas</h2>
-                <p class="informe__big-number">${totalShares}</p>
+                <p class="informe__big-number">${
+                  totalCG.total_compartidas_global
+                }</p>
             </div>
 
             <div class="informe__card">
@@ -77,7 +99,7 @@ function renderResumen() {
             </div>
         </div>
     `;
-}
+};
 
 function renderPublicaciones() {
   content.innerHTML = `
