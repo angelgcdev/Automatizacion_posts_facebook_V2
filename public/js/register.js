@@ -3,11 +3,31 @@ import { togglePasswordVisibility } from "./utils/togglePasswordVisibility.js";
 import { requestData } from "./utils/requestData.js";
 
 // public/js/register.js
+
+//Obtener cargos
+const ObtenerCargos = async () => {
+  try {
+    const cargos = await requestData("/users/cargos");
+
+    const cargoSelect = document.getElementById("registerCargo");
+
+    cargos.forEach((cargo) => {
+      const option = document.createElement("option");
+      option.value = cargo.id_cargo;
+      option.textContent = cargo.nombre;
+      cargoSelect.appendChild(option);
+    });
+  } catch (error) {}
+};
+
 document
   .getElementById("registerForm")
   .addEventListener("submit", async (e) => {
     e.preventDefault();
-
+    const nombres = document.getElementById("registerNames").value.trim();
+    const apellidos = document.getElementById("registerLastNames").value.trim();
+    const id_cargo = document.getElementById("registerCargo").value.trim();
+    const oficina = document.getElementById("registerOffice").value.trim();
     const email = document.getElementById("registerEmail").value.trim();
     const password = document.getElementById("registerPassword").value.trim();
 
@@ -22,10 +42,17 @@ document
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          nombres,
+          apellidos,
+          id_cargo,
+          oficina,
+          email,
+          password,
+        }),
       };
 
-      const response = await requestData("/users", options);
+      const response = await requestData("/users/createUser", options);
 
       if (response) {
         showNotification("Registro exitoso. Ahora puedes iniciar sesión.");
@@ -45,6 +72,9 @@ document
 
 /**---------LISTENERS---------- */
 const cargarEventListeners = () => {
+  //llenar el select cuando se carga la pagina
+  document.addEventListener("DOMContentLoaded", ObtenerCargos);
+
   //Toggle button para contraseñas
   document
     .querySelector(".button__toggle-icon")

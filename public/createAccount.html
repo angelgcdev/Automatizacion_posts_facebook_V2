@@ -14,7 +14,11 @@
         <div class="overlay"></div>
         <div class="form-content">
           <a href="./login.html" class="link__login">
-            <img class="link__login__icon" src="./assets/icons/arrow_back.svg" alt="icon de flecha">
+            <img
+              class="link__login__icon"
+              src="./assets/icons/arrow_back.svg"
+              alt="icon de flecha"
+            />
           </a>
 
           <div class="form-logo">
@@ -26,6 +30,45 @@
           </div>
 
           <form class="form" id="registerForm">
+            <div class="form__group">
+              <input
+                class="form__input"
+                type="text"
+                id="registerNames"
+                name="names"
+                placeholder="Nombres"
+                required
+              />
+            </div>
+
+            <div class="form__group">
+              <input
+                class="form__input"
+                type="text"
+                id="registerLastNames"
+                name="LastNames"
+                placeholder="Apellidos"
+                required
+              />
+            </div>
+
+            <div class="form__group">
+              <select name="cargo" id="registerCargo">
+                <option value="">Selecciona un cargo</option>
+              </select>
+            </div>
+
+            <div class="form__group">
+              <input
+                class="form__input"
+                type="text"
+                id="registerOffice"
+                name="office"
+                placeholder="Oficina"
+                required
+              />
+            </div>
+
             <div class="form__group">
               <input
                 class="form__input"

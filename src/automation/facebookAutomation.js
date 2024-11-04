@@ -32,9 +32,9 @@ const fillField = async (page, selector, value) => {
 //Funcion para iniciar sesion en Facebook
 const loginToFacebook = async (page, { email, password }) => {
   await page.goto(URL);
-  await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+  // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
   await fillField(page, "#email", email);
-  await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+  // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
   await fillField(page, "#pass", password);
   await clickOnSelector(page, "button[name='login']");
   await page.waitForNavigation({ timeout: 30000 });
@@ -59,7 +59,7 @@ const automatizarFacebook = async (post) => {
     await page.goto(post.url);
     await page.waitForLoadState("networkidle");
 
-    await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+    // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
     //Verificar si ya se dio me gusta
     const likeButtonSelector = 'div[aria-label="Me gusta"]';
@@ -80,7 +80,7 @@ const automatizarFacebook = async (post) => {
       }, likeButtonSelector);
 
       if (!isLiked) {
-        await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+        // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
         await clickOnSelector(page, likeButtonSelector);
         await page.waitForLoadState("networkidle");
       } else {
@@ -122,7 +122,7 @@ const automatizarFacebook = async (post) => {
       }
 
       try {
-        await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+        // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
         //Click en el boton 'Grupo'
         await clickOnSelector(
           page,
@@ -138,14 +138,14 @@ const automatizarFacebook = async (post) => {
 
       //-----------------Opcion auxiliar-------------------------------
       try {
-        await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+        // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
         await clickOnSelector(
           page,
           'div[role="button"] span:has-text("Más opciones")'
         );
         await page.waitForLoadState("networkidle");
 
-        await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+        // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
         await clickOnSelector(
           page,
           'div[role="button"] span:has-text("Compartir en un grupo")'
@@ -155,7 +155,7 @@ const automatizarFacebook = async (post) => {
         console.error(error);
       }
 
-      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+      // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
       await page.waitForSelector('div[role="list"]', { timeout: 10000 });
 
       const titleGroupPost = await page.locator(
@@ -172,7 +172,7 @@ const automatizarFacebook = async (post) => {
       );
       await page.waitForLoadState("networkidle");
 
-      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+      // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
       await fillField(
         page,
         'div[aria-label="Crea una publicación pública..."]',
@@ -180,11 +180,11 @@ const automatizarFacebook = async (post) => {
       );
       await page.keyboard.press("Space");
 
-      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+      // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
       await clickOnSelector(page, 'div[aria-label="Publicar"]');
       await page.waitForLoadState("networkidle");
 
-      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+      // await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
       //Actualizar el reporte de publicaciones en la base de datos
       const currentDate = new Date().toLocaleString("es-ES", {
@@ -193,12 +193,13 @@ const automatizarFacebook = async (post) => {
 
       try {
         const { rows } = await pool.query(
-          "INSERT INTO reportes (id_publicacion, id_usuario, email, url, mensaje, nombre_grupo, fecha_publicacion) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+          "INSERT INTO reportes (id_publicacion, id_usuario, email, url, url_img, mensaje, nombre_grupo, fecha_publicacion) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
           [
             post.id_publicacion,
             post.id_usuario,
             post.email,
             post.url,
+            post.url_img,
             post.mensaje,
             nombre_grupo,
             currentDate,

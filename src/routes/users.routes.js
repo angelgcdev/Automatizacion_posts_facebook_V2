@@ -2,6 +2,7 @@
 import { Router } from "express";
 import {
   getUsers,
+  cargos,
   createUser,
   loginUser,
   addPost,
@@ -24,7 +25,9 @@ const router = Router();
 
 router.get("/users", getUsers);
 
-router.post("/users", createUser);
+router.get("/users/cargos", cargos);
+
+router.post("/users/createUser", createUser);
 
 router.post("/login", loginUser);
 

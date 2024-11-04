@@ -40,14 +40,8 @@ const posts = [
   },
 ];
 
-// const totalShares = 225;
-const sharesByDay = [
-  { date: "2023-05-01", shares: 150 },
-  { date: "2023-05-02", shares: 75 },
-];
-
-const facebookAccounts = ["cuenta1@facebook.com", "cuenta2@facebook.com"];
-const appUsers = ["usuario1@app.com", "usuario2@app.com"];
+// const facebookAccounts = ["cuenta1@facebook.com", "cuenta2@facebook.com"];
+// const appUsers = ["usuario1@app.com", "usuario2@app.com"];
 
 // Elementos del DOM
 const content = document.getElementById("content");
@@ -58,6 +52,9 @@ const registroBtn = document.getElementById("registroBtn");
 // Funciones para renderizar contenido
 const renderResumen = async () => {
   const totalCG = await requestData("/admin/totalCG");
+  const sharesByDay = await requestData("/admin/sharesByDay");
+  const facebookAccounts = await requestData("/admin/facebookAccounts");
+  const appUsers = await requestData("/admin/appUsers");
 
   content.innerHTML = `
         <div class="informe__grid">
@@ -73,8 +70,13 @@ const renderResumen = async () => {
                 <ul class="informe__list">
                     ${sharesByDay
                       .map(
-                        (day) =>
-                          `<li class="informe__item">${day.date}: <span>${day.shares}</span></li>`
+                        (day) => `
+                        <li class="informe__item">
+                        ${new Date(day.dia).toLocaleDateString(
+                          "es-ES"
+                        )}: <span>${day.total_publicaciones}</span>
+                        </li>
+                        `
                       )
                       .join("")}
                 </ul>
@@ -86,14 +88,17 @@ const renderResumen = async () => {
                 <ul class="informe__list">
                     ${facebookAccounts
                       .map(
-                        (account) => `<li class="informe__item">${account}</li>`
+                        (account) =>
+                          `<li class="informe__item">${account.email}</li>`
                       )
                       .join("")}
                 </ul>
                 <h3 class="informe__card-subtitle">Usuarios de la aplicación:</h3>
                 <ul class="informe__list">
                     ${appUsers
-                      .map((user) => `<li class="informe__item">${user}</li>`)
+                      .map(
+                        (user) => `<li class="informe__item">${user.email}</li>`
+                      )
                       .join("")}
                 </ul>
             </div>
@@ -101,17 +106,18 @@ const renderResumen = async () => {
     `;
 };
 
-function renderPublicaciones() {
+const renderPublicaciones = async () => {
+  const posts = await requestData("/admin/postsInfo");
   content.innerHTML = `
         <div class="informe__grid">
             ${posts
               .map(
-                (post) => `
+                (info) => `
                 <div class="informe__card informe__post">
-                    <img src="${post.image}" alt="Post image" class="informe__post-image">
+                    <img src="${info.url_img}" alt="Post image" class="informe__post-image">
 
                     <div class="informe__post-content">
-                        <p class="informe__post-title">${post.message}</p>
+                        <p class="informe__post-title">${info.tituloPost}</p>
                         <div class="informe__post-stats">
                             <div class="informe__post-details">
                               <svg 
@@ -128,7 +134,7 @@ function renderPublicaciones() {
                               <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
                               <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                             </svg>
-                              ${post.shares}
+                              ${info.totalShares}
                             </div>
 
                             <div class="informe__post-details">
@@ -144,7 +150,7 @@ function renderPublicaciones() {
                                   d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3">
                                 </path>
                               </svg>
-                              ${post.reactions}
+                              ${info.totalLikes}
                             </div>
                         </div>
                     </div>
@@ -154,9 +160,11 @@ function renderPublicaciones() {
               .join("")}
         </div>
     `;
-}
+};
 
-function renderRegistro() {
+const renderRegistro = async () => {
+  const reports = await requestData(`/admin/postsReport`);
+
   content.innerHTML = `
         <table class="informe__table">
             <thead>
@@ -169,15 +177,19 @@ function renderRegistro() {
                 </tr>
             </thead>
             <tbody>
-                ${posts
+                ${reports
                   .map(
                     (post) => `
                     <tr>
-                        <td>${facebookAccounts[0]}</td>
-                        <td>${post.message}</td>
-                        <td><a href="${post.url}" target="_blank">${post.url}</a></td>
-                        <td>${post.groupName}</td>
-                        <td>${post.date}</td>
+                        <td>${post.email}</td>
+                        <td>${post.mensaje}</td>
+                        <td><a href="${
+                          post.url
+                        }" target="_blank">Ver publicación</a></td>
+                        <td>${post.nombre_grupo}</td>
+                        <td>${new Date(
+                          post.fecha_publicacion
+                        ).toLocaleString()}</td>
                     </tr>
                 `
                   )
@@ -185,9 +197,10 @@ function renderRegistro() {
             </tbody>
         </table>
     `;
-}
+};
 
 // Event listeners
+
 resumenBtn.addEventListener("click", () => {
   setActiveButton(resumenBtn);
   renderResumen();

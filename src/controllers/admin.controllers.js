@@ -1,5 +1,8 @@
 // src/controllers/users.controllers.js
+
 import { pool } from "../db.js";
+import { postInformation } from "../automation/postInformation.js";
+
 // import bcrypt from "bcrypt";
 // import jwt from "jsonwebtoken";
 // import {
@@ -227,30 +230,11 @@ import { pool } from "../db.js";
 //   }
 // };
 
-// const postsReport = async (req, res) => {
-//   try {
-//     const { id_usuario } = req.params;
-//     const { rows } = await pool.query(
-//       "SELECT * FROM reportes WHERE id_usuario = $1;",
-//       [id_usuario]
-//     );
-
-//     if (rows.length === 0) {
-//       return res.status(400).json({ message: "publicaciones no encontradas" });
-//     }
-
-//     return res.status(200).json(rows);
-//   } catch (error) {
-//     console.error("Error al obtener el reporte de publicaciones.");
-//     return res.status(500).json({
-//       message: "Se produjo un error al obtener el reporte de publicaciones.",
-//     });
-//   }
-// };
-
 const totalCG = async (req, res) => {
   try {
-    const { rows } = await pool.query("SELECT COUNT(*) as total_compartidas_global FROM reportes;");
+    const { rows } = await pool.query(
+      "SELECT COUNT(*) as total_compartidas_global FROM reportes;"
+    );
 
     if (rows.length === 0) {
       return res
@@ -267,27 +251,27 @@ const totalCG = async (req, res) => {
   }
 };
 
-// const postsReportDay = async (req, res) => {
-//   try {
-//     const { id_usuario } = req.params;
-//     const { rows } = await pool.query(
-//       "SELECT DATE_TRUNC('day', fecha_publicacion) AS dia, COUNT(*) AS total_publicaciones FROM reportes WHERE id_usuario = $1 GROUP BY DATE_TRUNC('day', fecha_publicacion) ORDER BY dia DESC;",
-//       [id_usuario]
-//     );
+const sharesByDay = async (req, res) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT DATE_TRUNC('day', fecha_publicacion) AS dia, COUNT(*) AS total_publicaciones 
+      FROM reportes 
+      GROUP BY DATE_TRUNC('day', fecha_publicacion) 
+      ORDER BY dia DESC;`);
 
-//     if (rows.length === 0) {
-//       return res.status(400).json({ message: "reporte diario no encontrado" });
-//     }
+    if (rows.length === 0) {
+      return res.status(400).json({ message: "reporte diario no encontrado" });
+    }
 
-//     return res.status(200).json(rows);
-//   } catch (error) {
-//     console.error("Error al obtener el reporte diario de publicaciones.");
-//     return res.status(500).json({
-//       message:
-//         "Se produjo un error al obtener el reporte diario de publicaciones.",
-//     });
-//   }
-// };
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error al obtener el reporte diario de publicaciones.");
+    return res.status(500).json({
+      message:
+        "Se produjo un error al obtener el reporte diario de publicaciones.",
+    });
+  }
+};
 
 const adminPostsReportCurrentDay = async (req, res) => {
   try {
@@ -309,6 +293,97 @@ const adminPostsReportCurrentDay = async (req, res) => {
     return res.status(500).json({
       message:
         "Se produjo un error al obtener el total de publicaciones diarias.",
+    });
+  }
+};
+
+const facebookAccounts = async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT DISTINCT email FROM reportes;");
+
+    if (rows === 0) {
+      return res.status(400).json({ message: "cuentas no encontradas." });
+    }
+
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error al obtener el reporte de publicaciones.");
+    return res.status(500).json({
+      message: "Se produjo un error al obtener las cuentas de facebook",
+    });
+  }
+};
+
+const appUsers = async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT email FROM usuarios;");
+
+    if (rows === 0) {
+      return res.status(400).json({ message: "usuarios no encontrados." });
+    }
+
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error al obtener los usuarios de la aplicación.");
+    return res.status(500).json({
+      message: "Se produjo un error al obtener los usuarios de la aplicación.",
+    });
+  }
+};
+
+const postsReport = async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT * FROM reportes;");
+
+    if (rows.length === 0) {
+      return res.status(400).json({ message: "publicaciones no encontradas" });
+    }
+
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error al obtener el reporte de publicaciones.");
+    return res.status(500).json({
+      message: "Se produjo un error al obtener el reporte de publicaciones.",
+    });
+  }
+};
+
+const postsInfo = async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      "SELECT DISTINCT url, url_img FROM reportes;"
+    );
+
+    // Maneja el caso de no encontrar URLs
+    if (rows.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron ls URLs de las  publicaciones." });
+    }
+
+    const publicacionesInfo = [];
+
+    for (const row of rows) {
+      try {
+        const info = await postInformation(row.url);
+        info.url_img = row.url_img;
+        publicacionesInfo.push(info);
+      } catch (error) {
+        console.log(
+          `Error al obtener información para la URL: ${row.url}`,
+          error
+        );
+      }
+    }
+
+    return res.status(200).json(publicacionesInfo);
+  } catch (error) {
+    console.error(
+      "Error al obtener las URLs de las imagenes de las publiciones",
+      error
+    );
+    return res.status(500).json({
+      message: "Se produjo un error al obtener las URLs de la publicaciones.",
     });
   }
 };
@@ -387,4 +462,12 @@ const adminPostsReportCurrentDay = async (req, res) => {
 //   }
 // };
 
-export { totalCG, adminPostsReportCurrentDay };
+export {
+  totalCG,
+  sharesByDay,
+  adminPostsReportCurrentDay,
+  facebookAccounts,
+  appUsers,
+  postsReport,
+  postsInfo,
+};

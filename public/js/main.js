@@ -317,7 +317,7 @@ const loadPosts = async (serachTerm = "") => {
           Correo Electrónico: <span class = "article__posts__text-span">${post.email}</span>
         </p>
         <figcaption class = "article__post-img__container">
-          <img class="article__post-img" src="${post.urlimg}">
+          <img class="article__post-img" src="${post.url_img}">
           <caption class = "article__post-img__text">Imagen de la publicación</caption>
         </figcaption>
 

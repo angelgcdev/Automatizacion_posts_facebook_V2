@@ -13,7 +13,7 @@ const clickOnSelector = async (page, selector) => {
 };
 
 //Función principal para extraer la url del post
-const postImg = async (post) => {
+const postImg = async (url) => {
   let browser;
   try {
     browser = await chromium.launch({
@@ -24,19 +24,23 @@ const postImg = async (post) => {
     const page = await context.newPage();
 
     //Navegar al enlace del post de una página
-    await page.goto(post.url);
+    await page.goto(url);
 
     await clickOnSelector(page, "div[aria-label='Cerrar']");
 
-    const imageElement = await page.$(selectorImg);
+    //extraer la url de la imagen
+    const imageURL = await page.$eval(selectorImg, (el) => el.src);
+    return imageURL;
 
-    if (imageElement) {
-      const imageUrl = await imageElement.getAttribute("src");
-      return imageUrl;
-    } else {
-      console.log("No se encontró la imagen con el selector proporcionado.");
-      return null;
-    }
+    // const imageElement = await page.$(selectorImg);
+
+    // if (imageElement) {
+    //   const imageUrl = await imageElement.getAttribute("src");
+    //   return imageUrl;
+    // } else {
+    //   console.log("No se encontró la imagen con el selector proporcionado.");
+    //   return null;
+    // }
   } catch (error) {
     console.log("Error al obtener la URL de la imagen:", error);
   } finally {

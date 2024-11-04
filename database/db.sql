@@ -170,10 +170,27 @@
 CREATE DATABASE facebook_db WITH ENCODING 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8' TEMPLATE template0;
 --;
 --Conectarse a la base de datos
-\c facebook_db;
+\ c facebook_db;
+--Tabla de cargos
+CREATE TABLE cargos(
+  id_cargo SERIAL PRIMARY KEY,
+  nombre VARCHAR(255) NOT NULL UNIQUE
+);
+--
+INSERT INTO cargos (nombre)
+VALUES ('Técnico'),
+  ('Pasante'),
+  ('Coordinador'),
+  ('Posgraduante'),
+  ('Personal de apoyo');
+--
 --Tabla usuarios;
 CREATE TABLE usuarios(
   id_usuario SERIAL PRIMARY KEY,
+  nombres VARCHAR(255) NOT NULL,
+  apellidos VARCHAR(255) NOT NULL,
+  id_cargo INT REFERENCES cargos(id_cargo),
+  oficina VARCHAR(255),
   email VARCHAR(512) NOT NULL UNIQUE,
   password VARCHAR(512) NOT NULL,
   is_admin BOOLEAN DEFAULT FALSE
@@ -185,8 +202,8 @@ CREATE TABLE publicaciones (
   id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
   email VARCHAR(512) NOT NULL,
   password VARCHAR(512) NOT NULL,
-  url TEXT NOT NULL,
-  urlImg VARCHAR(2048),
+  url VARCHAR(2048),
+  url_img VARCHAR(2048),
   mensaje TEXT NOT NULL,
   numero_de_posts INT DEFAULT 1,
   intervalo_tiempo INT DEFAULT 0
@@ -200,6 +217,7 @@ CREATE TABLE reportes (
     id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
     email VARCHAR(512) NOT NULL,
     url VARCHAR(2048),
+    url_img VARCHAR(2048),
     mensaje TEXT NOT NULL,
     nombre_grupo TEXT,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP

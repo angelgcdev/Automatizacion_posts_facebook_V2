@@ -17,16 +17,29 @@ const getUsers = async (req, res) => {
   res.json(rows);
 };
 
+const cargos = async (req, res) => {
+  const { rows } = await pool.query("SELECT * FROM cargos;");
+  return res.status(200).json(rows);
+};
+
 const createUser = async (req, res) => {
   try {
-    const { email, password, is_admin = false } = req.body;
+    const {
+      nombres,
+      apellidos,
+      id_cargo,
+      oficina,
+      email,
+      password,
+      is_admin = false,
+    } = req.body;
 
     //Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const { rows } = await pool.query(
-      "INSERT INTO usuarios (email, password, is_admin) VALUES ($1, $2, $3) RETURNING *",
-      [email, hashedPassword, is_admin]
+      "INSERT INTO usuarios (nombres, apellidos, id_cargo, oficina, email, password, is_admin) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      [nombres, apellidos, id_cargo, oficina, email, hashedPassword, is_admin]
     );
     return res.json(rows[0]);
   } catch (error) {
@@ -88,17 +101,17 @@ const addPost = async (req, res) => {
       intervalo_tiempo,
     } = req.body;
 
-    const urlImg = await postImg({ url });
-    console.log("URL de imagen: ", urlImg);
+    const url_img = await postImg(url);
+    console.log("URL de imagen: ", url_img);
 
     const { rows } = await pool.query(
-      "INSERT INTO publicaciones (id_usuario, email, password, url, urlImg, mensaje, numero_de_posts, intervalo_tiempo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      "INSERT INTO publicaciones (id_usuario, email, password, url, url_img, mensaje, numero_de_posts, intervalo_tiempo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
         id_usuario,
         email,
         password,
         url,
-        urlImg,
+        url_img,
         mensaje,
         numero_de_posts,
         intervalo_tiempo,
@@ -160,16 +173,16 @@ const updatePost = async (req, res) => {
     const { email, password, url, mensaje, numero_de_posts, intervalo_tiempo } =
       req.body;
 
-    const urlImg = await postImg({ url });
-    console.log("URL de imagen: ", urlImg);
+    const url_img = await postImg(url);
+    console.log("URL de imagen: ", url_img);
 
     const { rows } = await pool.query(
-      "UPDATE publicaciones SET email = $1, password = $2, url = $3, urlImg = $4, mensaje = $5, numero_de_posts = $6, intervalo_tiempo = $7 WHERE id_publicacion= $8 RETURNING *",
+      "UPDATE publicaciones SET email = $1, password = $2, url = $3, url_img = $4, mensaje = $5, numero_de_posts = $6, intervalo_tiempo = $7 WHERE id_publicacion= $8 RETURNING *",
       [
         email,
         password,
         url,
-        urlImg,
+        url_img,
         mensaje,
         numero_de_posts,
         intervalo_tiempo,
@@ -395,6 +408,7 @@ const cancelPosts = async (req, res) => {
 
 export {
   getUsers,
+  cargos,
   createUser,
   loginUser,
   addPost,

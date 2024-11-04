@@ -186,20 +186,25 @@ body {
 }
 
 .informe__post-image {
-  width: 64px;
-  height: 64px;
+  width: 25rem;
+  height: 25rem;
   object-fit: cover;
   border-radius: 4px;
 }
 
 .informe__post-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
   flex: 1;
 }
 
 .informe__post-title {
-  font-size: var(--normal);
-  font-weight: 600;
+  font-size: var(--smaller);
+  font-weight: 500;
   letter-spacing: 0.05rem;
+  line-height: 1.5;
 }
 
 .informe__post-stats {
