@@ -316,7 +316,17 @@ const facebookAccounts = async (req, res) => {
 
 const appUsers = async (req, res) => {
   try {
-    const { rows } = await pool.query("SELECT email FROM usuarios;");
+    const { rows } = await pool.query(`
+    SELECT 
+      u.nombres,
+      u.apellidos,
+      u.oficina,
+      u.email,
+      c.nombre AS cargo
+    FROM 
+      usuarios u
+    JOIN 
+      cargos c ON u.id_cargo = c.id_cargo;`);
 
     if (rows === 0) {
       return res.status(400).json({ message: "usuarios no encontrados." });

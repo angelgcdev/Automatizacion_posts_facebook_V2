@@ -2,6 +2,8 @@
 
 import { logoutUser } from "./utils/logoutUser.js";
 import { requestData } from "./utils/requestData.js";
+import { showLoading } from "./utils/showLoading.js";
+import { hideLoading } from "./utils/hideLoading.js";
 
 // Datos del usuario
 const token = localStorage.getItem("token");
@@ -17,33 +19,36 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Datos de ejemplo
-const posts = [
-  {
-    id: 1,
-    image: "https://via.placeholder.com/100",
-    shares: 150,
-    reactions: 500,
-    message: "¡Gran oferta!",
-    url: "https://facebook.com/post1",
-    groupName: "Ventas",
-    date: "2023-05-01",
-  },
-  {
-    id: 2,
-    image: "https://via.placeholder.com/100",
-    shares: 75,
-    reactions: 300,
-    message: "Nuevo producto",
-    url: "https://facebook.com/post2",
-    groupName: "Novedades",
-    date: "2023-05-02",
-  },
-];
+// const posts = [
+//   {
+//     id: 1,
+//     image: "https://via.placeholder.com/100",
+//     shares: 150,
+//     reactions: 500,
+//     message: "¡Gran oferta!",
+//     url: "https://facebook.com/post1",
+//     groupName: "Ventas",
+//     date: "2023-05-01",
+//   },
+//   {
+//     id: 2,
+//     image: "https://via.placeholder.com/100",
+//     shares: 75,
+//     reactions: 300,
+//     message: "Nuevo producto",
+//     url: "https://facebook.com/post2",
+//     groupName: "Novedades",
+//     date: "2023-05-02",
+//   },
+// ];
 
 // const facebookAccounts = ["cuenta1@facebook.com", "cuenta2@facebook.com"];
 // const appUsers = ["usuario1@app.com", "usuario2@app.com"];
 
+let posts = [];
+
 // Elementos del DOM
+
 const content = document.getElementById("content");
 const resumenBtn = document.getElementById("resumenBtn");
 const publicacionesBtn = document.getElementById("publicacionesBtn");
@@ -83,8 +88,7 @@ const renderResumen = async () => {
             </div>
             
             <div class="informe__card">
-                <h2 class="informe__card-title">Cuentas y Usuarios</h2>
-                <h3 class="informe__card-subtitle">Cuentas de Facebook:</h3>
+                <h2 class="informe__card-title">Cuentas de Facebook</h2>
                 <ul class="informe__list">
                     ${facebookAccounts
                       .map(
@@ -93,22 +97,49 @@ const renderResumen = async () => {
                       )
                       .join("")}
                 </ul>
-                <h3 class="informe__card-subtitle">Usuarios de la aplicación:</h3>
-                <ul class="informe__list">
-                    ${appUsers
-                      .map(
-                        (user) => `<li class="informe__item">${user.email}</li>`
-                      )
-                      .join("")}
-                </ul>
             </div>
         </div>
+
+        <div>
+                <h2 class="informe__card-title">Usuarios de la aplicación</h2>
+                <table class="informe__table">
+                  <thead>
+                    <tr>
+                      <th>Nombres</th>
+                      <th>Apellidos</th>
+                      <th>Cargo</th>
+                      <th>Oficina</th>
+                      <th>Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${appUsers
+                      .map(
+                        (post) => `
+                    <tr>
+                      <td>${post.nombres}</td>
+                      <td>${post.apellidos}</td>
+                      <td>${post.cargo}</td>
+                      <td>${post.oficina}</td>
+                      <td>
+                        <a href="${post.email}" target="_blank">
+                          ${post.email}
+                        </a>
+                      </td>
+                    </tr>
+                `
+                      )
+                      .join("")}
+            </tbody>
+        </table>
+            </div>
     `;
 };
 
-const renderPublicaciones = async () => {
-  const posts = await requestData("/admin/postsInfo");
-  content.innerHTML = `
+const renderPublicaciones = async (posts) => {
+  try {
+    // const posts = await requestData("/admin/postsInfo");
+    content.innerHTML = `
         <div class="informe__grid">
             ${posts
               .map(
@@ -160,6 +191,9 @@ const renderPublicaciones = async () => {
               .join("")}
         </div>
     `;
+  } catch (error) {
+    console.error("Error al cargar las publicaciones:", error);
+  }
 };
 
 const renderRegistro = async () => {
@@ -208,7 +242,7 @@ resumenBtn.addEventListener("click", () => {
 
 publicacionesBtn.addEventListener("click", () => {
   setActiveButton(publicacionesBtn);
-  renderPublicaciones();
+  renderPublicaciones(posts);
 });
 
 registroBtn.addEventListener("click", () => {
@@ -224,6 +258,19 @@ function setActiveButton(activeButton) {
   });
   activeButton.classList.add("informe__button--active");
 }
+
+const infoPublicaciones = async () => {
+  posts = await requestData("/admin/postsInfo");
+  return posts;
+};
+
+document.querySelector("#buttonUpdate").addEventListener("click", async () => {
+  const loadingContainer = showLoading("Cargando...");
+
+  await infoPublicaciones();
+
+  hideLoading(loadingContainer);
+});
 
 // Inicializar la página con el resumen
 renderResumen();
