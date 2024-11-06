@@ -60,7 +60,7 @@ const automatizarFacebook = async (post) => {
   try {
     //Lanzar el navegador
     browser = await chromium.launch({
-      headless: false,
+      headless: true,
       slowMo: 50,
     });
 

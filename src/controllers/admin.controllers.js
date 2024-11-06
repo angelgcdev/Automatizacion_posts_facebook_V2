@@ -318,15 +318,21 @@ const appUsers = async (req, res) => {
   try {
     const { rows } = await pool.query(`
     SELECT 
-      u.nombres,
-      u.apellidos,
-      u.oficina,
-      u.email,
-      c.nombre AS cargo
-    FROM 
-      usuarios u
-    JOIN 
-      cargos c ON u.id_cargo = c.id_cargo;`);
+	    u.nombres,
+ 	    u.apellidos,
+ 	    u.oficina,
+ 	    u.email,
+ 	    c.nombre AS cargo,
+      COALESCE(COUNT(r.id_reporte), 0) AS total_compartidas
+    FROM
+	    usuarios u
+    JOIN
+	    cargos c ON u.id_cargo = c.id_cargo
+    JOIN
+	    reportes r ON u.id_usuario = r.id_usuario
+    GROUP BY
+	    u.id_usuario, c.nombre;
+      `);
 
     if (rows === 0) {
       return res.status(400).json({ message: "usuarios no encontrados." });
@@ -360,9 +366,7 @@ const postsReport = async (req, res) => {
 
 const postsInfo = async (req, res) => {
   try {
-    const { rows } = await pool.query(
-      "SELECT DISTINCT url FROM reportes;"
-    );
+    const { rows } = await pool.query("SELECT DISTINCT url FROM reportes;");
 
     // Maneja el caso de no encontrar URLs
     if (rows.length === 0) {

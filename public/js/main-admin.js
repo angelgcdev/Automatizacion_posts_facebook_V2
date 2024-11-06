@@ -110,6 +110,7 @@ const renderResumen = async () => {
                       <th>Cargo</th>
                       <th>Oficina</th>
                       <th>Email</th>
+                      <th>Total Compartidas</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -126,6 +127,7 @@ const renderResumen = async () => {
                           ${post.email}
                         </a>
                       </td>
+                      <td>${post.total_compartidas}</td>
                     </tr>
                 `
                       )
@@ -136,12 +138,14 @@ const renderResumen = async () => {
     `;
 };
 
-const renderPublicaciones = async (posts) => {
+const renderPublicaciones = async () => {
   try {
-    // const posts = await requestData("/admin/postsInfo");
+    const posts = localStorage.getItem("posts_V1");
+    let parsedPosts = JSON.parse(posts);
+
     content.innerHTML = `
         <div class="informe__grid">
-            ${posts
+            ${parsedPosts
               .map(
                 (info) => `
                 <div class="informe__card informe__post">
@@ -265,6 +269,13 @@ function setActiveButton(activeButton) {
 
 const infoPublicaciones = async () => {
   posts = await requestData("/admin/postsInfo");
+
+  //Limpiamos el localStorage
+  localStorage.removeItem("posts_V1");
+
+  //Guardamos los datos de las publicaciones en localStorage
+  localStorage.setItem("posts_V1", JSON.stringify(posts));
+
   return posts;
 };
 
