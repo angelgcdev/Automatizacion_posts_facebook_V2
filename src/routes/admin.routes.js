@@ -48,6 +48,7 @@ adminRouter.get("/admin/appUsers", appUsers);
 adminRouter.get("/admin/postsReport", postsReport);
 
 adminRouter.get("/admin/postsInfo", postsInfo);
+
 // adminRouter.get("/admin/detailPost/:id_usuario/:email", detailPost);
 
 // adminRouter.get("/admin/totalD/:id_usuario/:email", totalD);

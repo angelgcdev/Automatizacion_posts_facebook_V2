@@ -225,7 +225,7 @@ body {
 
 .informe__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(40rem, 1fr));
   gap: 2rem;
 }
 
@@ -253,6 +253,7 @@ body {
 }
 
 .informe__post-title {
+  padding-bottom: 3.2rem;
   font-size: var(--smaller);
   font-weight: 500;
   letter-spacing: 0.05rem;

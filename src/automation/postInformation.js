@@ -1,7 +1,7 @@
 // automtion/postImg.js
 import { chromium } from "playwright";
 
-// const selectorImg = 'img[data-visualcompletion="media-vc-image"]';
+const selectorImg = "img.x85a59c.x193iq5w.x4fas0m.x19kjcj4";
 const selectorTitulo =
   "div.xyinxu5.x4uap5.x1g2khh7.xkhd6sd span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x1xmvt09.x1lliihq.x1s928wv.xhkezso.x1gmr53x.x1cpjm7i.x1fgarty.x1943h6x.xudqn12.x3x7a5m.x6prxxf.xvq8zen.xo1l8bm.xzsf02u";
 const selectorLikesImg =
@@ -34,8 +34,8 @@ const postInformation = async (url) => {
 
     await clickOnSelector(page, "div[aria-label='Cerrar']");
 
-    //extraer la url de la imagen
-    // const imageURL = await page.$eval(selectorImg, (el) => el.src);
+    // extraer la url de la imagen
+    const imageURL = await page.$eval(selectorImg, (el) => el.src);
 
     //Extraer el titulo de la publicación
     const tituloPost = await page.$eval(selectorTitulo, (el) => el.textContent);
@@ -52,9 +52,9 @@ const postInformation = async (url) => {
       (el) => el.textContent
     );
 
-    console.log({ tituloPost, totalLikes, totalShares });
+    console.log({ url, imageURL, tituloPost, totalLikes, totalShares });
 
-    return { tituloPost, totalLikes, totalShares };
+    return { url, imageURL, tituloPost, totalLikes, totalShares };
   } catch (error) {
     console.log("Error al obtener la URL de la imagen:", error);
   } finally {
@@ -66,7 +66,7 @@ const postInformation = async (url) => {
 };
 
 // const informationPost = await postInformation(
-//   "https://www.facebook.com/photo/?fbid=565439469196313&set=a.190427340030863"
+//   "https://www.facebook.com/photo/?fbid=122118680816554716&set=gm.449613821484264&idorvanity=393042770474703"
 // );
 // console.log(informationPost);
 

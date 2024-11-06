@@ -361,7 +361,7 @@ const postsReport = async (req, res) => {
 const postsInfo = async (req, res) => {
   try {
     const { rows } = await pool.query(
-      "SELECT DISTINCT url, url_img FROM reportes;"
+      "SELECT DISTINCT url FROM reportes;"
     );
 
     // Maneja el caso de no encontrar URLs
@@ -376,7 +376,6 @@ const postsInfo = async (req, res) => {
     for (const row of rows) {
       try {
         const info = await postInformation(row.url);
-        info.url_img = row.url_img;
         publicacionesInfo.push(info);
       } catch (error) {
         console.log(
