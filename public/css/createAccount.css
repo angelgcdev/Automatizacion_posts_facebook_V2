@@ -6,7 +6,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10rem;
+  gap: 1.6rem;
+  height: 100vh;
 }
 
 .link__login {
@@ -15,7 +16,15 @@
   padding-left: 3.2rem;
 }
 
-.link__login__icon{
+.form-logo {
+  margin: initial;
+}
+
+.form {
+  margin: initial;
+}
+
+.link__login__icon {
   width: 3rem;
 }
 
@@ -28,4 +37,17 @@
 .button--login:hover {
   background-color: var(--skyBlueDark);
   color: var(--gray);
+}
+
+.form__option {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+@media (min-width: 767px) {
+  .form-container {
+    margin: initial;
+    width: 100vw;
+    height: 100vh;
+  }
 }

@@ -13,6 +13,7 @@ const ObtenerCargos = async () => {
 
     cargos.forEach((cargo) => {
       const option = document.createElement("option");
+      option.classList.add("form__option");
       option.value = cargo.id_cargo;
       option.textContent = cargo.nombre;
       cargoSelect.appendChild(option);

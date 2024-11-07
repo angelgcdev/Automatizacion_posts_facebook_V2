@@ -18,36 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Datos de ejemplo
-// const posts = [
-//   {
-//     id: 1,
-//     image: "https://via.placeholder.com/100",
-//     shares: 150,
-//     reactions: 500,
-//     message: "¡Gran oferta!",
-//     url: "https://facebook.com/post1",
-//     groupName: "Ventas",
-//     date: "2023-05-01",
-//   },
-//   {
-//     id: 2,
-//     image: "https://via.placeholder.com/100",
-//     shares: 75,
-//     reactions: 300,
-//     message: "Nuevo producto",
-//     url: "https://facebook.com/post2",
-//     groupName: "Novedades",
-//     date: "2023-05-02",
-//   },
-// ];
-
-// const facebookAccounts = ["cuenta1@facebook.com", "cuenta2@facebook.com"];
-// const appUsers = ["usuario1@app.com", "usuario2@app.com"];
-
 let posts = [];
 
 // Elementos del DOM
+
+const searchInput = document.getElementById("search__posts-input");
 
 const content = document.getElementById("content");
 const resumenBtn = document.getElementById("resumenBtn");
@@ -56,6 +31,9 @@ const registroBtn = document.getElementById("registroBtn");
 
 // Funciones para renderizar contenido
 const renderResumen = async () => {
+  //Ocultar el buscador
+  searchInput.classList.add("hidden");
+
   const totalCG = await requestData("/admin/totalCG");
   const sharesByDay = await requestData("/admin/sharesByDay");
   const facebookAccounts = await requestData("/admin/facebookAccounts");
@@ -100,7 +78,7 @@ const renderResumen = async () => {
             </div>
         </div>
 
-        <div>
+        <div class="table__container">
                 <h2 class="informe__card-title">Usuarios de la aplicación</h2>
                 <table class="informe__table">
                   <thead>
@@ -138,14 +116,22 @@ const renderResumen = async () => {
     `;
 };
 
-const renderPublicaciones = async () => {
+const renderPublicaciones = async (searchTerm = "") => {
+  //Mostrar el buscador
+  searchInput.classList.remove("hidden");
+
   try {
     const posts = localStorage.getItem("posts_V1");
     let parsedPosts = JSON.parse(posts);
 
+    const filteredPosts = parsedPosts.filter((post) =>
+      post.tituloPost.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     content.innerHTML = `
+    <!-- Buscador de publicaciones -->
         <div class="informe__grid">
-            ${parsedPosts
+            ${filteredPosts
               .map(
                 (info) => `
                 <div class="informe__card informe__post">
@@ -205,6 +191,9 @@ const renderPublicaciones = async () => {
 };
 
 const renderRegistro = async () => {
+  //Mostrar el buscador
+  searchInput.classList.add("hidden");
+
   const reports = await requestData(`/admin/postsReport`);
 
   content.innerHTML = `
@@ -243,6 +232,13 @@ const renderRegistro = async () => {
 
 // Event listeners
 
+searchInput.addEventListener("input", () => {
+  const searchTerm = searchInput.value.trim();
+  console.log(searchTerm);
+
+  renderPublicaciones(searchTerm);
+});
+
 resumenBtn.addEventListener("click", () => {
   setActiveButton(resumenBtn);
   renderResumen();
@@ -250,7 +246,7 @@ resumenBtn.addEventListener("click", () => {
 
 publicacionesBtn.addEventListener("click", () => {
   setActiveButton(publicacionesBtn);
-  renderPublicaciones(posts);
+  renderPublicaciones();
 });
 
 registroBtn.addEventListener("click", () => {

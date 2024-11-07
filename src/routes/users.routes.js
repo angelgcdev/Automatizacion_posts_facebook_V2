@@ -1,6 +1,7 @@
 // src/routes/users.routes.js
 import { Router } from "express";
 import {
+  infoUser,
   getUsers,
   cargos,
   createUser,
@@ -22,6 +23,8 @@ import {
 // import { verifyToken } from "../middlewares/users.middlewares.js";
 
 const router = Router();
+
+router.get("/users/infoUser/:id_usuario", infoUser);
 
 router.get("/users", getUsers);
 

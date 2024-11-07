@@ -46,10 +46,25 @@ const editForm = document.querySelector("#editForm");
 const formSesion = document.querySelector(".form-sesion");
 
 //Insertar el email del usuario que ha iniciado sesion
-const emailSesion = document.createElement("p");
-emailSesion.classList.add("emailSesion");
-emailSesion.textContent = userEmail;
-formSesion.appendChild(emailSesion);
+const userSession = async () => {
+  const infoUser = await requestData(`/users/infoUser/${userId}`);
+
+  const sesionContainer = document.createElement("div");
+  sesionContainer.classList.add("sesion__container");
+
+  const emailSesion = document.createElement("p");
+  emailSesion.classList.add("emailSesion");
+  emailSesion.textContent = userEmail;
+
+  const nameSesion = document.createElement("p");
+  nameSesion.classList.add("emailSesion");
+  nameSesion.textContent = infoUser[0].nombres;
+
+  sesionContainer.appendChild(nameSesion);
+  sesionContainer.appendChild(emailSesion);
+
+  formSesion.appendChild(sesionContainer);
+};
 
 /************************************** */
 /**Boton solo para el administrador */
@@ -591,6 +606,8 @@ const deleteReport = async () => {
 /**---------LISTENERS---------- */
 
 const cargarEventListeners = () => {
+  document.addEventListener("DOMContentLoaded", userSession);
+
   searchInput.addEventListener("input", () => {
     const serachTerm = searchInput.value.trim();
     console.log(serachTerm);

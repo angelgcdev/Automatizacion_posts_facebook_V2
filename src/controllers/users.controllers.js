@@ -12,6 +12,16 @@ import { postImg } from "../automation/postImg.js";
 const saltRounds = 10;
 let isCanceled = false;
 
+const infoUser = async (req, res) => {
+  const { id_usuario } = req.params;
+
+  const { rows } = await pool.query(
+    " SELECT * FROM usuarios WHERE id_usuario=$1",
+    [id_usuario]
+  );
+  res.status(200).json(rows);
+};
+
 const getUsers = async (req, res) => {
   const { rows } = await pool.query("SELECT * FROM usuarios;");
   res.json(rows);
@@ -407,6 +417,7 @@ const cancelPosts = async (req, res) => {
 };
 
 export {
+  infoUser,
   getUsers,
   cargos,
   createUser,

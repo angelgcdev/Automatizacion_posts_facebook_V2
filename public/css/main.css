@@ -119,7 +119,7 @@ a {
   position: relative;
   width: 100%;
   height: 90%;
-  background-image: url(../background.jpeg);
+  background-image: url(../background.jpg);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -161,7 +161,7 @@ a {
 }
 
 .emailSesion {
-  padding: 1rem;
+  /* padding: 1rem; */
   color: var(--gray);
   letter-spacing: 0.1rem;
   border-radius: 1rem;
@@ -311,8 +311,7 @@ a {
 }
 
 .button--logout {
-  border-radius: 1rem;
-  background-color: hsl(235.38deg 70.33% 60.83%);
+  background-color: var(--blue);
   color: var(--white);
 }
 
@@ -338,14 +337,15 @@ a {
 
 .button--share {
   width: 15rem;
-  border-radius: 1rem;
+  /* border-radius: 1rem; */
   color: var(--white);
   background-color: var(--skyBlue);
 }
 
 .button--share:hover {
-  border: 2px solid var(--skyBlue);
-  color: var(--skyBlue);
+  background: var(--skyBlueDark);
+  /* border: 2px solid var(--skyBlue); */
+  color: var(--white);
   font-weight: bold;
 }
 
@@ -355,7 +355,7 @@ a {
 
 .button--edit {
   padding: 1rem;
-  border-radius: 1rem;
+  border-radius: 3rem;
   background-color: var(--green);
   width: 6rem;
   margin-bottom: 1.6rem;
@@ -373,7 +373,7 @@ a {
 
 .button--delete {
   padding: 1rem;
-  border-radius: 1rem;
+  border-radius: 3rem;
   background-color: var(--red);
   width: 6rem;
   margin-left: 1rem;
@@ -409,7 +409,7 @@ a {
 .button--detail-p {
   padding: 1rem;
   width: 6rem;
-  border-radius: 1rem;
+  border-radius: 3rem;
   border: 2px solid var(--lightBlue);
   margin-left: 1.6rem;
   margin-bottom: 1.6rem;
@@ -433,7 +433,7 @@ a {
   width: 15rem;
   font-size: var(--smaller);
   text-transform: capitalize;
-  border-radius: 1rem;
+  /* border-radius: 1rem; */
   border: 2px solid var(--white);
   color: var(--white);
   margin-left: 1.6rem;
@@ -453,7 +453,7 @@ a {
   width: 15rem;
   font-size: var(--smaller);
   text-transform: capitalize;
-  border-radius: 1rem;
+  /* border-radius: 1rem; */
   border: 2px solid var(--red);
   color: var(--red);
   margin-left: 1.6rem;
@@ -485,10 +485,10 @@ a {
 
 .button--inform-posts {
   font-size: var(--smaller);
-  border-radius: 1rem;
+  /* border-radius: 1rem; */
   width: 13rem;
   position: absolute;
-  background-color: var(--verdeEsmeralda);
+  background-color: var(--violet);
   color: var(--white);
   bottom: 3.2rem;
   right: 3.2rem;
@@ -521,8 +521,8 @@ a {
 .container__buttons {
   display: flex;
   gap: 1.6rem;
-  justify-content: space-evenly;
-  align-items: center;
+  justify-content: center;
+  /* align-items: center; */
   flex-wrap: wrap;
   margin-bottom: 1.6rem;
 }
@@ -550,14 +550,14 @@ a {
 }
 
 .totalPublicaciones_p {
-  border-radius: 1rem;
+  border-radius: 3rem;
   display: inline-block;
   padding: 1.6rem;
   background: #1378f2b8;
   z-index: 30;
   position: fixed;
   top: 10rem;
-  right: -2rem;
+  right: -6rem;
   color: white;
   width: 26rem;
 }
