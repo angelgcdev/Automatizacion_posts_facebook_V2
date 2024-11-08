@@ -122,7 +122,10 @@ const appUsers = async (req, res) => {
 
 const postsReport = async (req, res) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM reportes;");
+    const { rows } = await pool.query(`
+      SELECT * FROM reportes
+      ORDER BY fecha_publicacion DESC;
+      `);
 
     if (rows.length === 0) {
       return res.status(400).json({ message: "publicaciones no encontradas" });

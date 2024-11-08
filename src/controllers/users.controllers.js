@@ -275,7 +275,11 @@ const postsReport = async (req, res) => {
   try {
     const { id_usuario } = req.params;
     const { rows } = await pool.query(
-      "SELECT * FROM reportes WHERE id_usuario = $1;",
+      `
+      SELECT * FROM reportes 
+      WHERE id_usuario=$1
+      ORDER BY fecha_publicacion DESC;
+      `,
       [id_usuario]
     );
 
@@ -366,8 +370,11 @@ const postsReportCurrentDay = async (req, res) => {
 const detailPost = async (req, res) => {
   try {
     const { id_usuario, email } = req.params;
-    const { rows } = await pool.query(
-      "SELECT * FROM reportes WHERE id_usuario= $1 AND email= $2;",
+    const { rows } = await pool.query(`
+      SELECT * FROM reportes 
+      WHERE id_usuario=$1 AND email=$2
+      ORDER BY fecha_publicacion DESC;
+      `,
       [id_usuario, email]
     );
 
