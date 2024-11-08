@@ -35,22 +35,24 @@ const postInformation = async (url) => {
     await clickOnSelector(page, "div[aria-label='Cerrar']");
 
     // extraer la url de la imagen
-    const imageURL = await page.$eval(selectorImg, (el) => el.src);
+    const imageURL = await page
+      .$eval(selectorImg, (el) => el.src)
+      .catch(() => null);
 
     //Extraer el titulo de la publicación
-    const tituloPost = await page.$eval(selectorTitulo, (el) => el.textContent);
+    const tituloPost = await page
+      .$eval(selectorTitulo, (el) => el.textContent)
+      .catch(() => "");
 
     //Extraer la #de reacciones del post
-    const totalLikes = await page.$eval(
-      selectorLikesImg,
-      (el) => el.textContent
-    );
+    const totalLikes = await page
+      .$eval(selectorLikesImg, (el) => el.textContent)
+      .catch(() => 0);
 
     //Extraer el #de compartidas del post
-    const totalShares = await page.$eval(
-      selectorSharesImg,
-      (el) => el.textContent
-    );
+    const totalShares = await page
+      .$eval(selectorSharesImg, (el) => el.textContent)
+      .catch(() => 0);
 
     console.log({ url, imageURL, tituloPost, totalLikes, totalShares });
 
