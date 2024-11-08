@@ -15,11 +15,32 @@ let isCanceled = false;
 const infoUser = async (req, res) => {
   const { id_usuario } = req.params;
 
-  const { rows } = await pool.query(
-    " SELECT * FROM usuarios WHERE id_usuario=$1",
-    [id_usuario]
-  );
-  res.status(200).json(rows);
+  //Verificacion del id_usuario
+
+  if (!id_usuario || isNaN(id_usuario)) {
+    return res
+      .status(400)
+      .json({ error: "El ID de usuario es inválido o no proporcionado" });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      " SELECT * FROM usuarios WHERE id_usuario=$1",
+      [id_usuario]
+    );
+
+    //Comprobar si se encontro un usuario con ese id_usuario
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado." });
+    }
+
+    //Si se encuentra al usuario, devolver los datos
+    res.status(200).json(rows);
+  } catch (error) {
+    //Manejo de errores de la base de datos o cualquier otro tipo de error
+    console.error("Error al obtener el usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 };
 
 const getUsers = async (req, res) => {

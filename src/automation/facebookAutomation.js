@@ -4,6 +4,8 @@ import { pool } from "../db.js";
 
 /*********VARIABLES***********/
 
+let automationSession = null; // Variable global para almacenar la sesión
+
 const MIN_DELAY = 5000; // Minimo tiempo de espera en milisegundos
 const MAX_DELAY = 10000; // Máximo tiempo de espera en milisegundos
 const URL = "https://www.facebook.com/";
@@ -102,17 +104,17 @@ const loginToFacebook = async (page, { email, password }) => {
   await page.waitForNavigation({ timeout: 30000 });
 
   // Espera a que el usuario complete el CAPTCHA manualmente (si aparece)
-  try {
-    console.log("Esperando a que el usuario complete el CAPTCHA...");
-    await page.waitForNavigation({ timeout: 0 });
-    console.log("CAPTCHA completado. Continuando con el flujo...");
+  // try {
+  //   console.log("Esperando a que el usuario complete el CAPTCHA...");
+  //   await page.waitForNavigation({ timeout: 0 });
+  //   console.log("CAPTCHA completado. Continuando con el flujo...");
 
-    console.log("Esperando a que usuario complete la VERIFICACIÓN...");
-    await page.waitForNavigation({ timeout: 0 });
-    console.log("VERIFICACIÓN completado. Continuando con el flujo...");
-  } catch (error) {
-    console.error("Error de navegación o CAPTCHA no resuelto a tiempo:", error);
-  }
+  //   console.log("Esperando a que usuario complete la VERIFICACIÓN...");
+  //   await page.waitForNavigation({ timeout: 0 });
+  //   console.log("VERIFICACIÓN completado. Continuando con el flujo...");
+  // } catch (error) {
+  //   console.error("Error de navegación o CAPTCHA no resuelto a tiempo:", error);
+  // }
 };
 
 //Funcion para manejar la insercion de reportes a la base de datos
@@ -163,6 +165,11 @@ const automatizarFacebook = async (post) => {
   try {
     //Inicializar el navegador y contexto unicos para esta sesion
     ({ browser, context } = await initBrowser());
+
+    //Almacenar la sesión para usarla luego en cancelAutomation
+    automationSession = { browser, context };
+
+    console.log("Automation session: ", automationSession);
 
     //Crear una nueva pagina
     const page = await context.newPage();
@@ -287,8 +294,13 @@ const automatizarFacebook = async (post) => {
 
 //Función para cerrar el navegador
 const cancelAutomation = async () => {
-  if (browser && browser.isConnected()) {
-    await closeBrowser();
+  if (
+    automationSession &&
+    automationSession.browser &&
+    automationSession.browser.isConnected()
+  ) {
+    await closeBrowser(automationSession.browser, automationSession.context);
+    automationSession = null; //Resetar la sesion despues de cerrarla
     console.log("Automatizacion cancelada, navegador cerrado.");
   } else {
     console.log("No hay navegador abierto.");
