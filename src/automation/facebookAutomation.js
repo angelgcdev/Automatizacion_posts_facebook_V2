@@ -10,6 +10,16 @@ const MIN_DELAY = 5000; // Minimo tiempo de espera en milisegundos
 const MAX_DELAY = 10000; // Máximo tiempo de espera en milisegundos
 const URL = "https://www.facebook.com/";
 
+/*----selectores css----*/
+const likeButtonSelector = 'div[aria-label="Me gusta"]';
+
+//Botón Compartir opciones diferentes
+const selector1 =
+  'div[aria-label="Envía la publicación a amigos o publícala en tu perfil."]';
+const selector2 =
+  'div[aria-label="Envía esto a tus amigos o publícalo en tu perfil."]';
+const selector3 = 'div[aria-label="Compartir"]';
+
 /************FUNCIONES***********/
 
 //Funcion para inicializar el contexto del navegador
@@ -104,17 +114,17 @@ const loginToFacebook = async (page, { email, password }) => {
   await page.waitForNavigation({ timeout: 30000 });
 
   // Espera a que el usuario complete el CAPTCHA manualmente (si aparece)
-  // try {
-  //   console.log("Esperando a que el usuario complete el CAPTCHA...");
-  //   await page.waitForNavigation({ timeout: 0 });
-  //   console.log("CAPTCHA completado. Continuando con el flujo...");
+  try {
+    console.log("Esperando a que el usuario complete el CAPTCHA...");
+    await page.waitForNavigation({ timeout: 0 });
+    console.log("CAPTCHA completado. Continuando con el flujo...");
 
-  //   console.log("Esperando a que usuario complete la VERIFICACIÓN...");
-  //   await page.waitForNavigation({ timeout: 0 });
-  //   console.log("VERIFICACIÓN completado. Continuando con el flujo...");
-  // } catch (error) {
-  //   console.error("Error de navegación o CAPTCHA no resuelto a tiempo:", error);
-  // }
+    console.log("Esperando a que usuario complete la VERIFICACIÓN...");
+    await page.waitForNavigation({ timeout: 0 });
+    console.log("VERIFICACIÓN completado. Continuando con el flujo...");
+  } catch (error) {
+    console.error("Error de navegación o CAPTCHA no resuelto a tiempo:", error);
+  }
 };
 
 //Funcion para manejar la insercion de reportes a la base de datos
@@ -169,8 +179,6 @@ const automatizarFacebook = async (post) => {
     //Almacenar la sesión para usarla luego en cancelAutomation
     automationSession = { browser, context };
 
-    console.log("Automation session: ", automationSession);
-
     //Crear una nueva pagina
     const page = await context.newPage();
 
@@ -182,19 +190,11 @@ const automatizarFacebook = async (post) => {
     await page.waitForLoadState("networkidle", { timeout: 15000 });
 
     //Verificar si ya se dio me gusta
-    const likeButtonSelector = 'div[aria-label="Me gusta"]';
     await handleLikeButton(page, likeButtonSelector);
 
     // Publicar en los grupos
     for (let i = 1; i <= post.numero_de_posts; i++) {
       await page.waitForTimeout(post.intervalo_tiempo * 60000); //intervalo de tiempo entre publicaciones
-
-      //Botón Compartir
-      const selector1 =
-        'div[aria-label="Envía la publicación a amigos o publícala en tu perfil."]';
-      const selector2 =
-        'div[aria-label="Envía esto a tus amigos o publícalo en tu perfil."]';
-      const selector3 = 'div[aria-label="Compartir"]';
 
       const firstSelector = await Promise.race([
         page.waitForSelector(selector1, { timeout: 10000 }),
@@ -248,12 +248,20 @@ const automatizarFacebook = async (post) => {
 
       await page.waitForSelector('div[role="list"]', { timeout: 10000 });
 
-      const titleGroupPost = await page.locator(
-        `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
-  span[class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x676frb x1lkfr7t x1lbecb7 xk50ysn xzsf02u x1yc453h"]`
-      );
+      const nombre_grupo = await page
+        .$eval(
+          `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
+  span[class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x676frb x1lkfr7t x1lbecb7 xk50ysn xzsf02u x1yc453h"]`,
+          (el) => el.textContent
+        )
+        .catch(() => "");
 
-      const nombre_grupo = await titleGroupPost.textContent();
+      //     const titleGroupPost = await page.locator(
+      //       `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
+      // span[class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x676frb x1lkfr7t x1lbecb7 xk50ysn xzsf02u x1yc453h"]`
+      //     );
+
+      //     const nombre_grupo = await titleGroupPost.textContent();
       console.log(nombre_grupo);
 
       await clickOnSelector(
