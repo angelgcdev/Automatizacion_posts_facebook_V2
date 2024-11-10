@@ -1,5 +1,6 @@
 // automtion/postImg.js
 import { chromium } from "playwright";
+import { cleanText } from "../utils/cleanText.js";
 
 const selectorImg = "img.x85a59c.x193iq5w.x4fas0m.x19kjcj4";
 const selectorTitulo =
@@ -40,9 +41,12 @@ const postInformation = async (url) => {
       .catch(() => null);
 
     //Extraer el titulo de la publicación
-    const tituloPost = await page
+    const title = await page
       .$eval(selectorTitulo, (el) => el.textContent)
       .catch(() => "");
+
+    //Titulo limpio
+    const tituloPost = cleanText(title);
 
     //Extraer la #de reacciones del post
     const totalLikes = await page
@@ -54,7 +58,13 @@ const postInformation = async (url) => {
       .$eval(selectorSharesImg, (el) => el.textContent)
       .catch(() => 0);
 
-    console.log({ url, imageURL, tituloPost, totalLikes, totalShares });
+    console.log({
+      url,
+      imageURL,
+      tituloPost,
+      totalLikes,
+      totalShares,
+    });
 
     return { url, imageURL, tituloPost, totalLikes, totalShares };
   } catch (error) {
@@ -67,8 +77,9 @@ const postInformation = async (url) => {
   }
 };
 
+// // Datos Para probar esta funcion
 // const informationPost = await postInformation(
-//   "https://www.facebook.com/photo/?fbid=122118680816554716&set=gm.449613821484264&idorvanity=393042770474703"
+//   "https://www.facebook.com/photo?fbid=570870361986557&set=a.190427340030863"
 // );
 // console.log(informationPost);
 

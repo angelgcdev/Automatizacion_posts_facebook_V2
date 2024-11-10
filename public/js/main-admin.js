@@ -121,12 +121,25 @@ const renderPublicaciones = async (searchTerm = "") => {
   searchInput.classList.remove("hidden");
 
   try {
+    //Obtener las publicaciones desde localStorage
     const posts = localStorage.getItem("posts_V1");
+    if (!posts) {
+      content.innerHTML = "<p>No hay publicaciones disponibles.</p>";
+      return;
+    }
+
     let parsedPosts = JSON.parse(posts);
 
+    //Filtrar publicaciones por el término de búsqueda
     const filteredPosts = parsedPosts.filter((post) =>
       post.tituloPost.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    //Si no hay publicaciones que coincidan, mostrar un mensaje
+    if (filteredPosts.length === 0) {
+      content.innerHTML = "<p>No se encontraron publicaciones.</p>";
+      return;
+    }
 
     content.innerHTML = `
     <!-- Buscador de publicaciones -->

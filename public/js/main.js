@@ -303,10 +303,6 @@ const loadPosts = async (serachTerm = "") => {
       `/postsReportCurrentDay/${userId}`
     );
 
-    console.log(total_posts_current_day);
-
-    console.log(total_posts_current_day);
-
     //Añadir total de publicaciones en la UI
     const totalPublicaciones_p = document.createElement("p");
     totalPublicaciones_p.classList.add("totalPublicaciones_p");
