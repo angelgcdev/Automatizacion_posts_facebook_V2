@@ -262,7 +262,7 @@ a {
   padding: 1.6rem;
   width: inherit;
   height: 100px;
-  border-radius: 1rem;
+  border-radius: 3rem;
   font-size: var(--normal);
   letter-spacing: 0.1rem;
   color: var(--white);
@@ -282,7 +282,10 @@ a {
 }
 
 .button__toggle-icon {
-  margin-left: 1rem;
+  margin-left: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .button--password:hover {
@@ -608,11 +611,11 @@ a {
   width: 90%;
   margin-left: auto;
   margin-right: auto;
-  border-radius: 1rem;
+  border-radius: 3rem;
 }
 
 .total__detail-container {
-  border-radius: 1rem;
+  border-radius: 3rem;
   padding: 1rem;
   background: #1374f2b5;
   position: absolute;
@@ -626,7 +629,7 @@ a {
   position: relative;
   margin-bottom: 1.6rem;
   background-color: var(--white);
-  border-radius: 1rem;
+  border-radius: 3rem;
   padding: 1.6rem;
   /* letter-spacing: 0.1rem; */
   /* font-size: var(--smaller); */
@@ -722,8 +725,8 @@ a {
   background: var(--blue);
   margin: 15% auto;
   padding: 2rem;
-  border: 1px solid #888;
-  border-radius: 1rem;
+  /* border: 1px solid #888; */
+  border-radius: 3rem;
   width: 80%;
   overflow: auto;
   max-width: 80rem;
@@ -818,7 +821,7 @@ a {
   margin: 15% auto;
   padding: 2rem;
   border: 1px solid #888;
-  border-radius: 1rem;
+  border-radius: 3rem;
   width: 80%;
   overflow: auto;
 }
