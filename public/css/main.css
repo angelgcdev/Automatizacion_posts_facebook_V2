@@ -674,7 +674,7 @@ a {
 /*Estilos para notificaciones*/
 .notification {
   position: fixed;
-  top: 3.2rem;
+  bottom: 3.2rem;
   right: 3.2rem;
   background-color: var(--gray);
   color: var(--darkblue);
@@ -688,13 +688,13 @@ a {
 }
 
 .notification--success {
-  background-color: var(--green);
+  background-color: hsl(120deg 78% 40% / 77%);
   color: var(--white);
   text-shadow: 1px 1px 2px black;
 }
 
 .notification--error {
-  background-color: var(--red);
+  background-color: #ff264ac4;
   color: var(--white);
   text-shadow: 1px 1px 2px black;
 }
