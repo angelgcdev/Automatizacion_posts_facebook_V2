@@ -615,7 +615,11 @@ a {
 }
 
 .total__detail-container {
+<<<<<<< HEAD
   border-radius: 50%;
+=======
+  border-radius: 3rem;
+>>>>>>> ec1e6823b201b961aadb47b15efd6b88b3789afa
   padding: 1rem;
   background: #1374f2b5;
   position: absolute;
