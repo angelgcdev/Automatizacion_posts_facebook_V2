@@ -633,6 +633,7 @@ a {
 }
 
 .article__posts__text {
+  margin-top: 1.6rem;
   font-size: var(--small);
   letter-spacing: 0.1rem;
   line-height: 1.5;
@@ -669,6 +670,11 @@ a {
   color: var(--grayDark);
   font-weight: 400;
   padding-left: 1rem;
+}
+
+.article__container-buttonP {
+  display: flex;
+  justify-content: space-evenly;
 }
 
 /*Estilos para notificaciones*/

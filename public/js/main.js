@@ -328,7 +328,9 @@ const loadPosts = async (serachTerm = "") => {
           Correo Electrónico: <span class = "article__posts__text-span">${post.email}</span>
         </p>
         <figcaption class = "article__post-img__container">
+          <a href="${post.url}" target="_blank">
           <img class="article__post-img" src="${post.url_img}">
+          </a>
           <caption class = "article__post-img__text">Imagen de la publicación</caption>
         </figcaption>
 
@@ -345,13 +347,26 @@ const loadPosts = async (serachTerm = "") => {
         </p>
       `;
 
-      articlePost.appendChild(createEditButton(post, post.id));
-      articlePost.appendChild(createDeleteButton(post.id_publicacion));
-      articlePost.appendChild(
+      const containerButtonP = document.createElement("div");
+      containerButtonP.classList.add("article__container-buttonP");
+
+      containerButtonP.appendChild(createEditButton(post, post.id));
+      containerButtonP.appendChild(createDeleteButton(post.id_publicacion));
+      containerButtonP.appendChild(
         createDetailPostButton(post.id_usuario, post.email)
       );
 
+      articlePost.appendChild(containerButtonP);
+
       postList.appendChild(articlePost);
+
+      // articlePost.appendChild(createEditButton(post, post.id));
+      // articlePost.appendChild(createDeleteButton(post.id_publicacion));
+      // articlePost.appendChild(
+      //   createDetailPostButton(post.id_usuario, post.email)
+      // );
+
+      // postList.appendChild(articlePost);
 
       userCount++;
     }
