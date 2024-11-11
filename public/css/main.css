@@ -439,7 +439,7 @@ a {
   /* border-radius: 1rem; */
   border: 2px solid var(--white);
   color: var(--white);
-  margin-left: 1.6rem;
+  /* margin-left: 1.6rem; */
 }
 
 .button--report:hover {
@@ -459,7 +459,7 @@ a {
   /* border-radius: 1rem; */
   border: 2px solid var(--red);
   color: var(--red);
-  margin-left: 1.6rem;
+  /* margin-left: 1.6rem; */
 }
 
 .button--reportDelete:hover {
