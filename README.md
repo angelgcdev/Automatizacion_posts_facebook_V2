@@ -1,5 +1,7 @@
 # Automatizacion_posts_facebook_V2
-Esta aplicacion web automatiza la publicaciones de facebook es la misma que la otra version pero con login y base de datos 
+
+Esta aplicacion web automatiza la publicaciones de facebook es la misma que la otra version pero con login y base de datos
+
 - Crear el archivo .env en el root del proyecto con el siguiente contenido:
   DB_USER=postgres
   DB_PASSWORD=postgres
