@@ -24,7 +24,7 @@ const selector3 = 'div[aria-label="Compartir"]';
 
 //Funcion para inicializar el contexto del navegador
 const initBrowser = async () => {
-  const browser = await chromium.launch({ headless: false, slowMo: 50 });
+  const browser = await chromium.launch({ headless: true, slowMo: 50 });
   const context = await browser.newContext({
     userAgent:
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36",
@@ -113,18 +113,18 @@ const loginToFacebook = async (page, { email, password }) => {
   await clickOnSelector(page, "button[name='login']");
   await page.waitForNavigation({ timeout: 30000 });
 
-  // Espera a que el usuario complete el CAPTCHA manualmente (si aparece)
-  try {
-    console.log("Esperando a que el usuario complete el CAPTCHA...");
-    await page.waitForNavigation({ timeout: 0 });
-    console.log("CAPTCHA completado. Continuando con el flujo...");
+  // // Espera a que el usuario complete el CAPTCHA manualmente (si aparece)
+  // try {
+  //   console.log("Esperando a que el usuario complete el CAPTCHA...");
+  //   await page.waitForNavigation({ timeout: 0 });
+  //   console.log("CAPTCHA completado. Continuando con el flujo...");
 
-    console.log("Esperando a que usuario complete la VERIFICACIÓN...");
-    await page.waitForNavigation({ timeout: 0 });
-    console.log("VERIFICACIÓN completado. Continuando con el flujo...");
-  } catch (error) {
-    console.error("Error de navegación o CAPTCHA no resuelto a tiempo:", error);
-  }
+  //   console.log("Esperando a que usuario complete la VERIFICACIÓN...");
+  //   await page.waitForNavigation({ timeout: 0 });
+  //   console.log("VERIFICACIÓN completado. Continuando con el flujo...");
+  // } catch (error) {
+  //   console.error("Error de navegación o CAPTCHA no resuelto a tiempo:", error);
+  // }
 };
 
 //Funcion para manejar la insercion de reportes a la base de datos
