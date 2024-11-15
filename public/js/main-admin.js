@@ -40,6 +40,42 @@ const renderResumen = async () => {
   const appUsers = await requestData("/admin/appUsers");
 
   content.innerHTML = `
+        <div class="table__container">
+          <h2 class="informe__card-title">Usuarios de la aplicación</h2>
+            <table class="informe__table">
+              <thead>
+                <tr>
+                  <th>Nombres</th>
+                  <th>Apellidos</th>
+                  <th>Cargo</th>
+                  <th>Oficina</th>
+                  <th>Email</th>
+                  <th>Total Compartidas</th>
+                </tr>
+              </thead>
+              <tbody>
+              ${appUsers
+                .map(
+                  (post) => `
+                <tr>
+                  <td>${post.nombres}</td>
+                  <td>${post.apellidos}</td>
+                  <td>${post.cargo}</td>
+                  <td>${post.oficina}</td>
+                  <td>
+                    <a href="${post.email}" target="_blank">
+                      ${post.email}
+                    </a>
+                  </td>
+                  <td>${post.total_compartidas}</td>
+                </tr>
+                `
+                )
+                .join("")}
+              </tbody>
+            </table>
+          </div>
+
         <div class="informe__grid">
             <div class="informe__card">
                 <h2 class="informe__card-title">Total de Compartidas</h2>
@@ -64,7 +100,7 @@ const renderResumen = async () => {
                       .join("")}
                 </ul>
             </div>
-            
+
             <div class="informe__card">
                 <h2 class="informe__card-title">Cuentas de Facebook</h2>
                 <ul class="informe__list">
@@ -77,42 +113,6 @@ const renderResumen = async () => {
                 </ul>
             </div>
         </div>
-
-        <div class="table__container">
-                <h2 class="informe__card-title">Usuarios de la aplicación</h2>
-                <table class="informe__table">
-                  <thead>
-                    <tr>
-                      <th>Nombres</th>
-                      <th>Apellidos</th>
-                      <th>Cargo</th>
-                      <th>Oficina</th>
-                      <th>Email</th>
-                      <th>Total Compartidas</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${appUsers
-                      .map(
-                        (post) => `
-                    <tr>
-                      <td>${post.nombres}</td>
-                      <td>${post.apellidos}</td>
-                      <td>${post.cargo}</td>
-                      <td>${post.oficina}</td>
-                      <td>
-                        <a href="${post.email}" target="_blank">
-                          ${post.email}
-                        </a>
-                      </td>
-                      <td>${post.total_compartidas}</td>
-                    </tr>
-                `
-                      )
-                      .join("")}
-            </tbody>
-        </table>
-            </div>
     `;
 };
 

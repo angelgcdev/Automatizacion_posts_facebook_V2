@@ -201,7 +201,8 @@ body {
 }
 
 .informe__card-title {
-  margin-bottom: 1.6rem;
+  padding: 1.6rem;
+  /* margin-bottom: 1.6rem; */
   color: #0066cc;
   font-size: var(--titulo3);
   letter-spacing: 0.05rem;
@@ -232,7 +233,12 @@ body {
 }
 
 .table__container {
+  /* padding: 1.6rem; */
+  background: var(--white);
+  border-radius: 3rem;
+  margin-bottom: 1.6rem;
   overflow: auto;
+  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
 .informe__post {
@@ -295,7 +301,7 @@ body {
 
 .informe__table th,
 .informe__table td {
-  padding: 10px;
+  padding: 1.6rem;
   text-align: left;
 }
 
