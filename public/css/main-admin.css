@@ -119,14 +119,14 @@ a {
 body {
   line-height: 1.5;
   color: #333;
-  background-color: var(--white);
+  background-color: #d4e6ff;
 }
 
 .informe {
   max-width: 120rem;
   margin: 0 auto;
   padding: 2rem;
-  background-color: #e6f2ff;
+  /* background-color: #e6f2ff; */
 }
 
 .informe__header {
@@ -297,6 +297,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   background-color: #ffffff;
+  box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.2);
 }
 
 .informe__table th,
@@ -310,6 +311,10 @@ body {
   color: #0066cc;
 }
 
+.icon__button {
+  width: 2.5rem;
+}
+
 /*Estilos para los botones*/
 .button {
   padding: 1.6rem;
@@ -320,6 +325,13 @@ body {
   letter-spacing: 0.1rem;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
   transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button--detail {
+  margin-left: 1.6rem;
+  background-color: var(--skyBlue);
+  border-radius: 1rem;
+  padding: 0.5rem;
 }
 
 .button--update {

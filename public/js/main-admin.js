@@ -67,7 +67,9 @@ const renderResumen = async () => {
                       ${post.email}
                     </a>
                   </td>
-                  <td>${post.total_compartidas}</td>
+                  <td>
+                    ${post.total_compartidas}
+                  </td>
                 </tr>
                 `
                 )
@@ -242,6 +244,24 @@ const renderRegistro = async () => {
         </table>
     `;
 };
+
+// //Funcion para crear boton detail
+// const createButtonDetail = () => {
+//   const buttonDetail = document.createElement("button");
+//   buttonDetail.classList.add("button--detail");
+
+//   const iconoDetail = document.createElement("img");
+//   iconoDetail.src = "../assets/icons/data_thresholding.svg";
+//   iconoDetail.classList.add("icon__button");
+
+//   buttonDetail.appendChild(iconoDetail);
+
+//   buttonDetail.addEventListener("click", () => {
+//     console.log("diste click...");
+//   });
+
+//   return buttonDetail;
+// };
 
 // Event listeners
 
