@@ -131,6 +131,7 @@ body {
 
 .informe__header {
   text-align: center;
+  margin-top: 4rem;
   margin-bottom: 3.2rem;
 }
 
@@ -159,6 +160,7 @@ body {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
+  flex-direction: column;
 }
 
 .informe__button {
@@ -195,6 +197,7 @@ body {
   background-color: #ffffff;
   padding: 3.2rem;
   margin-bottom: 1.5rem;
+  overflow: auto;
 }
 
 .informe__card-title {
@@ -224,7 +227,7 @@ body {
 
 .informe__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(35rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(25rem, 1fr));
   gap: 1.6rem;
 }
 
@@ -322,6 +325,10 @@ body {
 }
 
 .button--back {
+  position: fixed;
+  top: 1.6rem;
+  left: 1.6rem;
+
   margin-bottom: 1.6rem;
   display: inline-block;
   font-size: var(--smaller);
@@ -349,13 +356,16 @@ body {
 }
 
 /* Media Queries */
-@media (max-width: 768px) {
+@media (min-width: 400px) {
+  .informe__nav {
+    flex-direction: initial;
+  }
+}
+
+@media (min-width: 768px) {
   .informe__grid {
     /* grid-template-columns: 1fr; */
-  }
-
-  .informe__nav {
-    flex-direction: column;
+    grid-template-columns: repeat(auto-fill, minmax(35rem, 1fr));
   }
 }
 

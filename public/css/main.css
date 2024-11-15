@@ -86,11 +86,13 @@ a {
 }
 
 .loading__text {
+  padding: 1.6rem;
+  text-align: center;
   color: var(--white);
   font-size: var(--titulo3);
   font-weight: 700;
   letter-spacing: 0.1rem;
-  margin-bottom: 1.6rem;
+  /* margin-bottom: 1.6rem; */
 }
 
 .loading__spinner {
