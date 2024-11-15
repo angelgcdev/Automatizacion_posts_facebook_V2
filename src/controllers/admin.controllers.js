@@ -90,7 +90,8 @@ const facebookAccounts = async (req, res) => {
 const appUsers = async (req, res) => {
   try {
     const { rows } = await pool.query(`
-    SELECT 
+    SELECT
+      u.id_usuario,
 	    u.nombres,
  	    u.apellidos,
  	    u.oficina,
@@ -177,6 +178,27 @@ const postsInfo = async (req, res) => {
   }
 };
 
+const infoUsuario = async (req, res) => {
+  try {
+    const { id_usuario } = req.params;
+    const { rows } = await pool.query(
+      "SELECT * FROM usuarios WHERE id_usuario=$1;",
+      [id_usuario]
+    );
+
+    if (rows === 0) {
+      return res.status(400).json({ message: "usuario no encontrado." });
+    }
+
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error al obtener la información del usuario.");
+    return res.status(500).json({
+      message: "Se produjo un error al obtener la información del usuario.",
+    });
+  }
+};
+
 export {
   totalCG,
   sharesByDay,
@@ -185,4 +207,5 @@ export {
   appUsers,
   postsReport,
   postsInfo,
+  infoUsuario,
 };

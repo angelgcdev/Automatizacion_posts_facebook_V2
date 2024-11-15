@@ -1,23 +1,21 @@
 // public/js/main-admin.js
 
+//Importaciones de utilidades
 import { logoutUser } from "./utils/logoutUser.js";
 import { requestData } from "./utils/requestData.js";
 import { showLoading } from "./utils/showLoading.js";
 import { hideLoading } from "./utils/hideLoading.js";
+import { showNotification } from "./utils/showNotification.js";
+
+//Variables globales
+const reportContent = document.querySelector("#reportContent");
+const titleReport = document.querySelector("#title_report");
 
 // Datos del usuario
 const token = localStorage.getItem("token");
 const userId = localStorage.getItem("userId");
 const userEmail = localStorage.getItem("userEmail");
 const userAdmin = localStorage.getItem("userAdmin");
-
-//Validacion del usuario
-document.addEventListener("DOMContentLoaded", () => {
-  if (!token || userAdmin === "false") {
-    logoutUser();
-  }
-});
-
 let posts = [];
 
 // Elementos del DOM
@@ -29,7 +27,16 @@ const resumenBtn = document.getElementById("resumenBtn");
 const publicacionesBtn = document.getElementById("publicacionesBtn");
 const registroBtn = document.getElementById("registroBtn");
 
-// Funciones para renderizar contenido
+/*** Sección 1: Validación de usuario ***/
+document.addEventListener("DOMContentLoaded", () => {
+  if (!token || userAdmin === "false") {
+    logoutUser();
+  }
+});
+
+/*** Seccción 2: Funciones de renderizado ***/
+
+// Renderizar el resumen
 const renderResumen = async () => {
   //Ocultar el buscador
   searchInput.classList.add("hidden");
@@ -38,6 +45,7 @@ const renderResumen = async () => {
   const sharesByDay = await requestData("/admin/sharesByDay");
   const facebookAccounts = await requestData("/admin/facebookAccounts");
   const appUsers = await requestData("/admin/appUsers");
+  console.log(appUsers);
 
   content.innerHTML = `
         <div class="table__container">
@@ -53,7 +61,8 @@ const renderResumen = async () => {
                   <th>Total Compartidas</th>
                 </tr>
               </thead>
-              <tbody>
+
+              <tbody id="app-users-table">
               ${appUsers
                 .map(
                   (post) => `
@@ -69,6 +78,7 @@ const renderResumen = async () => {
                   </td>
                   <td>
                     ${post.total_compartidas}
+                    <span class="button-span"></span>
                   </td>
                 </tr>
                 `
@@ -116,8 +126,18 @@ const renderResumen = async () => {
             </div>
         </div>
     `;
+
+  //Agregar botones a las filas de la tabla
+  const tableRows = document.querySelectorAll("#app-users-table .button-span");
+  let count = 0;
+  tableRows.forEach((cell) => {
+    const button = createButtonDetail(appUsers[count].id_usuario);
+    count++;
+    cell.appendChild(button);
+  });
 };
 
+//Renderizar publicaciones
 const renderPublicaciones = async (searchTerm = "") => {
   //Mostrar el buscador
   searchInput.classList.remove("hidden");
@@ -205,6 +225,7 @@ const renderPublicaciones = async (searchTerm = "") => {
   }
 };
 
+//Renderizar registro
 const renderRegistro = async () => {
   //Mostrar el buscador
   searchInput.classList.add("hidden");
@@ -245,25 +266,191 @@ const renderRegistro = async () => {
     `;
 };
 
-// //Funcion para crear boton detail
-// const createButtonDetail = () => {
-//   const buttonDetail = document.createElement("button");
-//   buttonDetail.classList.add("button--detail");
+//Función para abrir el modal del reporte
+const openReportModal = async (id_usuario) => {
+  try {
+    const reports = await requestData(`/postsReport/${id_usuario}`);
 
-//   const iconoDetail = document.createElement("img");
-//   iconoDetail.src = "../assets/icons/data_thresholding.svg";
-//   iconoDetail.classList.add("icon__button");
+    const total_p = await requestData(`/totalP/${id_usuario}`);
 
-//   buttonDetail.appendChild(iconoDetail);
+    const reports_day = await requestData(`/postsReportDay/${id_usuario}`);
 
-//   buttonDetail.addEventListener("click", () => {
-//     console.log("diste click...");
-//   });
+    const infoUsuario = await requestData(`/admin/infoUsuario/${id_usuario}`);
 
-//   return buttonDetail;
-// };
+    console.log(infoUsuario);
 
-// Event listeners
+    if (!(reports && total_p && reports_day)) {
+      showNotificationn("El reporte esta vacio");
+      return;
+    }
+
+    //Limpiar el contenido previo
+    reportContent.innerHTML = "";
+
+    //Titulo del reporte
+    titleReport.textContent = "Historial de publicaciones";
+
+    reportContent.innerHTML = `
+
+      <div class="container-title__detail">
+        <p class="text-detail textEmail-detail">
+          ${infoUsuario[0].nombres} ${infoUsuario[0].apellidos}
+        </p>
+      </div>
+
+      <div class="container-title__detail container-title__total">
+        <p class="text-detail">Total publicaciones: ${total_p[0].count}</p>
+      </div>
+
+      <div class="container-title__detail">
+      <p class="text-detail">Publicaciones por día</p>
+      </div>
+    `;
+
+    //Crear la tabla de publicaciones diarias
+    const tableD = document.createElement("table");
+    tableD.classList.add("report-post__table");
+
+    tableD.innerHTML = `
+      <thead>
+        <tr>
+          <th>Día</th>
+          <th>Total Publicaciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+
+    const tbodyD = tableD.querySelector("tbody");
+
+    //Agregar las filas de datos
+    reports_day.forEach((reportDay) => {
+      const rowD = document.createElement("tr");
+      rowD.innerHTML = `
+        <td class="report-post__text">
+          ${new Date(reportDay.dia).toLocaleDateString("es-ES")}
+        </td>
+        <td class="report-post__text">
+          ${reportDay.total_publicaciones}
+        </td>
+      `;
+
+      tbodyD.appendChild(rowD);
+    });
+
+    //Insertar la tabla en el contenido del modal
+    reportContent.appendChild(tableD);
+
+    //Crear la tabla y su cabecera
+    const table = document.createElement("table");
+    table.classList.add("report-post__table");
+
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Correo de la Cuenta</th>
+          <th>Mensaje del Post</th>
+          <th>URL del Post</th>
+          <th>Nombre del Grupo</th>
+          <th>Fecha de Publicación</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      `;
+
+    const tbody = table.querySelector("tbody");
+
+    //Agregar las filas de datos
+    reports.forEach((post) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+          <td class="report-post__text">
+            ${post.email}
+          </td>
+          <td class="report-post__text">
+            ${post.mensaje}
+          </td>
+          <td class="report-post__text">
+            <a href="${post.url}" target="_blank">Ver publicación</a>
+          </td>
+          <td class="report-post__text">
+            ${post.nombre_grupo}
+          </td>
+          <td class="report-post__text">
+            ${new Date(post.fecha_publicacion).toLocaleString()}
+          </td>
+        `;
+
+      tbody.appendChild(row);
+    });
+
+    //Insertar la tabla en el contenido del modal
+    reportContent.appendChild(table);
+
+    document.querySelector("#reportModal").style.display = "block";
+  } catch (error) {
+    showNotification("Error al cargar el reporte:", false);
+  }
+};
+
+/*** Sección 3: Utilidades ***/
+
+//Funcion para cerrar el modal del reporte
+const closeReportModal = () => {
+  document.querySelector("#reportModal").style.display = "none";
+};
+
+//Funcion para crear boton detalle
+const createButtonDetail = (id_usuario) => {
+  const buttonDetail = document.createElement("button");
+  buttonDetail.classList.add("button--detail");
+
+  const iconoDetail = document.createElement("img");
+  iconoDetail.src = "../assets/icons/data_thresholding.svg";
+  iconoDetail.classList.add("icon__button");
+
+  buttonDetail.appendChild(iconoDetail);
+
+  buttonDetail.addEventListener("click", () => openReportModal(id_usuario));
+
+  return buttonDetail;
+};
+
+// Función para establecer el botón activo
+function setActiveButton(activeButton) {
+  const buttons = [resumenBtn, publicacionesBtn, registroBtn];
+  buttons.forEach((btn) => {
+    btn.classList.remove("informe__button--active");
+  });
+  activeButton.classList.add("informe__button--active");
+}
+
+//Actualizar información de publicaciones
+const infoPublicaciones = async () => {
+  posts = await requestData("/admin/postsInfo");
+
+  //Limpiamos el localStorage
+  localStorage.removeItem("posts_V1");
+
+  //Guardamos los datos de las publicaciones en localStorage
+  localStorage.setItem("posts_V1", JSON.stringify(posts));
+
+  return posts;
+};
+
+/*** Sección 4: Event Listeners ***/
+
+//Se dispara cuando se hace click en el boton 'X' del reportModal
+document
+  .querySelector("#closeReportModal")
+  .addEventListener("click", closeReportModal);
+
+//Cerrar el modal si se hace click fuera de el
+window.addEventListener("click", (event) => {
+  if (event.target === document.querySelector("#reportModal")) {
+    closeReportModal();
+  }
+});
 
 searchInput.addEventListener("input", () => {
   const searchTerm = searchInput.value.trim();
@@ -286,27 +473,6 @@ registroBtn.addEventListener("click", () => {
   setActiveButton(registroBtn);
   renderRegistro();
 });
-
-// Función para establecer el botón activo
-function setActiveButton(activeButton) {
-  const buttons = [resumenBtn, publicacionesBtn, registroBtn];
-  buttons.forEach((btn) => {
-    btn.classList.remove("informe__button--active");
-  });
-  activeButton.classList.add("informe__button--active");
-}
-
-const infoPublicaciones = async () => {
-  posts = await requestData("/admin/postsInfo");
-
-  //Limpiamos el localStorage
-  localStorage.removeItem("posts_V1");
-
-  //Guardamos los datos de las publicaciones en localStorage
-  localStorage.setItem("posts_V1", JSON.stringify(posts));
-
-  return posts;
-};
 
 document.querySelector("#buttonUpdate").addEventListener("click", async () => {
   const loadingContainer = showLoading("Cargando...");

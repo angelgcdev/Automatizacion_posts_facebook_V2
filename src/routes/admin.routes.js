@@ -9,6 +9,7 @@ import {
   appUsers,
   postsReport,
   postsInfo,
+  infoUsuario,
 } from "../controllers/admin.controllers.js";
 
 const adminRouter = Router();
@@ -29,5 +30,7 @@ adminRouter.get("/admin/appUsers", appUsers);
 adminRouter.get("/admin/postsReport", postsReport);
 
 adminRouter.get("/admin/postsInfo", postsInfo);
+
+adminRouter.get("/admin/infoUsuario/:id_usuario", infoUsuario);
 
 export { adminRouter };
