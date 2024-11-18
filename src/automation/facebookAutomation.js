@@ -106,26 +106,61 @@ const fillField = async (page, selector, value) => {
 };
 
 //Funcion para iniciar sesion en Facebook
+//Funcion para iniciar sesion en Facebook
 const loginToFacebook = async (page, { email, password }) => {
-  await page.goto(URL);
-  await fillField(page, "#email", email);
-  await fillField(page, "#pass", password);
-  await clickOnSelector(page, "button[name='login']");
-  await page.waitForNavigation({ timeout: 30000 });
+  try {
+    console.log("Iniciando sesión en Facebook...");
 
-  // // Espera a que el usuario complete el CAPTCHA manualmente (si aparece)
-  // try {
-  //   console.log("Esperando a que el usuario complete el CAPTCHA...");
-  //   await page.waitForNavigation({ timeout: 0 });
-  //   console.log("CAPTCHA completado. Continuando con el flujo...");
+    await page.goto(URL);
+    await fillField(page, "#email", email);
+    await fillField(page, "#pass", password);
+    await clickOnSelector(page, "button[name='login']");
 
-  //   console.log("Esperando a que usuario complete la VERIFICACIÓN...");
-  //   await page.waitForNavigation({ timeout: 0 });
-  //   console.log("VERIFICACIÓN completado. Continuando con el flujo...");
-  // } catch (error) {
-  //   console.error("Error de navegación o CAPTCHA no resuelto a tiempo:", error);
-  // }
+    //Esperar la navegación despues de iniciar sesión
+    await page.waitForNavigation({ timeout: 30000 });
+
+    //Verificar si la sesión esta activa
+    const isLoggedIn = await page.evaluate(() => {
+      const perfil = document.querySelector('div[aria-label="Tu perfil"]');
+      return !!perfil;
+    });
+
+    if (!isLoggedIn) {
+      console.error("Error: No se pudo iniciar sesión en Facebook.");
+      throw new Error(
+        "Fallo en el inicio de sesión. Se cancela la automatización."
+      );
+    }
+
+    console.log("Inicio de sesión exitoso.");
+  } catch (error) {
+    console.error("Error al iniciar sesión de Facebook:", error);
+    throw new Error(
+      "Fallo en el inicio de sesión. Se cancela la automatización."
+    );
+  }
 };
+
+// const loginToFacebook = async (page, { email, password }) => {
+//   await page.goto(URL);
+//   await fillField(page, "#email", email);
+//   await fillField(page, "#pass", password);
+//   await clickOnSelector(page, "button[name='login']");
+//   await page.waitForNavigation({ timeout: 30000 });
+
+//   // // Espera a que el usuario complete el CAPTCHA manualmente (si aparece)
+//   // try {
+//   //   console.log("Esperando a que el usuario complete el CAPTCHA...");
+//   //   await page.waitForNavigation({ timeout: 0 });
+//   //   console.log("CAPTCHA completado. Continuando con el flujo...");
+
+//   //   console.log("Esperando a que usuario complete la VERIFICACIÓN...");
+//   //   await page.waitForNavigation({ timeout: 0 });
+//   //   console.log("VERIFICACIÓN completado. Continuando con el flujo...");
+//   // } catch (error) {
+//   //   console.error("Error de navegación o CAPTCHA no resuelto a tiempo:", error);
+//   // }
+// };
 
 //Funcion para manejar la insercion de reportes a la base de datos
 const insertReport = async (post, nombre_grupo, currentDate) => {
@@ -295,6 +330,7 @@ const automatizarFacebook = async (post) => {
     // await browser.close();
   } catch (error) {
     console.log("Se ha producido un error:", error);
+    throw error;
   } finally {
     closeBrowser(browser, context);
   }
