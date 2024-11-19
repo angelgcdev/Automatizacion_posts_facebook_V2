@@ -19,7 +19,7 @@ const app = express();
 const httpServer = createServer(app); //Crea un servidor HTTP
 const io = new Server(httpServer, {
   cors: {
-    origin: `http://localhost:${PORT}`,
+    origin: "https://post.posgradoupea.edu.bo",
     methods: ["GET", "POST"],
     credentials: true,
   },
