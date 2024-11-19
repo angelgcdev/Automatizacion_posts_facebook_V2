@@ -17,7 +17,13 @@ const __dirname = dirname(__filename);
 
 const app = express();
 const httpServer = createServer(app); //Crea un servidor HTTP
-const io = new Server(httpServer); // Vincular el servidor con socket.io
+const io = new Server(httpServer, {
+  cors: {
+    origin: `http://localhost:${PORT}`,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+}); // Vincular el servidor con socket.io
 const userSockets = {};
 
 app.use(morgan("dev")); // Logger
