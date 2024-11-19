@@ -1,5 +1,5 @@
 // src/facebookAutomation.js
-import { chromium, errors } from "playwright";
+import { firefox, errors } from "playwright";
 import { pool } from "../db.js";
 import { io, userSockets } from "../index.js";
 
@@ -34,23 +34,12 @@ const emitirMensajeAUsuario = (userId, mensaje) => {
 
 //Funcion para inicializar el contexto del navegador
 const initBrowser = async () => {
-  const browser = await chromium.launch({ headless: true, slowMo: 50 });
-  const context = await browser.newContext({
-    userAgent:
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36",
-    viewport: { width: 1920, height: 1080 },
-    bypassCSP: true,
-  });
-
-  await context.addInitScript(() => {
-    Object.defineProperty(navigator, "webdriver", { get: () => false });
-    Object.defineProperty(navigator, "languages", {
-      get: () => ["en-US", "en"],
-    });
-  });
+  const browser = await firefox.launch({ headless: false, slowMo: 50 });
+  const context = await browser.newContext();
 
   return { browser, context };
 };
+
 //Funcion para cerrar el navegador
 const closeBrowser = async (browser, context) => {
   try {
@@ -231,7 +220,6 @@ const insertReport = async (post, nombre_grupo, currentDate) => {
 //Funcion para manejar el click en el boton like
 const handleLikeButton = async (page, selector, userId) => {
   try {
-    emitirMensajeAUsuario(userId, "Dando me gusta a la publicación");
     await page.waitForSelector(selector, { timeout: 15000 });
     const isLiked = await page.evaluate((selector) => {
       const button = document.querySelector(selector);
@@ -270,13 +258,18 @@ const automatizarFacebook = async (post, userId) => {
     await page.goto(post.url);
     await page.waitForLoadState("networkidle", { timeout: 15000 });
 
+    //Cerrar si hay un modal de aviso
+    try {
+      await clickOnSelector(page, "div[aria-label='Cerrar']");
+    } catch (error) {
+      console.error(error);
+    }
+
     //Verificar si ya se dio me gusta
     await handleLikeButton(page, likeButtonSelector, userId);
 
     // Publicar en los grupos
     for (let i = 1; i <= post.numero_de_posts; i++) {
-      emitirMensajeAUsuario(userId, "Compartiendo en los grupos de Facebook.");
-
       await page.waitForTimeout(post.intervalo_tiempo * 60000); //intervalo de tiempo entre publicaciones
 
       const firstSelector = await Promise.race([
@@ -339,16 +332,6 @@ const automatizarFacebook = async (post, userId) => {
         )
         .catch(() => "");
 
-      //     const titleGroupPost = await page.locator(
-      //       `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
-      // span[class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x676frb x1lkfr7t x1lbecb7 xk50ysn xzsf02u x1yc453h"]`
-      //     );
-
-      //     const nombre_grupo = await titleGroupPost.textContent();
-      emitirMensajeAUsuario(
-        userId,
-        `Compartiendo la publicación en el grupo: ${nombre_grupo}`
-      );
       console.log(nombre_grupo);
 
       await clickOnSelector(
@@ -363,11 +346,6 @@ const automatizarFacebook = async (post, userId) => {
         post.mensaje
       );
       await page.keyboard.press("Space");
-
-      emitirMensajeAUsuario(
-        userId,
-        `Mensaje de la publicación: ${post.mensaje}`
-      );
 
       await clickOnSelector(page, 'div[aria-label="Publicar"]');
       await page.waitForLoadState("networkidle", { timeout: 15000 });

@@ -482,9 +482,9 @@ const sharePosts = async () => {
   } catch (error) {
     showNotification("Hubo un problema al compartir las publiciones.", false);
   } finally {
+    loadPosts();
     hideLoading(); //Oculta la animacion de carga
     openReportModal(); //Muestra el reporte al finalizar
-    loadPosts();
   }
 };
 

@@ -31,16 +31,6 @@ const postImg = async (url) => {
     //extraer la url de la imagen
     const imageURL = await page.$eval(selectorImg, (el) => el.src);
     return imageURL;
-
-    // const imageElement = await page.$(selectorImg);
-
-    // if (imageElement) {
-    //   const imageUrl = await imageElement.getAttribute("src");
-    //   return imageUrl;
-    // } else {
-    //   console.log("No se encontró la imagen con el selector proporcionado.");
-    //   return null;
-    // }
   } catch (error) {
     console.log("Error al obtener la URL de la imagen:", error);
   } finally {
