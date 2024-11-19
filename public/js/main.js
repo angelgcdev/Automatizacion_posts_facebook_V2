@@ -4,6 +4,8 @@ import { togglePasswordVisibility } from "./utils/togglePasswordVisibility.js";
 import { logoutUser } from "./utils/logoutUser.js";
 import { requestData } from "./utils/requestData.js";
 
+import { io } from "https://cdn.socket.io/4.8.1/socket.io.esm.min.js";
+
 const token = localStorage.getItem("token");
 const userId = localStorage.getItem("userId");
 const userEmail = localStorage.getItem("userEmail");
@@ -17,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**---------VARIABLES---------- */
+
+const socket = io("http://localhost:4000");
 
 const formContent = document.getElementById("form-content");
 
@@ -87,6 +91,47 @@ if (userAdmin === "true") {
 /************************************** */
 
 /**---------FUNCIONES---------- */
+
+//Emitir el ID del usuario al servidor
+socket.emit("register", userId);
+
+//Recibir actualizaciones desde el servidor
+socket.on("automation:update", (message) => {
+  mostrarMensaje(message);
+});
+
+//Recibir errores desde el servidor
+socket.on("automation:error", (error) => {
+  mostrarMensaje(error, true);
+});
+
+//Función para mostrar mensajes en la UI
+const mostrarMensaje = (mensaje, esError = false) => {
+  const containerMessageModal = document.getElementById("messageModal");
+  containerMessageModal.style.display = "block";
+
+  const messagesContainer = document.getElementById("messages");
+  const p = document.createElement("p");
+  p.classList.add("textoWS");
+
+  if (esError) {
+    p.style.color = "red";
+  }
+
+  p.textContent = mensaje;
+  messagesContainer.appendChild(p);
+
+  //Desplazarse automaticamente hacia abajo
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+};
+
+// Función para limpiar el contenedor de mensajes
+const limpiarContenedorMensajes = () => {
+  const div = document.getElementById("messages");
+  div.innerHTML = ""; // Limpia el contenido del contenedor
+  const containerMessageModal = document.getElementById("messageModal");
+  containerMessageModal.style.display = "none"; // Oculta el modal si está visible
+};
 
 //Funcion para mostrar la animacion de carga
 const showLoading = (text) => {
@@ -414,6 +459,9 @@ const addPost = async (event) => {
 
 //Funcion para compartir publicaciones
 const sharePosts = async () => {
+  //Limpiar el contendor de mensajes de socket io
+  limpiarContenedorMensajes();
+
   showLoading("Publicando..."); //Muestra la animacion de carga
 
   loadingContainer.appendChild(createCancelButton());
@@ -598,6 +646,12 @@ const closeReportModal = () => {
   document.querySelector("#reportModal").style.display = "none";
 };
 
+// Función para cerrar el modal
+const closeMessageModal = () => {
+  const messageModal = document.getElementById("messageModal");
+  messageModal.style.display = "none";
+};
+
 //Funcion para eliminar el reporte de publicaciones
 const deleteReport = async () => {
   const confirmDelete = confirm(
@@ -617,6 +671,11 @@ const deleteReport = async () => {
 /**---------LISTENERS---------- */
 
 const cargarEventListeners = () => {
+  // Evento de cierre del modal de mensajes
+  document
+    .getElementById("closeButtonModal")
+    .addEventListener("click", closeMessageModal);
+
   document.addEventListener("DOMContentLoaded", userSession);
 
   searchInput.addEventListener("input", () => {

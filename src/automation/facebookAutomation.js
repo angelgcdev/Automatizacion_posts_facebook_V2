@@ -1,6 +1,7 @@
 // src/facebookAutomation.js
-import { chromium } from "playwright";
+import { chromium, errors } from "playwright";
 import { pool } from "../db.js";
+import { io, userSockets } from "../index.js";
 
 /*********VARIABLES***********/
 
@@ -21,6 +22,15 @@ const selector2 =
 const selector3 = 'div[aria-label="Compartir"]';
 
 /************FUNCIONES***********/
+//Emitir funcion al usuario
+const emitirMensajeAUsuario = (userId, mensaje) => {
+  if (userSockets[userId]) {
+    io.to(userSockets[userId]).emit("automation:update", mensaje);
+    console.log(`Mensaje enviado a usuario ${userId}`);
+  } else {
+    console.log("Usuario no encontrado");
+  }
+};
 
 //Funcion para inicializar el contexto del navegador
 const initBrowser = async () => {
@@ -106,10 +116,15 @@ const fillField = async (page, selector, value) => {
 };
 
 //Funcion para iniciar sesion en Facebook
-//Funcion para iniciar sesion en Facebook
-const loginToFacebook = async (page, { email, password }) => {
+const loginToFacebook = async (page, { email, password }, userId) => {
   try {
-    console.log("Iniciando sesión en Facebook...");
+    emitirMensajeAUsuario(
+      userId,
+      `Iniciando sesión en Facebook con el correo electrónico ${email}. Por favor, espera un momento...`
+    );
+    console.log(
+      `Iniciando sesión en Facebook con el correo electrónico ${email}...`
+    );
 
     await page.goto(URL);
     await fillField(page, "#email", email);
@@ -117,7 +132,40 @@ const loginToFacebook = async (page, { email, password }) => {
     await clickOnSelector(page, "button[name='login']");
 
     //Esperar la navegación despues de iniciar sesión
-    await page.waitForNavigation({ timeout: 30000 });
+    // await page.waitForNavigation({ timeout: 30000 });
+    await page.waitForTimeout(5000);
+
+    //Obtenemos a URL de la pagina
+    const verifyURL = page.url();
+
+    //Verificar si la URL indica un problema relacionado con el inicio de sesión
+    if (verifyURL.startsWith("https://www.facebook.com/login/")) {
+      emitirMensajeAUsuario(
+        userId,
+        `El inicio de sesión con la cuenta ${email} falló: podría tratarse de una contraseña incorrecta u otro problema relacionado con las credenciales.`
+      );
+      console.error(
+        "Error: Problema detectado en la contraseña durante el inicio de sesión."
+      );
+      throw new Error("Problema en la contraseña del inicio de sesión.");
+    }
+
+    //Verificar si la URL indica un problema relacionado con la autenticación
+    if (
+      verifyURL.startsWith("https://www.facebook.com/autentication/") ||
+      verifyURL.startsWith("https://www.facebook.com/checkpoint/")
+    ) {
+      emitirMensajeAUsuario(
+        userId,
+        `El inicio de sesión con la cuenta ${email} falló: Podría ser un problema de autenticación o CAPTCHA.`
+      );
+      console.error(
+        "Error: Problema detectado en la autenticación o CAPTCHA durante el inicio de sesión."
+      );
+      throw new Error(
+        "Problema en la autenticación o CAPTCHA en el inicio de sesión."
+      );
+    }
 
     //Verificar si la sesión esta activa
     const isLoggedIn = await page.evaluate(() => {
@@ -126,41 +174,37 @@ const loginToFacebook = async (page, { email, password }) => {
     });
 
     if (!isLoggedIn) {
-      console.error("Error: No se pudo iniciar sesión en Facebook.");
+      emitirMensajeAUsuario(
+        userId,
+        `No se pudo iniciar sesión con la cuenta ${email} en Facebook.`
+      );
+      console.error(
+        `No se pudo iniciar sesión con la cuenta ${email} en Facebook.`
+      );
       throw new Error(
         "Fallo en el inicio de sesión. Se cancela la automatización."
       );
     }
 
-    console.log("Inicio de sesión exitoso.");
+    console.log(`Inicio de sesión con la cuenta ${email}  exitosa.`);
+    emitirMensajeAUsuario(
+      userId,
+      `Inicio de sesión con la cuenta ${email}  exitosa.`
+    );
   } catch (error) {
-    console.error("Error al iniciar sesión de Facebook:", error);
+    emitirMensajeAUsuario(
+      userId,
+      `Error al iniciar sesión con la cuenta ${email} de Facebook`
+    );
+    console.error(
+      `Error al iniciar sesión con la cuenta ${email} de Facebook`,
+      error
+    );
     throw new Error(
       "Fallo en el inicio de sesión. Se cancela la automatización."
     );
   }
 };
-
-// const loginToFacebook = async (page, { email, password }) => {
-//   await page.goto(URL);
-//   await fillField(page, "#email", email);
-//   await fillField(page, "#pass", password);
-//   await clickOnSelector(page, "button[name='login']");
-//   await page.waitForNavigation({ timeout: 30000 });
-
-//   // // Espera a que el usuario complete el CAPTCHA manualmente (si aparece)
-//   // try {
-//   //   console.log("Esperando a que el usuario complete el CAPTCHA...");
-//   //   await page.waitForNavigation({ timeout: 0 });
-//   //   console.log("CAPTCHA completado. Continuando con el flujo...");
-
-//   //   console.log("Esperando a que usuario complete la VERIFICACIÓN...");
-//   //   await page.waitForNavigation({ timeout: 0 });
-//   //   console.log("VERIFICACIÓN completado. Continuando con el flujo...");
-//   // } catch (error) {
-//   //   console.error("Error de navegación o CAPTCHA no resuelto a tiempo:", error);
-//   // }
-// };
 
 //Funcion para manejar la insercion de reportes a la base de datos
 const insertReport = async (post, nombre_grupo, currentDate) => {
@@ -185,8 +229,9 @@ const insertReport = async (post, nombre_grupo, currentDate) => {
 };
 
 //Funcion para manejar el click en el boton like
-const handleLikeButton = async (page, selector) => {
+const handleLikeButton = async (page, selector, userId) => {
   try {
+    emitirMensajeAUsuario(userId, "Dando me gusta a la publicación");
     await page.waitForSelector(selector, { timeout: 15000 });
     const isLiked = await page.evaluate((selector) => {
       const button = document.querySelector(selector);
@@ -205,7 +250,7 @@ const handleLikeButton = async (page, selector) => {
 };
 
 // Función Principal de automatización de Facebook
-const automatizarFacebook = async (post) => {
+const automatizarFacebook = async (post, userId) => {
   let browser, context;
   try {
     //Inicializar el navegador y contexto unicos para esta sesion
@@ -218,17 +263,20 @@ const automatizarFacebook = async (post) => {
     const page = await context.newPage();
 
     // Iniciar sesión en Facebook
-    await loginToFacebook(page, post);
+    await loginToFacebook(page, post, userId);
 
     // Navegar al enlace del post de una página
+    emitirMensajeAUsuario(userId, "Navegando al enlace de la publicación...");
     await page.goto(post.url);
     await page.waitForLoadState("networkidle", { timeout: 15000 });
 
     //Verificar si ya se dio me gusta
-    await handleLikeButton(page, likeButtonSelector);
+    await handleLikeButton(page, likeButtonSelector, userId);
 
     // Publicar en los grupos
     for (let i = 1; i <= post.numero_de_posts; i++) {
+      emitirMensajeAUsuario(userId, "Compartiendo en los grupos de Facebook.");
+
       await page.waitForTimeout(post.intervalo_tiempo * 60000); //intervalo de tiempo entre publicaciones
 
       const firstSelector = await Promise.race([
@@ -297,6 +345,10 @@ const automatizarFacebook = async (post) => {
       //     );
 
       //     const nombre_grupo = await titleGroupPost.textContent();
+      emitirMensajeAUsuario(
+        userId,
+        `Compartiendo la publicación en el grupo: ${nombre_grupo}`
+      );
       console.log(nombre_grupo);
 
       await clickOnSelector(
@@ -312,8 +364,18 @@ const automatizarFacebook = async (post) => {
       );
       await page.keyboard.press("Space");
 
+      emitirMensajeAUsuario(
+        userId,
+        `Mensaje de la publicación: ${post.mensaje}`
+      );
+
       await clickOnSelector(page, 'div[aria-label="Publicar"]');
       await page.waitForLoadState("networkidle", { timeout: 15000 });
+
+      emitirMensajeAUsuario(
+        userId,
+        `Se compartio ¡exitosamente! la publicación en el grupo: ${nombre_grupo}`
+      );
 
       //Actualizar el reporte de publicaciones en la base de datos
       const currentDate = new Date().toLocaleString("es-ES", {

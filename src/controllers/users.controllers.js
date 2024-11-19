@@ -251,7 +251,7 @@ const sharePosts = async (req, res) => {
         return;
       }
       try {
-        await automatizarFacebook(post);
+        await automatizarFacebook(post, id_usuario);
       } catch (error) {
         console.log(
           `Error al automatizar publicaciones de: ${post.email}`,
@@ -370,7 +370,8 @@ const postsReportCurrentDay = async (req, res) => {
 const detailPost = async (req, res) => {
   try {
     const { id_usuario, email } = req.params;
-    const { rows } = await pool.query(`
+    const { rows } = await pool.query(
+      `
       SELECT * FROM reportes 
       WHERE id_usuario=$1 AND email=$2
       ORDER BY fecha_publicacion DESC;

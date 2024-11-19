@@ -114,6 +114,60 @@ a {
   }
 }
 
+/*Estilos para el modal de mensajes*/
+.message-modal {
+  display: none; 
+  border-radius: 3rem;
+  position: fixed;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+  z-index: 9999; /* Asegura que el modal esté encima de otros elementos */
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Estilo para el contenido del mensaje */
+.message-content {
+  /* background-color: white; */
+  border-radius: 3rem;
+  padding: 1.6rem;
+  max-width: 50rem;
+  width: 100%;
+  color: #dcff40; /* Color resaltante de las letras */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow-y: auto; /* Si el contenido es largo, se puede desplazar */
+}
+
+/* Estilo para el botón de cerrar */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color:var(--white);
+}
+
+/* Opcional: Estilo de los mensajes */
+.WSmessages {
+  letter-spacing: 0.1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: var(--normal);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.textoWS{
+  padding-bottom: 1.6rem;
+}
+
 /*----Estilos para la pagina web ---*/
 
 /*Estilos para el form-container*/
