@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /**---------VARIABLES---------- */
 
-const socket = io("http://localhost:4000");
+const socket = io("https://post.posgradoupea.edu.bo");
 
 const formContent = document.getElementById("form-content");
 
