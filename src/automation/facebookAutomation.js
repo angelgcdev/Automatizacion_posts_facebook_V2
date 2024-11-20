@@ -84,14 +84,14 @@ const clickOnSelector = async (page, selector, retries = 3) => {
       `Error en clickOnSelector para el selector ${selector}:`,
       error
     );
-    if (retries > 0) {
-      console.log(
-        `Retry clicking selector ${selector}. Attempts left: ${retries}`
-      );
-      await page.waitForTimeout(getRandomDelay(500, 1000));
-      return clickOnSelector(page, selector, retries - 1);
-    }
-    throw error;
+    // if (retries > 0) {
+    //   console.log(
+    //     `Retry clicking selector ${selector}. Attempts left: ${retries}`
+    //   );
+    //   await page.waitForTimeout(getRandomDelay(500, 1000));
+    //   return clickOnSelector(page, selector, retries - 1);
+    // }
+    // throw error;
   }
 };
 
