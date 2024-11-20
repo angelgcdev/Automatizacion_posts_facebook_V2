@@ -7,4 +7,4 @@ const DB_PORT = process.env.DB_PORT;
 
 const PORT = process.env.PORT || 4000;
 
-export { PORT, DB_USER, DB_HOST, DB_PASSWORD, DB_DATABASE, DB_PORT };
+export { DB_USER, DB_HOST, DB_PASSWORD, DB_DATABASE, DB_PORT, PORT };

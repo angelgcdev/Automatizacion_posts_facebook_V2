@@ -20,7 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /**---------VARIABLES---------- */
 
-const socket = io("http://localhost:4000");
+const serverUrl =
+  window.location.hostname === "localhost"
+    ? "http://localhost:4000"
+    : "https://post.posgradoupea.edu.bo";
+
+console.log(serverUrl);
+
+const socket = io(serverUrl);
 
 const formContent = document.getElementById("form-content");
 
@@ -111,15 +118,20 @@ const mostrarMensaje = (mensaje, esError = false) => {
   containerMessageModal.style.display = "block";
 
   const messagesContainer = document.getElementById("messages");
-  const p = document.createElement("p");
-  p.classList.add("textoWS");
+
+  const list = document.createElement("ul");
+  list.classList.add("listWS");
+
+  const listItem = document.createElement("li");
+  listItem.classList.add("textoWS");
 
   if (esError) {
-    p.style.color = "red";
+    listItem.style.color = "red";
   }
 
-  p.textContent = mensaje;
-  messagesContainer.appendChild(p);
+  listItem.textContent = mensaje;
+  list.appendChild(listItem);
+  messagesContainer.appendChild(list);
 
   //Desplazarse automaticamente hacia abajo
   messagesContainer.scrollTop = messagesContainer.scrollHeight;

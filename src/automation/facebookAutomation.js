@@ -1,5 +1,5 @@
 // src/facebookAutomation.js
-import { firefox, errors } from "playwright";
+import { firefox } from "playwright";
 import { pool } from "../db.js";
 import { io, userSockets } from "../index.js";
 
@@ -34,7 +34,7 @@ const emitirMensajeAUsuario = (userId, mensaje) => {
 
 //Funcion para inicializar el contexto del navegador
 const initBrowser = async () => {
-  const browser = await firefox.launch({ headless: false, slowMo: 50 });
+  const browser = await firefox.launch({ headless: true, slowMo: 50 });
   const context = await browser.newContext();
 
   return { browser, context };

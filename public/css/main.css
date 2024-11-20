@@ -116,7 +116,7 @@ a {
 
 /*Estilos para el modal de mensajes*/
 .message-modal {
-  display: none; 
+  display: none;
   border-radius: 3rem;
   position: fixed;
   top: 70%;
@@ -133,7 +133,6 @@ a {
 
 /* Estilo para el contenido del mensaje */
 .message-content {
-  /* background-color: white; */
   border-radius: 3rem;
   padding: 1.6rem;
   max-width: 50rem;
@@ -146,16 +145,17 @@ a {
 /* Estilo para el botón de cerrar */
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
+  top: 1rem;
+  right: 1rem;
+  font-size: 3.2rem;
   font-weight: bold;
   cursor: pointer;
-  color:var(--white);
+  color: var(--white);
 }
 
 /* Opcional: Estilo de los mensajes */
 .WSmessages {
+  padding: 1.6rem;
   letter-spacing: 0.1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -164,8 +164,15 @@ a {
   overflow-y: auto;
 }
 
-.textoWS{
-  padding-bottom: 1.6rem;
+.listWS {
+  padding: 1.6rem;
+  list-style: circle;
+}
+
+.textoWS {
+  /* padding-bottom: 1.6rem; */
+  list-style: unset;
+  text-shadow: 1px 1px 2px #0d0d0d;
 }
 
 /*----Estilos para la pagina web ---*/
