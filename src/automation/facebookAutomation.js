@@ -1,5 +1,5 @@
 // src/facebookAutomation.js
-import { firefox } from "playwright";
+import { chromium } from "playwright";
 import { pool } from "../db.js";
 import { io, userSockets } from "../index.js";
 
@@ -34,7 +34,7 @@ const emitirMensajeAUsuario = (userId, mensaje) => {
 
 //Funcion para inicializar el contexto del navegador
 const initBrowser = async () => {
-  const browser = await firefox.launch({ headless: true, slowMo: 50 });
+  const browser = await chromium.launch({ headless: false, slowMo: 50 });
   const context = await browser.newContext();
 
   return { browser, context };
@@ -270,8 +270,6 @@ const automatizarFacebook = async (post, userId) => {
 
     // Publicar en los grupos
     for (let i = 1; i <= post.numero_de_posts; i++) {
-      await page.waitForTimeout(post.intervalo_tiempo * 60000); //intervalo de tiempo entre publicaciones
-
       const firstSelector = await Promise.race([
         page.waitForSelector(selector1, { timeout: 10000 }),
         page.waitForSelector(selector2, { timeout: 10000 }),
@@ -364,6 +362,11 @@ const automatizarFacebook = async (post, userId) => {
         await insertReport(post, nombre_grupo, currentDate);
       } catch (error) {
         console.error("Error al insertar el reporte:", error);
+      }
+
+      // Intervalo de tiempo entre publicaciones
+      if (i !== post.numero_de_posts) {
+        await page.waitForTimeout(post.intervalo_tiempo * 60000); //intervalo de tiempo entre publicaciones
       }
     }
 
