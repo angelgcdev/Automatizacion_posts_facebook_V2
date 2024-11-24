@@ -2,7 +2,9 @@
 import { chromium } from "playwright";
 import { cleanText } from "../utils/cleanText.js";
 
-const selectorImg = "img.x85a59c.x193iq5w.x4fas0m.x19kjcj4";
+// const selectorImg = "img.x85a59c.x193iq5w.x4fas0m.x19kjcj4";
+const selectorImg = 'img[data-visualcompletion="media-vc-image"]';
+
 const selectorTitulo =
   "div.xyinxu5.x4uap5.x1g2khh7.xkhd6sd span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x1xmvt09.x1lliihq.x1s928wv.xhkezso.x1gmr53x.x1cpjm7i.x1fgarty.x1943h6x.xudqn12.x3x7a5m.x6prxxf.xvq8zen.xo1l8bm.xzsf02u";
 const selectorLikesImg =
@@ -14,9 +16,13 @@ const selectorSharesImg =
 
 //Funcion para hacer click en un selector con espera
 const clickOnSelector = async (page, selector) => {
-  await page.waitForLoadState("networkidle");
-  await page.waitForSelector(selector, { timeout: 10000 });
-  await page.click(selector);
+  try {
+    // await page.waitForLoadState("networkidle");
+    // await page.waitForSelector(selector, { timeout: 10000 });
+    await page.click(selector);
+  } catch (error) {
+    console.log(`Error al hacer click en el selector: ${selector}`, error);
+  }
 };
 
 //Función principal para extraer la url del post
@@ -35,28 +41,38 @@ const postInformation = async (url) => {
 
     await clickOnSelector(page, "div[aria-label='Cerrar']");
 
-    // extraer la url de la imagen
-    const imageURL = await page
-      .$eval(selectorImg, (el) => el.src)
-      .catch(() => null);
+    //Extraer datos en paralelo
+    const [imageURL, title, totalLikes, totalShares] = await Promise.all([
+      page.$eval(selectorImg, (el) => el.src).catch(() => null),
+      page.$eval(selectorTitulo, (el) => el.textContent).catch(() => ""),
+      page.$eval(selectorLikesImg, (el) => el.textContent).catch(() => 0),
+      page.$eval(selectorSharesImg, (el) => el.textContent).catch(() => 0),
+    ]);
 
-    //Extraer el titulo de la publicación
-    const title = await page
-      .$eval(selectorTitulo, (el) => el.textContent)
-      .catch(() => "");
+    // // extraer la url de la imagen
+    // const imageURL = await page
+    //   .$eval(selectorImg, (el) => el.src)
+    //   .catch(() => null);
 
-    //Titulo limpio
+    // //Extraer el titulo de la publicación
+    // const title = await page
+    //   .$eval(selectorTitulo, (el) => el.textContent)
+    //   .catch(() => "");
+
+    // //Titulo limpio
+    // const tituloPost = cleanText(title);
+
+    // //Extraer la #de reacciones del post
+    // const totalLikes = await page
+    //   .$eval(selectorLikesImg, (el) => el.textContent)
+    //   .catch(() => 0);
+
+    // //Extraer el #de compartidas del post
+    // const totalShares = await page
+    //   .$eval(selectorSharesImg, (el) => el.textContent)
+    //   .catch(() => 0);
+
     const tituloPost = cleanText(title);
-
-    //Extraer la #de reacciones del post
-    const totalLikes = await page
-      .$eval(selectorLikesImg, (el) => el.textContent)
-      .catch(() => 0);
-
-    //Extraer el #de compartidas del post
-    const totalShares = await page
-      .$eval(selectorSharesImg, (el) => el.textContent)
-      .catch(() => 0);
 
     console.log({
       url,
@@ -79,7 +95,7 @@ const postInformation = async (url) => {
 
 // // Datos Para probar esta funcion
 // const informationPost = await postInformation(
-//   "https://www.facebook.com/photo?fbid=570870361986557&set=a.190427340030863"
+//   "https://www.facebook.com/photo/?fbid=122118533834528786&set=gm.3327538297377440&idorvanity=416196628511636"
 // );
 // console.log(informationPost);
 

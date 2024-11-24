@@ -7,9 +7,13 @@ const selectorImg = 'img[data-visualcompletion="media-vc-image"]';
 
 //Funcion para hacer click en un selector con espera
 const clickOnSelector = async (page, selector) => {
-  await page.waitForLoadState("networkidle");
-  await page.waitForSelector(selector, { timeout: 10000 });
-  await page.click(selector);
+  try {
+    // await page.waitForLoadState("networkidle");
+    // await page.waitForSelector(selector, { timeout: 10000 });
+    await page.click(selector);
+  } catch (error) {
+    console.log(`Error al hacer click en el selector: ${selector}`, error);
+  }
 };
 
 //Función principal para extraer la url del post

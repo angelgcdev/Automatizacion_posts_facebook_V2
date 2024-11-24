@@ -155,22 +155,23 @@ a {
 
 /* Opcional: Estilo de los mensajes */
 .WSmessages {
-  padding: 1.6rem;
   letter-spacing: 0.1rem;
   font-weight: 400;
   line-height: 1.5;
   font-size: var(--normal);
   max-height: 300px;
   overflow-y: auto;
-}
-
-.listWS {
-  padding: 1.6rem;
+  padding: 3.2rem;
   list-style: circle;
 }
 
+/* .listWS {
+  padding: 1.6rem;
+  list-style: circle;
+} */
+
 .textoWS {
-  /* padding-bottom: 1.6rem; */
+  padding-bottom: 1.6rem;
   list-style: unset;
   text-shadow: 1px 1px 2px #0d0d0d;
 }

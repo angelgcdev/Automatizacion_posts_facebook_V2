@@ -25,8 +25,6 @@ const serverUrl =
     ? "http://localhost:4000"
     : "https://post.posgradoupea.edu.bo";
 
-console.log(serverUrl);
-
 const socket = io(serverUrl);
 
 const formContent = document.getElementById("form-content");
@@ -119,9 +117,6 @@ const mostrarMensaje = (mensaje, esError = false) => {
 
   const messagesContainer = document.getElementById("messages");
 
-  const list = document.createElement("ul");
-  list.classList.add("listWS");
-
   const listItem = document.createElement("li");
   listItem.classList.add("textoWS");
 
@@ -130,8 +125,7 @@ const mostrarMensaje = (mensaje, esError = false) => {
   }
 
   listItem.textContent = mensaje;
-  list.appendChild(listItem);
-  messagesContainer.appendChild(list);
+  messagesContainer.appendChild(listItem);
 
   //Desplazarse automaticamente hacia abajo
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -417,14 +411,6 @@ const loadPosts = async (serachTerm = "") => {
 
       postList.appendChild(articlePost);
 
-      // articlePost.appendChild(createEditButton(post, post.id));
-      // articlePost.appendChild(createDeleteButton(post.id_publicacion));
-      // articlePost.appendChild(
-      //   createDetailPostButton(post.id_usuario, post.email)
-      // );
-
-      // postList.appendChild(articlePost);
-
       userCount++;
     }
 
@@ -496,7 +482,6 @@ const sharePosts = async () => {
   } finally {
     loadPosts();
     hideLoading(); //Oculta la animacion de carga
-    openReportModal(); //Muestra el reporte al finalizar
   }
 };
 

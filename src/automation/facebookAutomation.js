@@ -23,10 +23,13 @@ const selector3 = 'div[aria-label="Compartir"]';
 
 /************FUNCIONES***********/
 //Emitir funcion al usuario
-const emitirMensajeAUsuario = (userId, mensaje) => {
+const emitirMensajeAUsuario = (userId, mensaje, esError = false) => {
   if (userSockets[userId]) {
-    io.to(userSockets[userId]).emit("automation:update", mensaje);
-    console.log(`Mensaje enviado a usuario ${userId}`);
+    const tipoMensaje = esError ? "automation:error" : "automation:update";
+    io.to(userSockets[userId]).emit(tipoMensaje, mensaje);
+    console.log(
+      `Mensaje ${esError ? "de error" : "enviado"} enviado a usuario ${userId}`
+    );
   } else {
     console.log("Usuario no encontrado");
   }
@@ -34,7 +37,10 @@ const emitirMensajeAUsuario = (userId, mensaje) => {
 
 //Funcion para inicializar el contexto del navegador
 const initBrowser = async () => {
-  const browser = await chromium.launch({ headless: true, slowMo: 50 });
+  const browser = await chromium.launch({
+    headless: true,
+    // slowMo: 50
+  });
   const context = await browser.newContext();
 
   return { browser, context };
@@ -107,19 +113,10 @@ const fillField = async (page, selector, value) => {
 //Funcion para iniciar sesion en Facebook
 const loginToFacebook = async (page, { email, password }, userId) => {
   try {
-    emitirMensajeAUsuario(
-      userId,
-      `Iniciando sesión en Facebook con el correo electrónico ${email}. Por favor, espera un momento...`
-    );
-    console.log(
-      `Iniciando sesión en Facebook con el correo electrónico ${email}...`
-    );
-
     await page.goto(URL);
     await fillField(page, "#email", email);
     await fillField(page, "#pass", password);
     await clickOnSelector(page, "button[name='login']");
-
     //Esperar la navegación despues de iniciar sesión
     // await page.waitForNavigation({ timeout: 30000 });
     await page.waitForTimeout(5000);
@@ -127,52 +124,45 @@ const loginToFacebook = async (page, { email, password }, userId) => {
     //Obtenemos a URL de la pagina
     const verifyURL = page.url();
 
-    //Verificar si la URL indica un problema relacionado con el inicio de sesión
-    if (verifyURL.startsWith("https://www.facebook.com/login/")) {
-      emitirMensajeAUsuario(
-        userId,
-        `El inicio de sesión con la cuenta ${email} falló: podría tratarse de una contraseña incorrecta u otro problema relacionado con las credenciales.`
-      );
-      console.error(
-        "Error: Problema detectado en la contraseña durante el inicio de sesión."
-      );
-      throw new Error("Problema en la contraseña del inicio de sesión.");
-    }
+    //Verificar si el usuario esta conectado
+    const isLoggedIn = (await page.$('div[aria-label="Tu perfil"]')) !== null;
 
-    //Verificar si la URL indica un problema relacionado con la autenticación
-    if (
-      verifyURL.startsWith("https://www.facebook.com/autentication/") ||
-      verifyURL.startsWith("https://www.facebook.com/checkpoint/")
-    ) {
-      emitirMensajeAUsuario(
-        userId,
-        `El inicio de sesión con la cuenta ${email} falló: Podría ser un problema de autenticación o CAPTCHA.`
-      );
-      console.error(
-        "Error: Problema detectado en la autenticación o CAPTCHA durante el inicio de sesión."
-      );
-      throw new Error(
-        "Problema en la autenticación o CAPTCHA en el inicio de sesión."
-      );
-    }
-
-    //Verificar si la sesión esta activa
-    const isLoggedIn = await page.evaluate(() => {
-      const perfil = document.querySelector('div[aria-label="Tu perfil"]');
-      return !!perfil;
-    });
+    // const isLoggedIn = await page.evaluate(() => {
+    //   const perfil = document.querySelector('div[aria-label="Tu perfil"]');
+    //   return !!perfil;
+    // });
 
     if (!isLoggedIn) {
-      emitirMensajeAUsuario(
-        userId,
-        `No se pudo iniciar sesión con la cuenta ${email} en Facebook.`
-      );
-      console.error(
-        `No se pudo iniciar sesión con la cuenta ${email} en Facebook.`
-      );
-      throw new Error(
-        "Fallo en el inicio de sesión. Se cancela la automatización."
-      );
+      //Verificar si la URL indica un problema relacionado con el inicio de sesión
+      if (verifyURL.startsWith("https://www.facebook.com/login/")) {
+        emitirMensajeAUsuario(
+          userId,
+          `El inicio de sesión con la cuenta ${email} falló: podría tratarse de una contraseña incorrecta u otro problema relacionado con las credenciales.`,
+          true
+        );
+        console.error(
+          "Error: Problema detectado en la contraseña durante el inicio de sesión."
+        );
+        throw new Error("Problema en la contraseña del inicio de sesión.");
+      }
+
+      //Verificar si la URL indica un problema relacionado con la autenticación
+      if (
+        verifyURL.startsWith("https://www.facebook.com/autentication/") ||
+        verifyURL.startsWith("https://www.facebook.com/checkpoint/")
+      ) {
+        emitirMensajeAUsuario(
+          userId,
+          `El inicio de sesión con la cuenta ${email} falló: Podría ser un problema de autenticación o CAPTCHA.`,
+          true
+        );
+        console.error(
+          "Error: Problema detectado en la autenticación o CAPTCHA durante el inicio de sesión."
+        );
+        throw new Error(
+          "Problema en la autenticación o CAPTCHA en el inicio de sesión."
+        );
+      }
     }
 
     console.log(`Inicio de sesión con la cuenta ${email}  exitosa.`);
@@ -183,7 +173,8 @@ const loginToFacebook = async (page, { email, password }, userId) => {
   } catch (error) {
     emitirMensajeAUsuario(
       userId,
-      `Error al iniciar sesión con la cuenta ${email} de Facebook`
+      `Error al iniciar sesión con la cuenta ${email} de Facebook`,
+      true
     );
     console.error(
       `Error al iniciar sesión con la cuenta ${email} de Facebook`,
@@ -251,6 +242,13 @@ const automatizarFacebook = async (post, userId) => {
     const page = await context.newPage();
 
     // Iniciar sesión en Facebook
+    emitirMensajeAUsuario(
+      userId,
+      `Iniciando sesión en Facebook con el correo electrónico ${post.email}. Por favor, espera un momento...`
+    );
+    console.log(
+      `Iniciando sesión en Facebook con el correo electrónico ${post.email}...`
+    );
     await loginToFacebook(page, post, userId);
 
     // Navegar al enlace del post de una página
@@ -316,9 +314,8 @@ const automatizarFacebook = async (post, userId) => {
         } catch (error) {
           console.error(error);
         }
+        //------------------------------------------------
       }
-
-      //------------------------------------------------
 
       await page.waitForSelector('div[role="list"]', { timeout: 10000 });
 
