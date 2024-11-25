@@ -12,3 +12,7 @@ DB_DATABASE=facebook_db
 JWT_SECRET=tu_clave_secreta
 
 PORT=4000
+
+modificar la tabla en la base de datos de la siguiente forma:
+
+ALTER TABLE posts ADD COLUMN activo BOOLEAN DEFAULT false;

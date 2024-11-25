@@ -324,6 +324,49 @@ const createDetailPostButton = (id_usuario, email) => {
   return detailPostButton;
 };
 
+//Función para crear el checkbox de estado de publicaciones
+const createChekboxState = (post) => {
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.classList.add("article__checkbox");
+  checkbox.checked = post.activo;
+
+  checkbox.addEventListener("change", async () => {
+    const newStatus = checkbox.checked ? true : false;
+    await updatePostStatus(post.id_publicacion, newStatus);
+    console.log("Estado:", newStatus);
+    console.log("checkbox");
+  });
+
+  return checkbox;
+};
+
+// Funcion para actualizar el estado de la publicacion en la base de datos
+const updatePostStatus = async (id_publicacion, status) => {
+  try {
+    const options = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ estado: status }),
+    };
+
+    const response = await requestData(
+      `/users/updatePostStatus/${id_publicacion}`,
+      options
+    );
+
+    if (response) {
+      console.log(`Estado de publicaciones actualizado a ${status}`);
+    } else {
+      console.error(`Error al actualizar el estado de las publicaciones.`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
 //Funcion para cancelar publicaciones
 const cancelPosts = async () => {
   const options = {
@@ -371,7 +414,7 @@ const loadPosts = async (serachTerm = "") => {
       const articlePost = document.createElement("article");
       articlePost.classList.add("article__posts");
 
-      articlePost.innerHTML = `
+      articlePost.innerHTML += `
         <div class = "total__detail-container">
           <p class="total__detail-text">${total_d[0].count}</p>
         </div>
@@ -406,6 +449,10 @@ const loadPosts = async (serachTerm = "") => {
       containerButtonP.appendChild(
         createDetailPostButton(post.id_usuario, post.email)
       );
+
+      //Crear el checkbox para marcar publicaciones
+      const checkbox = createChekboxState(post);
+      articlePost.prepend(checkbox);
 
       articlePost.appendChild(containerButtonP);
 
@@ -470,7 +517,11 @@ const sharePosts = async () => {
   };
 
   try {
-    const response = await requestData(`/sharePosts/${userId}`, options);
+    const activo = true;
+    const response = await requestData(
+      `/sharePosts/${userId}/${activo}`,
+      options
+    );
 
     if (response) {
       showNotification(response.message);

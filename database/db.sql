@@ -206,7 +206,8 @@ CREATE TABLE publicaciones (
   url_img VARCHAR(2048),
   mensaje TEXT NOT NULL,
   numero_de_posts INT DEFAULT 1,
-  intervalo_tiempo INT DEFAULT 0
+  intervalo_tiempo INT DEFAULT 0,
+  activo BOOLEAN DEFAULT false
 );
 --;
 -- Tabla reportes

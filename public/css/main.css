@@ -706,6 +706,11 @@ a {
   /* font-size: var(--smaller); */
 }
 
+.article__checkbox {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
 .article__posts__text {
   margin-top: 1.6rem;
   font-size: var(--small);

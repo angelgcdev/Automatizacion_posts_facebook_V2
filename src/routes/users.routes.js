@@ -7,6 +7,7 @@ import {
   createUser,
   loginUser,
   addPost,
+  updatePostStatus,
   getPosts,
   deletePost,
   updatePost,
@@ -36,13 +37,15 @@ router.post("/login", loginUser);
 
 router.post("/addPost", addPost);
 
+router.put("/users/updatePostStatus/:id_publicacion", updatePostStatus);
+
 router.get("/getPosts/:id_usuario", getPosts);
 
 router.delete("/deletePost/:id_publicacion", deletePost);
 
 router.put("/updatePost/:id_publicacion", updatePost);
 
-router.post("/sharePosts/:id_usuario", sharePosts);
+router.post("/sharePosts/:id_usuario/:activo", sharePosts);
 
 router.get("/postsReport/:id_usuario", postsReport);
 

@@ -38,8 +38,8 @@ const emitirMensajeAUsuario = (userId, mensaje, esError = false) => {
 //Funcion para inicializar el contexto del navegador
 const initBrowser = async () => {
   const browser = await chromium.launch({
-    headless: true,
-    // slowMo: 50
+    headless: false,
+    slowMo: 50,
   });
   const context = await browser.newContext();
 
@@ -117,8 +117,6 @@ const loginToFacebook = async (page, { email, password }, userId) => {
     await fillField(page, "#email", email);
     await fillField(page, "#pass", password);
     await clickOnSelector(page, "button[name='login']");
-    //Esperar la navegación despues de iniciar sesión
-    // await page.waitForNavigation({ timeout: 30000 });
     await page.waitForTimeout(5000);
 
     //Obtenemos a URL de la pagina
@@ -126,11 +124,6 @@ const loginToFacebook = async (page, { email, password }, userId) => {
 
     //Verificar si el usuario esta conectado
     const isLoggedIn = (await page.$('div[aria-label="Tu perfil"]')) !== null;
-
-    // const isLoggedIn = await page.evaluate(() => {
-    //   const perfil = document.querySelector('div[aria-label="Tu perfil"]');
-    //   return !!perfil;
-    // });
 
     if (!isLoggedIn) {
       //Verificar si la URL indica un problema relacionado con el inicio de sesión

@@ -1,4 +1,6 @@
 // src/controllers/users.controllers.js
+import { io, userSockets } from "../index.js";
+
 import { pool } from "../db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -11,6 +13,19 @@ import { postImg } from "../automation/postImg.js";
 /************VARIABLES***********/
 const saltRounds = 10;
 let isCanceled = false;
+
+//Emitir funcion al usuario
+const emitirMensajeAUsuario = (userId, mensaje, esError = false) => {
+  if (userSockets[userId]) {
+    const tipoMensaje = esError ? "automation:error" : "automation:update";
+    io.to(userSockets[userId]).emit(tipoMensaje, mensaje);
+    console.log(
+      `Mensaje ${esError ? "de error" : "enviado"} enviado a usuario ${userId}`
+    );
+  } else {
+    console.log("Usuario no encontrado");
+  }
+};
 
 const infoUser = async (req, res) => {
   const { id_usuario } = req.params;
@@ -157,6 +172,31 @@ const addPost = async (req, res) => {
   }
 };
 
+const updatePostStatus = async (req, res) => {
+  const { id_publicacion } = req.params;
+  const { estado } = req.body;
+
+  try {
+    const { rows } = await pool.query(
+      "UPDATE publicaciones SET activo = $1 WHERE id_publicacion=$2 RETURNING *",
+      [estado, id_publicacion]
+    );
+
+    return res
+      .status(200)
+      .json({ message: "Estado de publicación actualizada con éxito." });
+  } catch (error) {
+    console.error(
+      "Error durante la actualización del estado de la publicación:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Se produjo un error al actualizar el estado de la publicación.",
+    });
+  }
+};
+
 const getPosts = async (req, res) => {
   try {
     const { id_usuario } = req.params;
@@ -238,11 +278,11 @@ const sharePosts = async (req, res) => {
     //Reiniciar el estado de cancelacion al iniciar la solicitud
     isCanceled = false;
 
-    const { id_usuario } = req.params;
+    const { id_usuario, activo } = req.params;
 
     const { rows } = await pool.query(
-      "SELECT * FROM publicaciones WHERE id_usuario=$1;",
-      [id_usuario]
+      "SELECT * FROM publicaciones WHERE id_usuario=$1 AND activo=$2;",
+      [id_usuario, activo]
     );
 
     for (const post of rows) {
@@ -259,6 +299,11 @@ const sharePosts = async (req, res) => {
         );
       }
     }
+
+    emitirMensajeAUsuario(
+      id_usuario,
+      "Se terminó de compartir las publicaciones..."
+    );
 
     return res.status(200).json({
       message: "Automatización de posts completada con éxito.",
@@ -452,6 +497,7 @@ export {
   createUser,
   loginUser,
   addPost,
+  updatePostStatus,
   getPosts,
   deletePost,
   updatePost,
