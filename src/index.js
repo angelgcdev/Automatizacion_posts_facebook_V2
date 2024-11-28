@@ -9,7 +9,6 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 
 import { createServer } from "http"; //Para usar el servidor HTTP
-import { Server } from "socket.io"; // WebSockets con socket.io
 import { initSocket } from "./socket.js";
 
 //Obtener el nombre del archivo actual y su directorio
