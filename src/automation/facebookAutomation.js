@@ -1,7 +1,7 @@
 // src/facebookAutomation.js
 import { chromium } from "playwright";
 import { pool } from "../db.js";
-import { io, userSockets } from "../index.js";
+import { getIo, userSockets } from "../socket.js";
 
 /*********VARIABLES***********/
 
@@ -24,6 +24,8 @@ const selector3 = 'div[aria-label="Compartir"]';
 /************FUNCIONES***********/
 //Emitir funcion al usuario
 const emitirMensajeAUsuario = (userId, mensaje, esError = false) => {
+  const io = getIo();
+
   if (userSockets[userId]) {
     const tipoMensaje = esError ? "automation:error" : "automation:update";
     io.to(userSockets[userId]).emit(tipoMensaje, mensaje);

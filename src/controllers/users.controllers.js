@@ -1,5 +1,5 @@
 // src/controllers/users.controllers.js
-import { io, userSockets } from "../index.js";
+import { getIo, userSockets } from "../socket.js";
 
 import { pool } from "../db.js";
 import bcrypt from "bcrypt";
@@ -16,6 +16,8 @@ let isCanceled = false;
 
 //Emitir funcion al usuario
 const emitirMensajeAUsuario = (userId, mensaje, esError = false) => {
+  const io = getIo();
+
   if (userSockets[userId]) {
     const tipoMensaje = esError ? "automation:error" : "automation:update";
     io.to(userSockets[userId]).emit(tipoMensaje, mensaje);
