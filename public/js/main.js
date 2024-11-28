@@ -507,8 +507,6 @@ const sharePosts = async () => {
   //Limpiar el contendor de mensajes de socket io
   limpiarContenedorMensajes();
 
-  showLoading("Publicando..."); //Muestra la animacion de carga
-
   loadingContainer.appendChild(createCancelButton());
 
   const options = {
@@ -517,6 +515,8 @@ const sharePosts = async () => {
   };
 
   try {
+    showLoading("Publicando..."); //Muestra la animacion de carga
+
     const activo = true;
     const response = await requestData(
       `/sharePosts/${userId}/${activo}`,

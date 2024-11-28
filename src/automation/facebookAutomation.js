@@ -340,11 +340,6 @@ const automatizarFacebook = async (post, userId) => {
       await clickOnSelector(page, 'div[aria-label="Publicar"]');
       await page.waitForLoadState("networkidle", { timeout: 15000 });
 
-      emitirMensajeAUsuario(
-        userId,
-        `Se compartio ¡exitosamente! la publicación en el grupo: ${nombre_grupo}`
-      );
-
       //Actualizar el reporte de publicaciones en la base de datos
       const currentDate = new Date().toLocaleString("es-ES", {
         timeZone: "America/La_Paz",
@@ -355,6 +350,11 @@ const automatizarFacebook = async (post, userId) => {
       } catch (error) {
         console.error("Error al insertar el reporte:", error);
       }
+
+      emitirMensajeAUsuario(
+        userId,
+        `Se compartio ¡exitosamente! la publicación en el grupo: ${nombre_grupo}`
+      );
 
       // Intervalo de tiempo entre publicaciones
       if (i !== post.numero_de_posts) {
