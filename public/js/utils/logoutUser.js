@@ -7,7 +7,7 @@ const logoutUser = () => {
   localStorage.removeItem("userAdmin");
 
   //Redirige a la página de inicio de sesión
-  window.location.href = "../login.html";
+  window.location.href = "../index.html";
 };
 
 export { logoutUser };

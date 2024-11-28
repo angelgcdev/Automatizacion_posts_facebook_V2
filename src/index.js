@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
 
 // Iniciar el servidor
 httpServer.listen(PORT, () => {
-  const baseUrl = `http://localhost:${PORT}/login.html`;
+  const baseUrl = `http://localhost:${PORT}`;
   console.log(`Server running at ${baseUrl}`);
 });
 
