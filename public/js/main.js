@@ -507,8 +507,6 @@ const sharePosts = async () => {
   //Limpiar el contendor de mensajes de socket io
   limpiarContenedorMensajes();
 
-  loadingContainer.appendChild(createCancelButton());
-
   const options = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -516,6 +514,7 @@ const sharePosts = async () => {
 
   try {
     showLoading("Publicando..."); //Muestra la animacion de carga
+    loadingContainer.appendChild(createCancelButton());
 
     const activo = true;
     const response = await requestData(
