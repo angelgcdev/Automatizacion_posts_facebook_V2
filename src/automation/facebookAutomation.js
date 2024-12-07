@@ -40,7 +40,7 @@ const emitirMensajeAUsuario = (userId, mensaje, esError = false) => {
 //Funcion para inicializar el contexto del navegador
 const initBrowser = async () => {
   const browser = await chromium.launch({
-    headless: false,
+    headless: true,
     slowMo: 50,
   });
   const context = await browser.newContext();
@@ -143,8 +143,9 @@ const loginToFacebook = async (page, { email, password }, userId) => {
 
       //Verificar si la URL indica un problema relacionado con la autenticación
       if (
-        verifyURL.startsWith("https://www.facebook.com/autentication/") ||
-        verifyURL.startsWith("https://www.facebook.com/checkpoint/")
+        verifyURL.startsWith("https://www.facebook.com/autentication") ||
+        verifyURL.startsWith("https://www.facebook.com/auth_platform") ||
+        verifyURL.startsWith("https://www.facebook.com/checkpoint")
       ) {
         emitirMensajeAUsuario(
           userId,
@@ -246,10 +247,14 @@ const automatizarFacebook = async (post, userId) => {
     );
     await loginToFacebook(page, post, userId);
 
+    await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+
     // Navegar al enlace del post de una página
     emitirMensajeAUsuario(userId, "Navegando al enlace de la publicación...");
     await page.goto(post.url);
     await page.waitForLoadState("networkidle", { timeout: 15000 });
+
+    await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
     //Cerrar si hay un modal de aviso
     try {
@@ -260,6 +265,8 @@ const automatizarFacebook = async (post, userId) => {
 
     //Verificar si ya se dio me gusta
     await handleLikeButton(page, likeButtonSelector, userId);
+
+    await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
     // Publicar en los grupos
     for (let i = 1; i <= post.numero_de_posts; i++) {
@@ -279,6 +286,8 @@ const automatizarFacebook = async (post, userId) => {
       } else {
         throw new Error("Ningún selector se resolvió a tiempo.");
       }
+
+      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
       try {
         //Click en el boton 'Grupo'
@@ -312,7 +321,9 @@ const automatizarFacebook = async (post, userId) => {
         //------------------------------------------------
       }
 
-      await page.waitForSelector('div[role="list"]', { timeout: 10000 });
+      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
+
+      await page.waitForSelector('div[role="list"]', { timeout: 20000 });
 
       const titleGroupPost = await page.locator(
         `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
@@ -322,21 +333,15 @@ const automatizarFacebook = async (post, userId) => {
       const nombre_grupo = await titleGroupPost.textContent();
       console.log(nombre_grupo);
 
-      //     const nombre_grupo = await page
-      //       .$eval(
-      //         `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
-      // span[class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x676frb x1lkfr7t x1lbecb7 xk50ysn xzsf02u x1yc453h"]`,
-      //         (el) => el.textContent
-      //       )
-      //       .catch(() => "");
-
-      //     console.log(nombre_grupo);
+      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
       await clickOnSelector(
         page,
         `div[role="list"] div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-child(${i})`
       );
       await page.waitForLoadState("networkidle", { timeout: 15000 });
+
+      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
       await fillField(
         page,
@@ -347,6 +352,8 @@ const automatizarFacebook = async (post, userId) => {
 
       await clickOnSelector(page, 'div[aria-label="Publicar"]');
       await page.waitForLoadState("networkidle", { timeout: 15000 });
+
+      await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
       //Actualizar el reporte de publicaciones en la base de datos
       const currentDate = new Date().toLocaleString("es-ES", {
@@ -369,8 +376,6 @@ const automatizarFacebook = async (post, userId) => {
         await page.waitForTimeout(post.intervalo_tiempo * 60000); //intervalo de tiempo entre publicaciones
       }
     }
-
-    // await browser.close();
   } catch (error) {
     console.log("Se ha producido un error:", error);
     throw error;
