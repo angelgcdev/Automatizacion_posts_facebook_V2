@@ -289,7 +289,6 @@ const sharePosts = async (req, res) => {
 
     for (const post of rows) {
       if (isCanceled) {
-        res.status(200).json({ message: "Publicaciones canceladas" });
         return;
       }
       try {
@@ -307,9 +306,13 @@ const sharePosts = async (req, res) => {
       "Se terminó de compartir las publicaciones..."
     );
 
-    return res.status(200).json({
-      message: "Automatización de posts completada con éxito.",
-    });
+    if (isCanceled) {
+      return res.status(200).json({ message: "Publicaciones canceladas" });
+    } else {
+      return res.status(200).json({
+        message: "Automatización de posts completada con éxito.",
+      });
+    }
   } catch (error) {
     console.log("Error durante sharePosts:", error);
     return res.status(500).json({
