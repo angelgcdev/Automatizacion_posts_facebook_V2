@@ -381,6 +381,9 @@ const cancelPosts = async () => {
   } else {
     console.log("No se cancelo");
   }
+
+  hideLoading();
+
 };
 
 //Funcion para cargar y mostrar usuarios
