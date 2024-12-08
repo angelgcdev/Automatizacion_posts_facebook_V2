@@ -329,7 +329,6 @@ const automatizarFacebook = async (post, userId) => {
         `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
   span[class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x676frb x1lkfr7t x1lbecb7 xk50ysn xzsf02u x1yc453h"]`
       );
-
       const nombre_grupo = await titleGroupPost.textContent();
       console.log(nombre_grupo);
 

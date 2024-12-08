@@ -512,6 +512,8 @@ const sharePosts = async () => {
     headers: { "Content-Type": "application/json" },
   };
 
+  let operationCompleted = false; //Inidicador de operacion terminada
+
   try {
     showLoading("Publicando..."); //Muestra la animacion de carga
     loadingContainer.appendChild(createCancelButton());
@@ -527,11 +529,15 @@ const sharePosts = async () => {
     } else {
       showNotification(response.message, false);
     }
+
+    operationCompleted = true; //Marca la operación como completada
   } catch (error) {
     showNotification("Hubo un problema al compartir las publiciones.", false);
   } finally {
-    loadPosts();
-    hideLoading(); //Oculta la animacion de carga
+    if (operationCompleted) {
+      loadPosts();
+      hideLoading(); //Oculta la animacion de carga
+    }
   }
 };
 
