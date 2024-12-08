@@ -382,8 +382,8 @@ const cancelPosts = async () => {
     console.log("No se cancelo");
   }
 
+  loadPosts();
   hideLoading();
-
 };
 
 //Funcion para cargar y mostrar usuarios
@@ -391,6 +391,10 @@ const loadPosts = async (serachTerm = "") => {
   const posts = await requestData(`/getPosts/${userId}`);
 
   if (posts) {
+    //Limpiar las lista de publicaciones
+    postList.innerHTML = "";
+    let userCount = 0; //Variable para contar usuarios
+
     //Filtrar publicaciones si hay un termino de bùsqueda
     const filteredPosts = posts.filter((post) =>
       post.email.toLowerCase().includes(serachTerm.toLowerCase())
@@ -405,10 +409,6 @@ const loadPosts = async (serachTerm = "") => {
     totalPublicaciones_p.classList.add("totalPublicaciones_p");
     totalPublicaciones_p.textContent = `Publicaciones hoy : ${total_posts_current_day.total_publicaciones}`;
     postsContainer.appendChild(totalPublicaciones_p);
-
-    //Limpiar las lista de publicaciones
-    postList.innerHTML = "";
-    let userCount = 0; //Variable para contar usuarios
 
     //Rederizamos los posts
     for (const post of filteredPosts) {
