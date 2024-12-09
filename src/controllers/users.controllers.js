@@ -287,32 +287,44 @@ const sharePosts = async (req, res) => {
       [id_usuario, activo]
     );
 
-    for (const post of rows) {
+    //Funcion para procesar cada publicación secuencialmente
+    const processPostsSequentially = async () => {
+      for (const post of rows) {
+        if (isCanceled) {
+          return;
+        }
+
+        try {
+          await automatizarFacebook(post, id_usuario);
+        } catch (error) {
+          console.log(
+            `Error al automatizar publicaciones de: ${post.email}`,
+            error
+          );
+        }
+
+        //liberar el event loop entre publicaciones
+        await new Promise((resolve) => setImmediate(resolve));
+      }
+
+      //Enviar mensaje al usuario final
+      emitirMensajeAUsuario(
+        id_usuario,
+        "Se terminó de compartir las publicaciones..."
+      );
+
       if (isCanceled) {
-        return;
+        return res.status(200).json({ message: "Publicaciones canceladas" });
+      } else {
+        return res.status(200).json({
+          message: "Automatización de posts completada con éxito.",
+        });
       }
-      try {
-        await automatizarFacebook(post, id_usuario);
-      } catch (error) {
-        console.log(
-          `Error al automatizar publicaciones de: ${post.email}`,
-          error
-        );
-      }
-    }
+    };
 
-    emitirMensajeAUsuario(
-      id_usuario,
-      "Se terminó de compartir las publicaciones..."
-    );
-
-    if (isCanceled) {
-      return res.status(200).json({ message: "Publicaciones canceladas" });
-    } else {
-      return res.status(200).json({
-        message: "Automatización de posts completada con éxito.",
-      });
-    }
+    //Ejecutar las publicaciones secuencialmente
+    await processPostsSequentially();
+    
   } catch (error) {
     console.log("Error durante sharePosts:", error);
     return res.status(500).json({
