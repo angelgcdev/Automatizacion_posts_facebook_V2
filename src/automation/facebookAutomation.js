@@ -7,7 +7,7 @@ import { getIo, userSockets } from "../socket.js";
 
 let automationSession = null; // Variable global para almacenar la sesión
 
-const MIN_DELAY = 5000; // Minimo tiempo de espera en milisegundos
+const MIN_DELAY = 3000; // Minimo tiempo de espera en milisegundos
 const MAX_DELAY = 10000; // Máximo tiempo de espera en milisegundos
 const URL = "https://www.facebook.com/";
 
@@ -73,14 +73,14 @@ const getRandomDelay = (min, max) =>
 //Funcion para simular pausas y movimientos del mouse
 const humanizeInteraction = async (page) => {
   //Movimientos aleatorios del raton en posiciones de la pagina
-  await page.mouse.move(Math.random() * 1000, Math.random() * 800, {
-    steps: 20,
+  await page.mouse.move(Math.random() * 1200, Math.random() * 900, {
+    steps: Math.floor(Math.random() * 30) + 10,
   });
-  await page.waitForTimeout(getRandomDelay(500, 1500)); //pausa breve
+  await page.waitForTimeout(getRandomDelay(1000, 2000)); //pausa breve
 };
 
 //Funcion para hacer click en un selector con espera
-const clickOnSelector = async (page, selector, retries = 3) => {
+const clickOnSelector = async (page, selector) => {
   try {
     await page.waitForTimeout(500); // Espera un poco antes de hacer clic.
 
@@ -92,14 +92,6 @@ const clickOnSelector = async (page, selector, retries = 3) => {
       `Error en clickOnSelector para el selector ${selector}:`,
       error
     );
-    // if (retries > 0) {
-    //   console.log(
-    //     `Retry clicking selector ${selector}. Attempts left: ${retries}`
-    //   );
-    //   await page.waitForTimeout(getRandomDelay(500, 1000));
-    //   return clickOnSelector(page, selector, retries - 1);
-    // }
-    // throw error;
   }
 };
 
@@ -215,13 +207,19 @@ const handleLikeButton = async (page, selector, userId) => {
 
     if (!isLiked) {
       await clickOnSelector(page, selector);
-      await page.waitForLoadState("networkidle", { timeout: 15000 });
+      await waitForPageLoad(page);
     } else {
       console.log("Me gusta ya está activado");
     }
   } catch (error) {
     console.error("Error al intentar dar me gusta:", error);
   }
+};
+
+//Esperar por el cuerpo y el estadode la red
+const waitForPageLoad = async (page) => {
+  await page.waitForSelector("body", { timeout: 20000 });
+  await page.waitForLoadState("networkidle", { timeout: 30000 });
 };
 
 // Función Principal de automatización de Facebook
@@ -245,40 +243,44 @@ const automatizarFacebook = async (post, userId) => {
     console.log(
       `Iniciando sesión en Facebook con el correo electrónico ${post.email}...`
     );
+
     await loginToFacebook(page, post, userId);
+
+    //Esperar por la página a cargar completamente
+    await waitForPageLoad(page);
 
     await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
     // Navegar al enlace del post de una página
     emitirMensajeAUsuario(userId, "Navegando al enlace de la publicación...");
     await page.goto(post.url);
-    await page.waitForLoadState("networkidle", { timeout: 15000 });
+    await waitForPageLoad(page);
 
     await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
     //Cerrar si hay un modal de aviso
     try {
       await clickOnSelector(page, "div[aria-label='Cerrar']");
+      await waitForPageLoad(page);
     } catch (error) {
       console.error(error);
     }
 
     //Verificar si ya se dio me gusta
     await handleLikeButton(page, likeButtonSelector, userId);
-
     await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
     // Publicar en los grupos
     for (let i = 1; i <= post.numero_de_posts; i++) {
       const firstSelector = await Promise.race([
-        page.waitForSelector(selector1, { timeout: 10000 }),
-        page.waitForSelector(selector2, { timeout: 10000 }),
-        page.waitForSelector(selector3, { timeout: 10000 }),
+        page.waitForSelector(selector1, { timeout: 30000 }),
+        page.waitForSelector(selector2, { timeout: 30000 }),
+        page.waitForSelector(selector3, { timeout: 30000 }),
       ]);
 
       if (firstSelector) {
         await firstSelector.click();
-        await page.waitForLoadState("networkidle", { timeout: 15000 });
+        await waitForPageLoad(page);
 
         console.log(
           "Se hizo clic en el primer selector(compartir) que se resolvió."
@@ -286,7 +288,6 @@ const automatizarFacebook = async (post, userId) => {
       } else {
         throw new Error("Ningún selector se resolvió a tiempo.");
       }
-
       await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
       try {
@@ -295,7 +296,7 @@ const automatizarFacebook = async (post, userId) => {
           page,
           'div[role="button"] span:has-text("Grupo")'
         );
-        await page.waitForLoadState("networkidle", { timeout: 15000 });
+        await waitForPageLoad(page);
       } catch (error) {
         console.error(
           "Error al intentar hacer click en el botón 'Grupo'",
@@ -308,27 +309,30 @@ const automatizarFacebook = async (post, userId) => {
             page,
             'div[role="button"] span:has-text("Más opciones")'
           );
-          await page.waitForLoadState("networkidle", { timeout: 15000 });
+          await waitForPageLoad(page);
 
           await clickOnSelector(
             page,
             'div[role="button"] span:has-text("Compartir en un grupo")'
           );
-          await page.waitForLoadState("networkidle", { timeout: 15000 });
+          await waitForPageLoad(page);
         } catch (error) {
           console.error(error);
         }
         //------------------------------------------------
       }
-
       await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
-      await page.waitForSelector('div[role="list"]', { timeout: 20000 });
+      await waitForPageLoad(page);
+      await page.waitForSelector('div[role="list"]', { timeout: 30000 });
 
       const titleGroupPost = await page.locator(
         `div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-of-type(${i})
   span[class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x676frb x1lkfr7t x1lbecb7 xk50ysn xzsf02u x1yc453h"]`
       );
+
+      await waitForPageLoad(page);
+
       const nombre_grupo = await titleGroupPost.textContent();
       console.log(nombre_grupo);
 
@@ -338,7 +342,7 @@ const automatizarFacebook = async (post, userId) => {
         page,
         `div[role="list"] div[role="listitem"][data-visualcompletion="ignore-dynamic"]:nth-child(${i})`
       );
-      await page.waitForLoadState("networkidle", { timeout: 15000 });
+      await waitForPageLoad(page);
 
       await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
@@ -350,8 +354,12 @@ const automatizarFacebook = async (post, userId) => {
       await page.keyboard.press("Space");
 
       await clickOnSelector(page, 'div[aria-label="Publicar"]');
-      await page.waitForLoadState("networkidle", { timeout: 15000 });
+      await waitForPageLoad(page);
 
+      emitirMensajeAUsuario(
+        userId,
+        `Se compartio ¡exitosamente! la publicación en el grupo: ${nombre_grupo}`
+      );
       await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY));
 
       //Actualizar el reporte de publicaciones en la base de datos
@@ -364,11 +372,6 @@ const automatizarFacebook = async (post, userId) => {
       } catch (error) {
         console.error("Error al insertar el reporte:", error);
       }
-
-      emitirMensajeAUsuario(
-        userId,
-        `Se compartio ¡exitosamente! la publicación en el grupo: ${nombre_grupo}`
-      );
 
       // Intervalo de tiempo entre publicaciones
       if (i !== post.numero_de_posts) {
