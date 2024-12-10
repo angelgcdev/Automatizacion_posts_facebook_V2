@@ -40,7 +40,7 @@ const emitirMensajeAUsuario = (userId, mensaje, esError = false) => {
 //Funcion para inicializar el contexto del navegador
 const initBrowser = async () => {
   const browser = await chromium.launch({
-    headless: true,
+    headless: false,
     slowMo: 50,
   });
   const context = await browser.newContext();
