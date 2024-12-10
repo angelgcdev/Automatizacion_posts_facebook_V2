@@ -41,7 +41,7 @@ const emitirMensajeAUsuario = (userId, mensaje, esError = false) => {
 const initBrowser = async () => {
   const browser = await chromium.launch({
     headless: true,
-    slowMo: 50,
+    // slowMo: 50,
   });
   const context = await browser.newContext();
 
