@@ -76,13 +76,15 @@ const humanizeInteraction = async (page) => {
   await page.mouse.move(Math.random() * 1200, Math.random() * 900, {
     steps: Math.floor(Math.random() * 30) + 10,
   });
-  await page.waitForTimeout(getRandomDelay(1000, 2000)); //pausa breve
+  await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY)); //pausa breve
 };
 
 //Funcion para hacer click en un selector con espera
 const clickOnSelector = async (page, selector) => {
   try {
-    await page.waitForTimeout(500); // Espera un poco antes de hacer clic.
+    await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY)); //pausa breve
+
+    // await page.waitForTimeout(500); // Espera un poco antes de hacer clic.
 
     await page.waitForSelector(selector, { timeout: 10000 });
     await humanizeInteraction(page);
@@ -97,7 +99,8 @@ const clickOnSelector = async (page, selector) => {
 
 //Funcion para llenar un campo de texto con retrasos, simulados entre caracteres
 const fillField = async (page, selector, value) => {
-  await page.waitForSelector(selector, { timeout: 10000 }); //Espera hasta 10 segundos
+  await page.waitForSelector(selector, { timeout: 30000 }); //Espera hasta 10 segundos
+  // await page.waitForSelector(selector, { timeout: 10000 }); //Espera hasta 10 segundos
   await humanizeInteraction(page);
   for (const char of value) {
     await page.type(selector, char, { delay: getRandomDelay(50, 150) });
@@ -111,7 +114,10 @@ const loginToFacebook = async (page, { email, password }, userId) => {
     await fillField(page, "#email", email);
     await fillField(page, "#pass", password);
     await clickOnSelector(page, "button[name='login']");
-    await page.waitForTimeout(5000);
+
+    await page.waitForTimeout(getRandomDelay(MIN_DELAY, MAX_DELAY)); //pausa breve
+
+    // await page.waitForTimeout(5000);
 
     //Obtenemos a URL de la pagina
     const verifyURL = page.url();
@@ -197,9 +203,10 @@ const insertReport = async (post, nombre_grupo, currentDate) => {
 };
 
 //Funcion para manejar el click en el boton like
-const handleLikeButton = async (page, selector, userId) => {
+const handleLikeButton = async (page, selector) => {
   try {
-    await page.waitForSelector(selector, { timeout: 15000 });
+    await page.waitForSelector(selector, { timeout: 30000 });
+    // await page.waitForSelector(selector, { timeout: 15000 });
     const isLiked = await page.evaluate((selector) => {
       const button = document.querySelector(selector);
       return button && button.getAttribute("aria-label") !== "Me gusta";
@@ -218,7 +225,7 @@ const handleLikeButton = async (page, selector, userId) => {
 
 //Esperar por el cuerpo y el estadode la red
 const waitForPageLoad = async (page) => {
-  await page.waitForSelector("body", { timeout: 20000 });
+  await page.waitForSelector("body", { timeout: 30000 });
   await page.waitForLoadState("networkidle", { timeout: 30000 });
 };
 
